@@ -1,6 +1,9 @@
 import mne
+import matplotlib.pyplot as plt
+
 from scot.var import VAR
 from scot.connectivity import Connectivity
+from scot.plotting import plot_connectivity_spectrum
 
 file_name = "data/S003R01.edf"
 data = mne.io.read_raw_edf(file_name, verbose=True)
@@ -24,3 +27,8 @@ fitted = var.fit(raw_data)
 print("VAR coefficient:",fitted.coef.shape)
 
 conn = Connectivity(fitted.coef)
+pdc  = conn.PDC()
+print("PDC shape:", pdc.shape)
+
+plot_connectivity_spectrum(pdc[:3,:3,:], freq_range=(0,80))
+plt.show()
