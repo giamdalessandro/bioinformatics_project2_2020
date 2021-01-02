@@ -3,8 +3,12 @@ import matplotlib.pyplot as plt
 
 from scot.var import VAR
 from scot.connectivity import Connectivity
-from scot.plotting import plot_connectivity_spectrum
+from scot.plotting import plot_connectivity_spectrum, plot_connectivity_significance
+from scot.eegtopo.topoplot import Topoplot
 
+"""
+To check also connectiviPy module, maybe better
+"""
 
 file_name = "data/S003R01.edf"
 data = mne.io.read_raw_edf(file_name, verbose=True)
@@ -31,7 +35,12 @@ conn = Connectivity(fitted.coef)
 pdc  = conn.PDC()
 print("PDC shape:", pdc.shape)
 
+
+#print("Channel {} topoplot...".format(channels[0]))
+#plot_circular(pdc[:,:,0], colors=(0,255,0), topo=Topoplot(), topomaps=[80,80])
+
 # plotting only 3 channel
 print("Plotting {} channels...".format(channels[:3]))
 plot_connectivity_spectrum(pdc[:3,:3,:], freq_range=(0,80))
+#plot_connectivity_significance(pdc[:3,:3,:], freq_range=(0,80))
 plt.show()
