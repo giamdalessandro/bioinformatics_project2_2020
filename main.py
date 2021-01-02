@@ -30,5 +30,7 @@ conn = Connectivity(fitted.coef)
 pdc  = conn.PDC()
 print("PDC shape:", pdc.shape)
 
+# plotting only 3 channel
+print("Plotting {} channels...".format(channels[:3]))
 plot_connectivity_spectrum(pdc[:3,:3,:], freq_range=(0,80))
 plt.show()
