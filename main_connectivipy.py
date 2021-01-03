@@ -31,7 +31,7 @@ print("\nData Info:",raw_data.info)
 array_data = raw_data.get_data()
 print("array_data shape:", array_data.shape)
 
-# Testing only the first two channels ->['Fc5.', 'Fc3.']
+# Testing only the first two channels -> ['Fc5.', 'Fc3.']
 data = cp.Data(array_data, fs=32., chan_names=raw_data.ch_names, data_info='edf_data')
 if PLOTS:
     data.plot_data(trial=3)
