@@ -3,7 +3,7 @@ import numpy as np
 import connectivipy as cp
 
 PLOTS        = False
-COMPUTE_MATS = False
+COMPUTE_MATS = True
 
 def save_matrices(n_channels=64):
     """
@@ -81,15 +81,17 @@ if COMPUTE_MATS:
 
     # investigate connectivity using DTF
     dtf_values = data.conn('dtf')
-    dtf_significance = data.significance(Nrep=200, alpha=0.05)
-    print("\nPDC sign:",dtf_significance)
+    dtf_significance = data.significance(Nrep=100, alpha=0.05)
+    print(dtf_values[0])
+    print("\nDTF sign:",dtf_significance)
     if PLOTS:
         data.plot_conn('DTF measure')
 
     # investigate connectivity using PDC
     pdc_values = data.conn('pdc')
-    pdc_significance = data.significance(Nrep=200, alpha=0.05)
-    print("\nDTF sign:",pdc_significance)
+    pdc_significance = data.significance(Nrep=100, alpha=0.05)
+    print(pdc_values[0])
+    print("\nPDC sign:",pdc_significance)
     if PLOTS:
         data.plot_conn("PDC measure")
 
@@ -97,11 +99,14 @@ if COMPUTE_MATS:
 
 
 #### Compute adjacency matrix 
+"""
+DTF: with a threshold of 0.07881 we obtain a neetwork density of 0.2006 (20.01%) 
+PDC: with a threshold of 0.04597 we obtain a neetwork density of 0.2003 (20.03%)
+
 conn_mat = load_matrix(conn_method='DTF')
 print("mat shape:",conn_mat.shape)
 
-# DTF: with a threshold of 0.07881 we obtain a neetwork density of 0.2006 (20.01%) 
-# PDC: with a threshold of 0.04597 we obtain a neetwork density of 0.2003 (20.03%)
 adj_mat = compute_adjacency(conn_mat, threshold=0.07881)  # 0.04597 for PDC
-print(adj_mat)
+#print(adj_mat)
 print("Network density:", np.sum(adj_mat)/4032)
+"""
