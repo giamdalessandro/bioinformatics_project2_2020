@@ -20,13 +20,16 @@ data.fit_mvar(2, 'yw')
 
 # you can capture fitted parameters and residual matrix
 ar, vr = data.mvar_coefficients
-#print(cp.conn.conn_estim_dc.keys()) -> connectivity measure available
 
+#print(cp.conn.conn_estim_dc.keys()) -> connectivity measure available
 # investigate connectivity using DTF
-gdtf_values = data.conn('dtf')
-gdtf_significance = data.significance(Nrep=200, alpha=0.05)
+dtf_values = data.conn('dtf')
+dtf_significance = data.significance(Nrep=200, alpha=0.05)
 data.plot_conn('DTF measure')
+print("\nPDC sign:",dtf_significance)
 
 # investigate connectivity using PDC
-pdc_shorttime = data.conn('pdc')
+pdc_values = data.conn('pdc')
+pdc_significance = data.significance(Nrep=200, alpha=0.05)
 data.plot_conn("PDC measure")
+print("\nDTF sign:",pdc_significance)
