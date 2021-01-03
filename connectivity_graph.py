@@ -60,7 +60,7 @@ def compute_adjacency(conn_mat, threshold=0.05):
 
     return adj_mat
 
-
+#### Loading EEG data
 file_name = "data/S003R01.edf"
 raw_data = mne.io.read_raw_edf(file_name, verbose=True)
 print("\nData Info:",raw_data.info)
@@ -68,12 +68,11 @@ print("\nData Info:",raw_data.info)
 array_data = raw_data.get_data()
 print("array_data shape:", array_data.shape)
 
-# Testing only the first two channels -> ['Fc5.', 'Fc3.']
 data = cp.Data(array_data, fs=32., chan_names=raw_data.ch_names, data_info='edf_data')
 if PLOTS:
     data.plot_data(trial=3)
 
-
+#### Compute connectivity matrices with DTF and PDC
 if COMPUTE_MATS:
     # fit mvar using Yule-Walker algorithm and order 2,
     # you can capture fitted parameters and residual matrix
@@ -97,12 +96,12 @@ if COMPUTE_MATS:
     save_matrices(n_channels=64)
 
 
-
+#### Compute adjacency matrix 
 conn_mat = load_matrix(conn_method='DTF')
 print("mat shape:",conn_mat.shape)
 
-# DTF: with a threshold of 0.07881 we obtain a neetwork density of 0.2011 (20.1%) 
-# PDC: with a threshold of 0.04592 we obtain a neetwork density of 0.2033 (20.3%)
-adj_mat = compute_adjacency(conn_mat, threshold=0.07881)
+# DTF: with a threshold of 0.07881 we obtain a neetwork density of 0.2006 (20.01%) 
+# PDC: with a threshold of 0.04597 we obtain a neetwork density of 0.2003 (20.03%)
+adj_mat = compute_adjacency(conn_mat, threshold=0.07881)  # 0.04597 for PDC
 print(adj_mat)
 print("Network density:", np.sum(adj_mat)/4032)
