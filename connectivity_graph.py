@@ -28,8 +28,8 @@ def save_matrices():
 
 def load_matrix(conn_method="DTF"):
     """
-    Load one of the adjacency matrices from file
-        - conn_method: the method used to compute connectivity matrix, one of {'DTF','PDC'} 
+    Load the adjacency matrix from file
+        - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'} 
     """
     mat_file = "dtf_matrix.txt" if conn_method == "DTF" else "dtf_matrix.txt" 
     mat_list = []
@@ -61,8 +61,6 @@ if COMPUTE_MATS:
     # you can capture fitted parameters and residual matrix
     data.fit_mvar(2, 'yw')
     ar, vr = data.mvar_coefficients
-
-    #print(cp.conn.conn_estim_dc.keys()) -> connectivity measure available
 
     # investigate connectivity using DTF
     dtf_values = data.conn('dtf')
