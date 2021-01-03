@@ -33,7 +33,7 @@ def load_matrix(conn_method="DTF"):
     Load the adjacency matrix from file
         - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'}.
     """
-    mat_file = "dtf_matrix.txt" if conn_method == "DTF" else "dtf_matrix.txt" 
+    mat_file = "data/dtf_matrix.txt" if conn_method == "DTF" else "data/pdc_matrix.txt" 
     mat_list = []
     print("\nLoading matrix from '{}' ...".format(mat_file))
 
@@ -101,7 +101,8 @@ if COMPUTE_MATS:
 conn_mat = load_matrix(conn_method='DTF')
 print("mat shape:",conn_mat.shape)
 
-# with a threshold of 0.0788 we obtain a neetwork density of 0.2011 (20%) 
-adj_mat = compute_adjacency(conn_mat, threshold=0.0788)
+# DTF: with a threshold of 0.07881 we obtain a neetwork density of 0.2011 (20.1%) 
+# PDC: with a threshold of 0.04592 we obtain a neetwork density of 0.2033 (20.3%)
+adj_mat = compute_adjacency(conn_mat, threshold=0.07881)
 print(adj_mat)
-print(np.sum(adj_mat))
+print("Network density:", np.sum(adj_mat)/4032)
