@@ -42,9 +42,23 @@ def load_matrix(conn_method="DTF"):
             mat_list.append(row.strip().split(" "))
         f.close()
 
-    return np.array(mat_list)
+    return np.array(mat_list, dtype=np.float32)
 
-def compute_adjacency(threshold=0.2):
+def compute_adjacency(conn_mat, threshold=0.05):
+    """
+    Compute binary adjacency matrix from the given connectivity matrix.
+        - conn_mat : the connectivity matrix to be binarified;
+        - threshold: each cell of the resulting matrix will be considered 1 if its value
+                is >= than threshold, 0 otherwise. 
+    """
+    adj_mat = np.zeros(shape=conn_mat.shape)
+
+    for i in range(conn_mat.shape[0]):
+        for j in range(conn_mat.shape[1]):
+            if conn_mat[i][j] >= threshold and i != j:
+                adj_mat[i][j] = 1
+
+    return adj_mat
 
 
 file_name = "data/S003R01.edf"
@@ -83,5 +97,11 @@ if COMPUTE_MATS:
     save_matrices(n_channels=64)
 
 
-mat = load_matrix(conn_method='DTF')
-print("mat shape:",mat.shape)
+
+conn_mat = load_matrix(conn_method='DTF')
+print("mat shape:",conn_mat.shape)
+
+# with a threshold of 0.0788 we obtain a neetwork density of 0.2011 (20%) 
+adj_mat = compute_adjacency(conn_mat, threshold=0.0788)
+print(adj_mat)
+print(np.sum(adj_mat))
