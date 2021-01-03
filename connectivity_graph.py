@@ -5,16 +5,18 @@ import connectivipy as cp
 PLOTS        = False
 COMPUTE_MATS = False
 
-def save_matrices():
+def save_matrices(n_channels=64):
     """
     Save adjacency matrices obtained from DTF and PDC connectivity analysis to file
+        - n_channels: number of channels in the data, i.e. the resulting matrices 
+                dim (n_channels,n_channels).
     """    
     print("\nSaving DTF and PDC matrices respectively to 'data/dtf_matrix.txt' and 'data/pdc_matrix.txt'")
     f_dtf = open("data/dtf_matrix.txt", "w")
     f_pdc = open("data/pdc_matrix.txt", "w")
 
-    for i in range(64):
-        for j in range(64):
+    for i in range(n_channels):
+        for j in range(n_channels):
             if j == 63:
                 f_dtf.write(str(dtf_significance[i][j]) + "\n")
                 f_pdc.write(str(pdc_significance[i][j]) + "\n")
@@ -29,7 +31,7 @@ def save_matrices():
 def load_matrix(conn_method="DTF"):
     """
     Load the adjacency matrix from file
-        - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'} 
+        - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'}.
     """
     mat_file = "dtf_matrix.txt" if conn_method == "DTF" else "dtf_matrix.txt" 
     mat_list = []
@@ -41,6 +43,8 @@ def load_matrix(conn_method="DTF"):
         f.close()
 
     return np.array(mat_list)
+
+def compute_adjacency(threshold=0.2):
 
 
 file_name = "data/S003R01.edf"
@@ -76,8 +80,8 @@ if COMPUTE_MATS:
     if PLOTS:
         data.plot_conn("PDC measure")
 
-    save_matrices()
+    save_matrices(n_channels=64)
 
 
 mat = load_matrix(conn_method='DTF')
-print(mat.shape)
+print("mat shape:",mat.shape)
