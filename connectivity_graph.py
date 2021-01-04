@@ -2,10 +2,10 @@ import mne
 import numpy as np
 import connectivipy as cp
 
-PLOTS        = False
-COMPUTE_MATS = True
+PLOTS        = True
+COMPUTE_MATS = False
 
-def save_matrices(n_channels=64):
+def save_matrices(dtf_mat, pdc_mat, n_channels=64):
     """
     Save adjacency matrices obtained from DTF and PDC connectivity analysis to file
         - n_channels: number of channels in the data, i.e. the resulting matrices 
@@ -18,11 +18,11 @@ def save_matrices(n_channels=64):
     for i in range(n_channels):
         for j in range(n_channels):
             if j == 63:
-                f_dtf.write(str(dtf_significance[i][j]) + "\n")
-                f_pdc.write(str(pdc_significance[i][j]) + "\n")
+                f_dtf.write(str(dtf_mat[i][j]) + "\n")
+                f_pdc.write(str(pdc_mat[i][j]) + "\n")
             else:
-                f_dtf.write(str(dtf_significance[i][j]) + " ")
-                f_pdc.write(str(pdc_significance[i][j]) + " ")
+                f_dtf.write(str(dtf_mat[i][j]) + " ")
+                f_pdc.write(str(pdc_mat[i][j]) + " ")
 
     f_dtf.close()
     f_pdc.close()
@@ -68,7 +68,7 @@ print("\nData Info:",raw_data.info)
 array_data = raw_data.get_data()
 print("array_data shape:", array_data.shape)
 
-data = cp.Data(array_data, fs=32., chan_names=raw_data.ch_names, data_info='edf_data')
+data = cp.Data(array_data, fs=160., chan_names=raw_data.ch_names, data_info='edf_data')
 if PLOTS:
     data.plot_data(trial=3)
 
@@ -95,7 +95,7 @@ if COMPUTE_MATS:
     if PLOTS:
         data.plot_conn("PDC measure")
 
-    save_matrices(n_channels=64)
+    save_matrices(dtf_significance,pdc_significance,n_channels=64)
 
 
 #### Compute adjacency matrix 
@@ -108,5 +108,6 @@ print("mat shape:",conn_mat.shape)
 
 adj_mat = compute_adjacency(conn_mat, threshold=0.07881)  # 0.04597 for PDC
 #print(adj_mat)
-print("Network density:", np.sum(adj_mat)/4032)
+max_edges = 64*(64-1)
+print("Network density:", np.sum(adj_mat)/max_edges)
 """
