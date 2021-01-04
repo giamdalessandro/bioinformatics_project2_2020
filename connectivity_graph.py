@@ -2,8 +2,8 @@ import mne
 import numpy as np
 import connectivipy as cp
 
-PLOTS        = True
-COMPUTE_MATS = False
+PLOTS        = False
+COMPUTE_MATS = True
 
 def save_matrices(dtf_mat, pdc_mat, n_channels=64):
     """
@@ -68,7 +68,7 @@ print("\nData Info:",raw_data.info)
 array_data = raw_data.get_data()
 print("array_data shape:", array_data.shape)
 
-data = cp.Data(array_data, fs=160., chan_names=raw_data.ch_names, data_info='edf_data')
+data = cp.Data(array_data, fs=32., chan_names=raw_data.ch_names, data_info='edf_data')
 if PLOTS:
     data.plot_data(trial=3)
 
@@ -80,17 +80,17 @@ if COMPUTE_MATS:
     ar, vr = data.mvar_coefficients
 
     # investigate connectivity using DTF
-    dtf_values = data.conn('dtf')
+    dtf_values = data.conn('dtf',resolution=10)
     dtf_significance = data.significance(Nrep=100, alpha=0.05)
-    print(dtf_values[0])
+    print(dtf_values.shape)
     print("\nDTF sign:",dtf_significance)
     if PLOTS:
         data.plot_conn('DTF measure')
 
     # investigate connectivity using PDC
-    pdc_values = data.conn('pdc')
+    pdc_values = data.conn('pdc',resolution=10)
     pdc_significance = data.significance(Nrep=100, alpha=0.05)
-    print(pdc_values[0])
+    print(pdc_values.shape)
     print("\nPDC sign:",pdc_significance)
     if PLOTS:
         data.plot_conn("PDC measure")
