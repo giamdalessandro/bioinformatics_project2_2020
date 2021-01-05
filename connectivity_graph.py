@@ -3,7 +3,9 @@ import numpy as np
 import connectivipy as cp
 
 PLOTS        = False
-COMPUTE_MATS = True
+COMPUTE_MATS = False
+ADJACENCY    = False
+
 
 def save_matrices(dtf_mat, pdc_mat, n_channels=64):
     """
@@ -61,16 +63,21 @@ def compute_adjacency(conn_mat, threshold=0.05):
     return adj_mat
 
 #### Loading EEG data
-file_name = "data/S003R01.edf"
+file_name = "data/S003R02.edf"
 raw_data = mne.io.read_raw_edf(file_name, verbose=True)
 print("\nData Info:",raw_data.info)
+
+events, event_dict = mne.events_from_annotations(raw_data)
+print("Events dict:",event_dict)
+print("Read events:",events)
 
 array_data = raw_data.get_data()
 print("array_data shape:", array_data.shape)
 
-data = cp.Data(array_data, fs=32., chan_names=raw_data.ch_names, data_info='edf_data')
+data = cp.Data(array_data, fs=10., chan_names=raw_data.ch_names, data_info='edf_data')
 if PLOTS:
     data.plot_data(trial=3)
+
 
 #### Compute connectivity matrices with DTF and PDC
 if COMPUTE_MATS:
@@ -78,36 +85,39 @@ if COMPUTE_MATS:
     # you can capture fitted parameters and residual matrix
     data.fit_mvar(2, 'yw')
     ar, vr = data.mvar_coefficients
+    #print("ar:",ar)
+    #print("vr:",vr)
 
     # investigate connectivity using DTF
-    dtf_values = data.conn('dtf',resolution=10)
+    dtf_values = data.conn('dtf',resolution=100)
     dtf_significance = data.significance(Nrep=100, alpha=0.05)
-    print(dtf_values.shape)
+    #print(dtf_values[49])
     print("\nDTF sign:",dtf_significance)
     if PLOTS:
         data.plot_conn('DTF measure')
 
     # investigate connectivity using PDC
-    pdc_values = data.conn('pdc',resolution=10)
+    pdc_values = data.conn('pdc',resolution=100)
     pdc_significance = data.significance(Nrep=100, alpha=0.05)
-    print(pdc_values.shape)
+    #print(pdc_values[49])
     print("\nPDC sign:",pdc_significance)
     if PLOTS:
         data.plot_conn("PDC measure")
 
-    save_matrices(dtf_significance,pdc_significance,n_channels=64)
+    save_matrices(dtf_mat=dtf_values[49],pdc_mat=pdc_values[49],n_channels=64)
 
 
 #### Compute adjacency matrix 
 """
+TODO -- to check this values
 DTF: with a threshold of 0.07881 we obtain a neetwork density of 0.2006 (20.01%) 
 PDC: with a threshold of 0.04597 we obtain a neetwork density of 0.2003 (20.03%)
-
-conn_mat = load_matrix(conn_method='DTF')
-print("mat shape:",conn_mat.shape)
-
-adj_mat = compute_adjacency(conn_mat, threshold=0.07881)  # 0.04597 for PDC
-#print(adj_mat)
-max_edges = 64*(64-1)
-print("Network density:", np.sum(adj_mat)/max_edges)
 """
+if ADJACENCY:
+    conn_mat = load_matrix(conn_method='DTF')
+    print("mat shape:",conn_mat.shape)
+
+    adj_mat = compute_adjacency(conn_mat, threshold=0.05)  # 0.04597 for PDC
+    #print(adj_mat)
+    max_edges = 64*(64-1)
+    print("Network density:", np.sum(adj_mat)/max_edges)
