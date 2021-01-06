@@ -2,9 +2,9 @@ import mne
 import numpy as np
 import connectivipy as cp
 
-PLOTS        = True
-COMPUTE_MATS = True
-ADJACENCY    = False
+PLOTS        = False
+COMPUTE_MATS = False
+ADJACENCY    = True
 
 
 def save_matrices(dtf_mat, pdc_mat, n_channels=64):
@@ -91,20 +91,20 @@ if COMPUTE_MATS:
     #print("vr:",vr)
 
     # investigate connectivity using DTF
-    dtf_values = data.conn('dtf',resolution=100)
+    dtf_values = data.conn('dtf',resolution=160)
     dtf_significance = data.significance(Nrep=100, alpha=0.05)
-    print(dtf_values)
+    print(dtf_values.shape)
     print("\nDTF sign:",dtf_significance)
     data.plot_conn('DTF measure',show=PLOTS)
 
     # investigate connectivity using PDC
-    pdc_values = data.conn('pdc',resolution=100)
+    pdc_values = data.conn('pdc',resolution=160)
     pdc_significance = data.significance(Nrep=100, alpha=0.05)
-    print(pdc_values)
+    print(pdc_values.shape)
     print("\nPDC sign:",pdc_significance)
     data.plot_conn("PDC measure",show=PLOTS)
 
-    save_matrices(dtf_mat=dtf_significance,pdc_mat=pdc_significance,n_channels=64)
+    save_matrices(dtf_mat=dtf_values[11],pdc_mat=pdc_values[11],n_channels=64)
 
 
 #### Compute adjacency matrix 
@@ -117,7 +117,7 @@ if ADJACENCY:
     conn_mat = load_matrix(conn_method='DTF')
     print("mat shape:",conn_mat.shape)
 
-    adj_mat = compute_adjacency(conn_mat, threshold=0.05)  # 0.04597 for PDC
+    adj_mat = compute_adjacency(conn_mat, threshold=0.045)  # 0.04597 for PDC
     #print(adj_mat)
     max_edges = 64*(64-1)
     print("Resutling network density:", np.sum(adj_mat)/max_edges)
