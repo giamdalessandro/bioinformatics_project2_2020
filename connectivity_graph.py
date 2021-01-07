@@ -3,8 +3,8 @@ import numpy as np
 import connectivipy as cp
 
 PLOTS        = False
-COMPUTE_MATS = False
-ADJACENCY    = True
+COMPUTE_MATS = True
+ADJACENCY    = False
 
 
 def save_matrices(dtf_mat, pdc_mat, n_channels=64):
@@ -91,20 +91,20 @@ if COMPUTE_MATS:
     #print("vr:",vr)
 
     # investigate connectivity using DTF
-    dtf_values = data.conn('dtf',resolution=160)
+    dtf_values = data.conn('dtf',resolution=80)
     dtf_significance = data.significance(Nrep=100, alpha=0.05)
-    print(dtf_values.shape)
+    print("dtf_shape:",dtf_values.shape)
     print("\nDTF sign:",dtf_significance)
     data.plot_conn('DTF measure',show=PLOTS)
 
     # investigate connectivity using PDC
-    pdc_values = data.conn('pdc',resolution=160)
+    pdc_values = data.conn('pdc',resolution=80)
     pdc_significance = data.significance(Nrep=100, alpha=0.05)
-    print(pdc_values.shape)
+    print("pdc_shape:",pdc_values.shape)
     print("\nPDC sign:",pdc_significance)
     data.plot_conn("PDC measure",show=PLOTS)
 
-    save_matrices(dtf_mat=dtf_values[11],pdc_mat=pdc_values[11],n_channels=64)
+    #save_matrices(dtf_mat=dtf_values[11],pdc_mat=pdc_values[11],n_channels=64)
 
 
 #### Compute adjacency matrix 
