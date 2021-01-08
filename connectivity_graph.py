@@ -85,16 +85,25 @@ data = cp.Data(array_data, fs=160., chan_names=raw_data.ch_names, data_info='edf
 if PLOTS:
     data.plot_data(trial=3)
 
+"""
+#### Model order
+# find best model order using Vieira-Morf algorithm
+best, crit = mv.order_akaike(y, 15, 'vm')
+plt.plot(1+np.arange(len(crit)), crit, 'g')
+plt.show()
+print(best)
+"""
+
+# fit mvar using Yule-Walker algorithm and order 2,
+# you can capture fitted parameters and residual matrix
+data.fit_mvar(p=2, method='yw')
+ar, vr = data.mvar_coefficients
+#print("ar:",ar)
+#print("vr:",vr)
+
 
 #### Compute connectivity matrices with DTF and PDC measures
 if COMPUTE_MATS:
-    # fit mvar using Yule-Walker algorithm and order 2,
-    # you can capture fitted parameters and residual matrix
-    data.fit_mvar(p=2, method='yw')
-    ar, vr = data.mvar_coefficients
-    #print("ar:",ar)
-    #print("vr:",vr)
-
     # investigate connectivity using DTF
     dtf_values = data.conn('dtf',resolution=80)
     dtf_significance = data.significance(Nrep=100, alpha=0.05)
