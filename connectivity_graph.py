@@ -19,9 +19,9 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, normalized=False):
     dtf_path = "data/dtf_matrix.txt" if not normalized else "data/dtf_norm_matrix.txt"
     pdc_path = "data/pdc_matrix.txt" if not normalized else "data/pdc_norm_matrix.txt"
 
-    print("\nSaving DTF and PDC matrices respectively to 'data/dtf_matrix.txt' and 'data/pdc_matrix.txt'")
+    print("\nSaving DTF and PDC matrices respectively to {} and {}".format(dtf_path,pdc_path))
     f_dtf = open(dtf_path, "w")
-    f_pdc = open(dtf_path, "w")
+    f_pdc = open(pdc_path, "w")
 
     for i in range(n_channels):
         for j in range(n_channels):
@@ -82,7 +82,8 @@ array_data = raw_data.get_data()
 print("array_data shape:", array_data.shape)
 
 data = cp.Data(array_data, fs=160., chan_names=raw_data.ch_names, data_info='edf_data')
-data.plot_data(trial=3,show=PLOTS)
+if PLOTS:
+    data.plot_data(trial=3)
 
 
 #### Compute connectivity matrices with DTF and PDC measures
@@ -99,21 +100,23 @@ if COMPUTE_MATS:
     dtf_significance = data.significance(Nrep=100, alpha=0.05)
     print("dtf_shape:",dtf_values.shape)
     print("\nDTF sign:",dtf_significance)
-    data.plot_conn('DTF measure',show=PLOTS)
+    if PLOTS:
+        data.plot_conn("DTF measure")
 
     # investigate connectivity using PDC
     pdc_values = data.conn('pdc',resolution=80)
     pdc_significance = data.significance(Nrep=100, alpha=0.05)
     print("pdc_shape:",pdc_values.shape)
     print("\nPDC sign:",pdc_significance)
-    data.plot_conn("PDC measure",show=PLOTS)
+    if PLOTS:
+        data.plot_conn("PDC measure")
 
     #save_matrices(dtf_mat=dtf_values[11],pdc_mat=pdc_values[11],n_channels=64)
 
 
 #### Compute adjacency matrix 
 """
-TODO -- to check this values
+TODO -- to check this values, prolly wrong
 DTF: with a threshold of 0.07881 we obtain a neetwork density of 0.2006 (20.01%) 
 PDC: with a threshold of 0.04597 we obtain a neetwork density of 0.2003 (20.03%)
 """
@@ -127,6 +130,8 @@ if ADJACENCY:
     print("Resutling network density:", np.sum(adj_mat)/max_edges)
 
 
+
+"""
 #### Tryin normalization in alpha band freq. range
 sum_dtf = np.sum(dtf_values[8:14], axis=0)
 sum_pdc = np.sum(pdc_values[8:14], axis=0)
@@ -137,6 +142,7 @@ for i in range(8,14):
     norm_dtf.append(np.divide(dtf_values[i],sum_dtf))
     norm_pdc.append(np.divide(pdc_values[i],sum_pdc))
 
-print(norm_dtf[2])
-print(norm_pdc[2])
+print(norm_dtf)
+print(norm_pdc)
 save_matrices(dtf_mat=norm_dtf[2],pdc_mat=norm_pdc[2],normalized=True)
+"""
