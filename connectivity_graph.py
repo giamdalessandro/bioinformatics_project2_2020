@@ -7,17 +7,21 @@ COMPUTE_MATS = True
 ADJACENCY    = False
 
 
-def save_matrices(dtf_mat, pdc_mat, n_channels=64):
+def save_matrices(dtf_mat, pdc_mat, n_channels=64, normalized=False):
     """
     Save adjacency matrices obtained from DTF and PDC connectivity analysis to file
         - dtf_mat   : connectivity matrix obtained with DTF measure;
         - pdc_mat   : connectivity matrix obtained with PDC measure;
         - n_channels: number of channels in the data, i.e. the resulting matrices 
-                dim (n_channels,n_channels).
-    """    
+                dim (n_channels,n_channels);
+        - normalized: to change the savepaths when storing normalized matrix.
+    """
+    dtf_path = "data/dtf_matrix.txt" if not normalized else "data/dtf_norm_matrix.txt"
+    pdc_path = "data/pdc_matrix.txt" if not normalized else "data/pdc_norm_matrix.txt"
+
     print("\nSaving DTF and PDC matrices respectively to 'data/dtf_matrix.txt' and 'data/pdc_matrix.txt'")
-    f_dtf = open("data/dtf_matrix.txt", "w")
-    f_pdc = open("data/pdc_matrix.txt", "w")
+    f_dtf = open(dtf_path, "w")
+    f_pdc = open(dtf_path, "w")
 
     for i in range(n_channels):
         for j in range(n_channels):
@@ -121,3 +125,18 @@ if ADJACENCY:
     #print(adj_mat)
     max_edges = 64*(64-1)
     print("Resutling network density:", np.sum(adj_mat)/max_edges)
+
+
+#### Tryin normalization in alpha band freq. range
+sum_dtf = np.sum(dtf_values[8:14], axis=0)
+sum_pdc = np.sum(pdc_values[8:14], axis=0)
+
+norm_dtf = []
+norm_pdc = []
+for i in range(8,14):
+    norm_dtf.append(np.divide(dtf_values[i],sum_dtf))
+    norm_pdc.append(np.divide(pdc_values[i],sum_pdc))
+
+print(norm_dtf[2])
+print(norm_pdc[2])
+save_matrices(dtf_mat=norm_dtf[2],pdc_mat=norm_pdc[2],normalized=True)
