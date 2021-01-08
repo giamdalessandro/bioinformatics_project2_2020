@@ -90,7 +90,7 @@ if PLOTS:
 if COMPUTE_MATS:
     # fit mvar using Yule-Walker algorithm and order 2,
     # you can capture fitted parameters and residual matrix
-    data.fit_mvar(2, 'yw')
+    data.fit_mvar(p=2, method='yw')
     ar, vr = data.mvar_coefficients
     #print("ar:",ar)
     #print("vr:",vr)
@@ -111,7 +111,7 @@ if COMPUTE_MATS:
     if PLOTS:
         data.plot_conn("PDC measure")
 
-    #save_matrices(dtf_mat=dtf_values[11],pdc_mat=pdc_values[11],n_channels=64)
+    save_matrices(dtf_mat=dtf_values[10],pdc_mat=pdc_values[10],n_channels=64)
 
 
 #### Compute adjacency matrix 
@@ -129,6 +129,11 @@ if ADJACENCY:
     max_edges = 64*(64-1)
     print("Resutling network density:", np.sum(adj_mat)/max_edges)
 
+
+print()
+print(dtf_values[10])
+print()
+print(pdc_values[10])
 
 
 """
