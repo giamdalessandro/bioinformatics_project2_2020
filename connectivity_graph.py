@@ -71,7 +71,7 @@ def compute_adjacency(conn_mat, threshold=0.05):
 
 
 #### Loading EEG data
-file_name = "data/S001R02.edf"
+file_name = "data/S003R01.edf"
 print("\nAnalyzing file", file_name)
 raw_data = mne.io.read_raw_edf(file_name, verbose=True)
 print("Data Info:",raw_data.info)
@@ -91,7 +91,7 @@ if PLOTS:
 #### Model order
 mv = cp.Mvar
 # find best model order using Vieira-Morf algorithm
-best_p, crit = mv.order_akaike(array_data, p_max=50, method='yw')
+best_p, crit = mv.order_akaike(array_data, p_max=15, method='yw')
 #best_p = 12
 #if PLOTS:
 plt.plot(1+np.arange(len(crit)), crit, 'g')
@@ -100,6 +100,7 @@ plt.xlabel("order(p)")
 plt.ylabel("AIC(p)")
 plt.grid()
 plt.show()
+print(crit)
 print(best_p)
 
 
