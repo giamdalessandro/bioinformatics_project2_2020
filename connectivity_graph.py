@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 PLOTS        = False
 COMPUTE_MATS = True
-ADJACENCY    = False
+ADJACENCY    = True
 
 
 def save_matrices(dtf_mat, pdc_mat, n_channels=64, normalized=False):
@@ -71,9 +71,10 @@ def compute_adjacency(conn_mat, threshold=0.05):
 
 
 #### Loading EEG data
-file_name = "data/S003R01.edf"
+file_name = "data/S001R02.edf"
+print("\nAnalyzing file", file_name)
 raw_data = mne.io.read_raw_edf(file_name, verbose=True)
-print("\nData Info:",raw_data.info)
+print("Data Info:",raw_data.info)
 
 events, event_dict = mne.events_from_annotations(raw_data)
 print("Events dict:",event_dict)
@@ -90,12 +91,15 @@ if PLOTS:
 #### Model order
 mv = cp.Mvar
 # find best model order using Vieira-Morf algorithm
-#best_p, crit = mv.order_akaike(array_data, p_max=15, method='vm')
-best_p = 12
-if PLOTS:
-    plt.plot(1+np.arange(len(crit)), crit, 'g')
-    plt.title("Model order estimation")
-    plt.show()
+best_p, crit = mv.order_akaike(array_data, p_max=50, method='yw')
+#best_p = 12
+#if PLOTS:
+plt.plot(1+np.arange(len(crit)), crit, 'g')
+plt.title("Model order estimation")
+plt.xlabel("order(p)")
+plt.ylabel("AIC(p)")
+plt.grid()
+plt.show()
 print(best_p)
 
 
