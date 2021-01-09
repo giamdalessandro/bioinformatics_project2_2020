@@ -1,6 +1,7 @@
 import mne
 import numpy as np
 import connectivipy as cp
+import matplotlib.pyplot as plt
 
 PLOTS        = False
 COMPUTE_MATS = True
@@ -85,18 +86,22 @@ data = cp.Data(array_data, fs=160., chan_names=raw_data.ch_names, data_info='edf
 if PLOTS:
     data.plot_data(trial=3)
 
-"""
+
 #### Model order
+mv = cp.Mvar
 # find best model order using Vieira-Morf algorithm
-best, crit = mv.order_akaike(y, 15, 'vm')
-plt.plot(1+np.arange(len(crit)), crit, 'g')
-plt.show()
-print(best)
-"""
+#best_p, crit = mv.order_akaike(array_data, p_max=15, method='vm')
+best_p = 12
+if PLOTS:
+    plt.plot(1+np.arange(len(crit)), crit, 'g')
+    plt.title("Model order estimation")
+    plt.show()
+print(best_p)
+
 
 # fit mvar using Yule-Walker algorithm and order 2,
 # you can capture fitted parameters and residual matrix
-data.fit_mvar(p=2, method='yw')
+data.fit_mvar(p=best_p, method='yw')
 ar, vr = data.mvar_coefficients
 #print("ar:",ar)
 #print("vr:",vr)
@@ -114,11 +119,14 @@ if COMPUTE_MATS:
 
     # investigate connectivity using PDC
     pdc_values = data.conn('pdc',resolution=80)
+    #pdc_values = data.short_time_conn('pdc', nfft=100, no=10)
     pdc_significance = data.significance(Nrep=100, alpha=0.05)
     print("pdc_shape:",pdc_values.shape)
     print("\nPDC sign:",pdc_significance)
     if PLOTS:
-        data.plot_conn("PDC measure")
+        #data.plot_conn("PDC measure")
+        data.plot_short_time_conn("PDC")
+
 
     save_matrices(dtf_mat=dtf_values[10],pdc_mat=pdc_values[10],n_channels=64)
 
@@ -133,30 +141,15 @@ if ADJACENCY:
     conn_mat = load_matrix(conn_method='DTF')
     print("mat shape:",conn_mat.shape)
 
-    adj_mat = compute_adjacency(conn_mat, threshold=0.045)  # 0.04597 for PDC
+    adj_mat = compute_adjacency(conn_mat, threshold=0.03)  # 0.04597 for PDC
     #print(adj_mat)
     max_edges = 64*(64-1)
     print("Resutling network density:", np.sum(adj_mat)/max_edges)
 
 
+"""
 print()
 print(dtf_values[10])
 print()
 print(pdc_values[10])
-
-
-"""
-#### Tryin normalization in alpha band freq. range
-sum_dtf = np.sum(dtf_values[8:14], axis=0)
-sum_pdc = np.sum(pdc_values[8:14], axis=0)
-
-norm_dtf = []
-norm_pdc = []
-for i in range(8,14):
-    norm_dtf.append(np.divide(dtf_values[i],sum_dtf))
-    norm_pdc.append(np.divide(pdc_values[i],sum_pdc))
-
-print(norm_dtf)
-print(norm_pdc)
-save_matrices(dtf_mat=norm_dtf[2],pdc_mat=norm_pdc[2],normalized=True)
 """
