@@ -53,7 +53,7 @@ def load_matrix(conn_method="DTF"):
 
     return np.array(mat_list, dtype=np.float32)
 
-def compute_adjacency(conn_mat, threshold=0.05):
+def compute_adjacency(conn_mat, threshold=0.05):    
     """
     Compute binary adjacency matrix from the given connectivity matrix.
         - conn_mat : the connectivity matrix to be binarified;
@@ -90,13 +90,13 @@ if PLOTS:
 #### Model order
 mv = cp.Mvar
 # find best model order using Vieira-Morf algorithm
-#best_p, crit = mv.order_akaike(array_data, p_max=15, method='vm')
-best_p = 12
+best_p, crit = mv.order_akaike(array_data, p_max=15, method='yw')
+#best_p = 6
 if PLOTS:
     plt.plot(1+np.arange(len(crit)), crit, 'g')
     plt.title("Model order estimation")
     plt.show()
-print(best_p)
+print("Best order:",best_p)
 
 
 # fit mvar using Yule-Walker algorithm and order 2,
@@ -124,9 +124,8 @@ if COMPUTE_MATS:
     print("pdc_shape:",pdc_values.shape)
     print("\nPDC sign:",pdc_significance)
     if PLOTS:
-        #data.plot_conn("PDC measure")
-        data.plot_short_time_conn("PDC")
-
+        data.plot_conn("PDC measure")
+        #data.plot_short_time_conn("PDC")
 
     save_matrices(dtf_mat=dtf_values[10],pdc_mat=pdc_values[10],n_channels=64)
 
@@ -147,9 +146,8 @@ if ADJACENCY:
     print("Resutling network density:", np.sum(adj_mat)/max_edges)
 
 
-"""
+
 print()
 print(dtf_values[10])
 print()
 print(pdc_values[10])
-"""
