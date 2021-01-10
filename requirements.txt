@@ -1,4 +1,4 @@
-mne
 numpy
+pyEDFlib
 matplotlib
 connectivipy
