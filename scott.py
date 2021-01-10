@@ -23,11 +23,15 @@ print("array_data shape:", array_data.shape)
 
 
 mvar = scot.var.VAR(1)
+mvar.fit(array_data)
 print(mvar.p)
-A = [array_data, array_data]
+A = [array_data[:, :2440],
+     array_data[:, 2440:4880],
+     array_data[:, 4880:7320],
+     array_data[:, 7320:]]
 
 mvar.optimize_order(
-    data=A, min_p=1, max_p=50, n_jobs=-1, verbose=1)
+    data=A, min_p=1, max_p=15, n_jobs=-1, verbose=2)
 print(mvar.p)
 # data : array-like, shape (n_trials, n_samples, n_channels)
 #        Segmented data set on which to optimize the model order. At least 2 trials are required
