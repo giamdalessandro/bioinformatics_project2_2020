@@ -4,21 +4,21 @@ import connectivipy as cp
 import matplotlib.pyplot as plt
 
 PLOTS        = False
-COMPUTE_MATS = True
+COMPUTE_MATS = False
 ADJACENCY    = False
 
 
-def save_matrices(dtf_mat, pdc_mat, n_channels=64, normalized=False):
+def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8):
     """
     Save adjacency matrices obtained from DTF and PDC connectivity analysis to file
         - dtf_mat   : connectivity matrix obtained with DTF measure;
         - pdc_mat   : connectivity matrix obtained with PDC measure;
         - n_channels: number of channels in the data, i.e. the resulting matrices 
                 dim (n_channels,n_channels);
-        - normalized: to change the savepaths when storing normalized matrix.
+        - freq      : frequecy value of analysis.
     """
-    dtf_path = "data/dtf_matrix.txt" if not normalized else "data/dtf_norm_matrix.txt"
-    pdc_path = "data/pdc_matrix.txt" if not normalized else "data/pdc_norm_matrix.txt"
+    dtf_path = "data/dtf_matrix_{}hz.txt".format(freq)
+    pdc_path = "data/pdc_matrix_{}hz.txt".format(freq)
 
     print("\nSaving DTF and PDC matrices respectively to {} and {}".format(dtf_path,pdc_path))
     f_dtf = open(dtf_path, "w")
@@ -37,12 +37,12 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, normalized=False):
     f_pdc.close()
     return
 
-def load_matrix(conn_method="DTF"):
+def load_matrix(conn_method="DTF", freq=10):
     """
     Load the adjacency matrix from file
         - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'}.
     """
-    mat_file = "data/dtf_matrix.txt" if conn_method == "DTF" else "data/pdc_matrix.txt" 
+    mat_file = "data/dtf_matrix_{}hz.txt".format(freq) if conn_method == "DTF" else "data/pdc_matrix_{}hz.txt".format(freq) 
     mat_list = []
     print("\nLoading matrix from '{}' ...".format(mat_file))
 
@@ -106,7 +106,7 @@ print(best_p)
 
 # fit mvar using Yule-Walker algorithm and order 2,
 # you can capture fitted parameters and residual matrix
-data.fit_mvar(p=5, method='yw')
+data.fit_mvar(p=12, method='yw')
 ar, vr = data.mvar_coefficients
 #print("ar:",ar)
 #print("vr:",vr)
@@ -132,7 +132,8 @@ if COMPUTE_MATS:
         data.plot_conn("PDC measure")
         #data.plot_short_time_conn("PDC")
 
-    save_matrices(dtf_mat=dtf_values[10],pdc_mat=pdc_values[10],n_channels=64)
+    #for i in range(8,14):
+    #    save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i)
 
 
 #### Compute adjacency matrix 
