@@ -1,10 +1,10 @@
 import os
-import mne
+import pyedflib
 import numpy as np
 import connectivipy as cp
 import matplotlib.pyplot as plt
 
-
+'''
 p = []
 #### Loading EEG data
 for f in os.listdir("test/"):
@@ -37,3 +37,18 @@ for f in os.listdir("test/"):
     p.append(best_p)
 
 print(p)
+'''
+
+
+
+file_name = "test/S050R02.edf"
+print("\nAnalyzing file", file_name)
+print(pyedflib.highlevel.read_edf_header(file_name, read_annotations=True))
+
+f = pyedflib.EdfReader(file_name)
+#n = f.open()
+#print("number of signals in file:", n)
+#signal_labels = f.getSignalLabels()
+#print("signal_labels:", signal_labels)
+
+f.close()

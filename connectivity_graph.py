@@ -71,7 +71,8 @@ def compute_adjacency(conn_mat, threshold=0.05):
 
 
 #### Loading EEG data
-file_name = "data/S003R01.edf"
+#file_name = "data/S003R01.edf"
+file_name = "test/S050R02.edf"
 print("\nAnalyzing file", file_name)
 raw_data = mne.io.read_raw_edf(file_name, verbose=True)
 print("Data Info:",raw_data.info)
