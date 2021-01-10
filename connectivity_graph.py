@@ -70,7 +70,7 @@ def compute_adjacency(conn_mat, threshold=0.05):
     return adj_mat
 
 
-file_name = "data/S003R01_fixed.edf"
+file_name = "data/S003R01.edf"
 print("\nAnalyzing file", file_name)
 f = pyedflib.EdfReader(file_name)
 n = f.signals_in_file
