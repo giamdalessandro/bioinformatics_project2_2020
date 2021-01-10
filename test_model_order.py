@@ -41,11 +41,10 @@ print(p)
 
 
 
-file_name = "test/S050R02.edf"
+file_name = "data/S003R01_fixed.edf"
 print("\nAnalyzing file", file_name)
-print(pyedflib.highlevel.read_edf_header(file_name, read_annotations=True))
-
 f = pyedflib.EdfReader(file_name)
+f.file_info_long()
 #n = f.open()
 #print("number of signals in file:", n)
 #signal_labels = f.getSignalLabels()
