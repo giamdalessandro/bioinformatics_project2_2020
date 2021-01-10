@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 PLOTS        = False
 COMPUTE_MATS = True
-ADJACENCY    = True
+ADJACENCY    = False
 
 
 def save_matrices(dtf_mat, pdc_mat, n_channels=64, normalized=False):
@@ -106,7 +106,7 @@ print(best_p)
 
 # fit mvar using Yule-Walker algorithm and order 2,
 # you can capture fitted parameters and residual matrix
-data.fit_mvar(p=best_p, method='yw')
+data.fit_mvar(p=5, method='yw')
 ar, vr = data.mvar_coefficients
 #print("ar:",ar)
 #print("vr:",vr)
