@@ -4,7 +4,7 @@ import connectivipy as cp
 import matplotlib.pyplot as plt
 
 PLOTS        = False
-COMPUTE_MATS = True
+COMPUTE_MATS = False
 ADJACENCY    = False
 
 
@@ -17,8 +17,8 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8):
                 dim (n_channels,n_channels);
         - freq      : frequecy value of analysis.
     """
-    dtf_path = "data/dtf_matrix_{}hz_5.txt".format(freq)
-    pdc_path = "data/pdc_matrix_{}hz_5.txt".format(freq)
+    dtf_path = "data/dtf_matrix_{}hz_auto.txt".format(freq)
+    pdc_path = "data/pdc_matrix_{}hz_auto.txt".format(freq)
 
     print("\nSaving DTF and PDC matrices respectively to {} and {}".format(dtf_path,pdc_path))
     f_dtf = open(dtf_path, "w")
@@ -42,7 +42,7 @@ def load_matrix(conn_method="DTF", freq=10):
     Load the adjacency matrix from file
         - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'}.
     """
-    mat_file = "data/dtf_matrix_{}hz.txt".format(freq) if conn_method == "DTF" else "data/pdc_matrix_{}hz.txt".format(freq) 
+    mat_file = "data/dtf_matrix_{}hz_auto.txt".format(freq) if conn_method == "DTF" else "data/pdc_matrix_{}hz_auto.txt".format(freq) 
     mat_list = []
     print("\nLoading matrix from '{}' ...".format(mat_file))
 
@@ -106,10 +106,11 @@ print(best_p)
 
 # fit mvar using Yule-Walker algorithm and order 2,
 # you can capture fitted parameters and residual matrix
-data.fit_mvar(p=5, method='yw')
+data.fit_mvar(p=None, method='yw')
 ar, vr = data.mvar_coefficients
 #print("ar:",ar)
 #print("vr:",vr)
+print(data._parameters)
 
 
 #### Compute connectivity matrices with DTF and PDC measures
@@ -152,8 +153,9 @@ if ADJACENCY:
     print("Resutling network density:", np.sum(adj_mat)/max_edges)
 
 
-
+"""
 print()
 print(dtf_values[10])
 print()
 print(pdc_values[10])
+"""
