@@ -1,4 +1,4 @@
-import mne
+import pyedflib
 import numpy as np
 import connectivipy as cp
 import matplotlib.pyplot as plt
@@ -70,21 +70,20 @@ def compute_adjacency(conn_mat, threshold=0.05):
     return adj_mat
 
 
-#### Loading EEG data
-#file_name = "data/S003R01.edf"
-file_name = "test/S050R02.edf"
+file_name = "data/S003R01_fixed.edf"
 print("\nAnalyzing file", file_name)
-raw_data = mne.io.read_raw_edf(file_name, verbose=True)
-print("Data Info:",raw_data.info)
+f = pyedflib.EdfReader(file_name)
+n = f.signals_in_file
+signal_labels = f.getSignalLabels()
+sigbufs = np.zeros((n, f.getNSamples()[0]))
+for i in np.arange(n):
+    sigbufs[i, :] = f.readSignal(i)
 
-events, event_dict = mne.events_from_annotations(raw_data)
-print("Events dict:",event_dict)
-print("Read events:",events)
+print("Loaded matrix with shape", sigbufs.shape)
+f.close()
 
-array_data = raw_data.get_data()
-print("array_data shape:", array_data.shape)
 
-data = cp.Data(array_data, fs=160., chan_names=raw_data.ch_names, data_info='edf_data')
+data = cp.Data(sigbufs, fs=160., chan_names=signal_labels, data_info=file_name)
 if PLOTS:
     data.plot_data(trial=3)
 
@@ -92,25 +91,22 @@ if PLOTS:
 #### Model order
 mv = cp.Mvar
 # find best model order using Vieira-Morf algorithm
-best_p, crit = mv.order_akaike(array_data, p_max=15, method='yw')
-#best_p = 12
-#if PLOTS:
-plt.plot(1+np.arange(len(crit)), crit, 'g')
-plt.title("Model order estimation")
-plt.xlabel("order(p)")
-plt.ylabel("AIC(p)")
-plt.grid()
-plt.show()
-print(crit)
-print(best_p)
+best_p, crit = mv.order_akaike(sigbufs, p_max=15, method='yw')
+if PLOTS:
+    plt.plot(1+np.arange(len(crit)), crit, 'g')
+    plt.title("Model order estimation")
+    plt.xlabel("order(p)")
+    plt.ylabel("AIC(p)")
+    plt.grid()
+    plt.show()
+    print(crit)
+
+print("Best p =", best_p)
 
 
-# fit mvar using Yule-Walker algorithm and order 2,
-# you can capture fitted parameters and residual matrix
-data.fit_mvar(p=None, method='yw')
+# fit mvar using Yule-Walker algorithm and order p
+data.fit_mvar(p=best_p, method='yw')
 ar, vr = data.mvar_coefficients
-#print("ar:",ar)
-#print("vr:",vr)
 print(data._parameters)
 
 
