@@ -4,7 +4,7 @@ import connectivipy as cp
 import matplotlib.pyplot as plt
 
 PLOTS        = False
-COMPUTE_MATS = False
+COMPUTE_MATS = True
 ADJACENCY    = False
 
 
@@ -17,8 +17,8 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8):
                 dim (n_channels,n_channels);
         - freq      : frequecy value of analysis.
     """
-    dtf_path = "data/dtf_matrix_{}hz.txt".format(freq)
-    pdc_path = "data/pdc_matrix_{}hz.txt".format(freq)
+    dtf_path = "data/dtf_matrix_{}hz_5.txt".format(freq)
+    pdc_path = "data/pdc_matrix_{}hz_5.txt".format(freq)
 
     print("\nSaving DTF and PDC matrices respectively to {} and {}".format(dtf_path,pdc_path))
     f_dtf = open(dtf_path, "w")
@@ -58,7 +58,7 @@ def compute_adjacency(conn_mat, threshold=0.05):
     Compute binary adjacency matrix from the given connectivity matrix.
         - conn_mat : the connectivity matrix to be binarified;
         - threshold: each cell of the resulting matrix will be considered 1 if its value
-                is >= than threshold, 0 otherwise. 
+                is greater or equal than 'threshold', 0 otherwise. 
     """
     adj_mat = np.zeros(shape=conn_mat.shape)
 
@@ -106,7 +106,7 @@ print(best_p)
 
 # fit mvar using Yule-Walker algorithm and order 2,
 # you can capture fitted parameters and residual matrix
-data.fit_mvar(p=12, method='yw')
+data.fit_mvar(p=5, method='yw')
 ar, vr = data.mvar_coefficients
 #print("ar:",ar)
 #print("vr:",vr)
@@ -132,8 +132,8 @@ if COMPUTE_MATS:
         data.plot_conn("PDC measure")
         #data.plot_short_time_conn("PDC")
 
-    #for i in range(8,14):
-    #    save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i)
+    for i in range(8,14):
+        save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i)
 
 
 #### Compute adjacency matrix 
