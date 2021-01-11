@@ -5,7 +5,7 @@ import connectivipy as cp
 import matplotlib.pyplot as plt
 
 PLOTS        = False
-COMPUTE_MATS = True
+COMPUTE_MATS = False
 ADJACENCY    = False
 
 
@@ -39,7 +39,7 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
     f_pdc.close()
     return
 
-def load_matrix(conn_method="dtf", freq=10, run="R01"):
+def load_matrix(conn_method="pdc", freq=10, run="R01"):
     """
     Load the adjacency matrix from file
         - conn_method : the method used to compute the connectivity matrix, one of {'dtf','pdc'};
@@ -156,3 +156,32 @@ if __name__ == "__main__":
     DTF 10hz R01: threshold of 0.1378 network density -> 0.2006 (20.01%) 
     PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
     """
+
+    """
+    Print adjacency matrix
+    """
+
+    ## PDC ##
+    mat = load_matrix(conn_method='pdc', freq=10, run='R01')
+    plt.matshow(mat)
+    plt.title("PDC adjacency matrix")
+    plt.show()
+
+    mat = compute_adjacency(mat, threshold=0.1226)
+    density = 100*np.sum(mat)/4032
+    plt.matshow(mat)
+    plt.title("PDC binary adjacency matrix with density = {:.02f}%".format(density))
+    plt.show()
+
+    ## DTF ##
+    mat = load_matrix(conn_method='dtf', freq=10, run='R01')
+    plt.matshow(mat)
+    plt.title("DTF adjacency matrix")
+    plt.show()
+
+    mat = compute_adjacency(mat, threshold=0.1378)
+    density = 100*np.sum(mat)/4032
+    plt.matshow(mat)
+    plt.title("DTF binary adjacency matrix with density = {:.02f}%".format(density))
+    plt.show()
+    
