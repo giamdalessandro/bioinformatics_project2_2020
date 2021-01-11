@@ -151,26 +151,8 @@ if __name__ == "__main__":
         #for i in range(8,14):
         #    save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i,run=file_name[9:12])
 
-
-    #### Compute adjacency matrix 
     """
     TODO -- to check this values, prolly wrong
     DTF 10hz R01: threshold of 0.1378 network density -> 0.2006 (20.01%) 
     PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
-    """
-    if ADJACENCY:
-        conn_mat = load_matrix(conn_method="dtf")
-        print("mat shape:",conn_mat.shape)
-
-        adj_mat = compute_adjacency(conn_mat, threshold=0.03)  # 0.04597 for PDC
-        #print(adj_mat)
-        max_edges = 64*(64-1)
-        print("Resutling network density:", np.sum(adj_mat)/max_edges)
-
-
-    """
-    print()
-    print(dtf_values[10])
-    print()
-    print(pdc_values[10])
     """
