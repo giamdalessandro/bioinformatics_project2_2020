@@ -41,7 +41,9 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
 def load_matrix(conn_method="DTF", freq=10, run="R01"):
     """
     Load the adjacency matrix from file
-        - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'}.
+        - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'};
+        - freq       : the frequqncy value related to the matrix data;
+        - run        : the related run of the experiment, one of {'R01','R02'}.
     """
     mat_file = "data/dtf_{}_{}hz_auto.txt".format(run,freq) if conn_method == "DTF" else "data/pdc_{}_{}hz_auto.txt".format(run,freq) 
     mat_list = []
@@ -71,6 +73,12 @@ def compute_adjacency(conn_mat, threshold=0.05):
     return adj_mat
 
 def load_conn_graph(conn="DTF", freq=10, run="R01"):
+    """
+    Load the connectivity graph from the related connectivity matrix.
+        - conn : the method used to compute the connectivity matrix, one of {'DTF','PDC'};
+        - freq : the frequqncy value related to the matrix data;
+        - run  : the related run of the experiment, one of {'R01','R02'}.
+    """
     print("\nInitializing graph from {}-{}-{}hz matrix ...".format(conn,run,freq))
     adj_mat = compute_adjacency(load_matrix(conn_method=conn,freq=freq,run=run))
 
