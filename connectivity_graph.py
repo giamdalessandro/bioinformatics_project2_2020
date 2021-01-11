@@ -5,7 +5,7 @@ import connectivipy as cp
 import matplotlib.pyplot as plt
 
 PLOTS        = False
-COMPUTE_MATS = False
+COMPUTE_MATS = True
 ADJACENCY    = False
 
 
@@ -57,7 +57,7 @@ def load_matrix(conn_method="dtf", freq=10, run="R01"):
 
     return np.array(mat_list, dtype=np.float32)
 
-def compute_adjacency(conn_mat, threshold=0.05):    
+def compute_adjacency(conn_mat, threshold=0.1226):    
     """
     Compute binary adjacency matrix from the given connectivity matrix.
         - conn_mat  : the connectivity matrix to be binarified;
@@ -73,7 +73,7 @@ def compute_adjacency(conn_mat, threshold=0.05):
 
     return adj_mat
 
-def load_conn_graph(conn="dtf", freq=10, run="R01"):
+def load_conn_graph(conn="pdc", freq=10, run="R01"):
     """
     Load the connectivity graph from the related connectivity matrix.
         - conn : the method used to compute the connectivity matrix, one of {'dtf','pdc'};
@@ -86,90 +86,91 @@ def load_conn_graph(conn="dtf", freq=10, run="R01"):
     return nx.from_numpy_array(adj_mat,create_using=nx.DiGraph)
 
 
-#### Loading EEG data from edf file
-file_name = "data/S003R02_fixed.edf"
-print("\nAnalyzing file", file_name)
-f = pyedflib.EdfReader(file_name)
-n = f.signals_in_file
-signal_labels = f.getSignalLabels()
-sigbufs = np.zeros((n, f.getNSamples()[0]))
-for i in np.arange(n):
-    sigbufs[i, :] = f.readSignal(i)
+if __name__ == "__main__":
+    #### Loading EEG data from edf file
+    file_name = "data/S003R01_fixed.edf"
+    print("\nAnalyzing file", file_name)
+    f = pyedflib.EdfReader(file_name)
+    n = f.signals_in_file
+    signal_labels = f.getSignalLabels()
+    sigbufs = np.zeros((n, f.getNSamples()[0]))
+    for i in np.arange(n):
+        sigbufs[i, :] = f.readSignal(i)
 
-print("Loaded matrix with shape", sigbufs.shape)
-f.close()
-
-
-data = cp.Data(sigbufs, fs=160., chan_names=signal_labels, data_info=file_name)
-if PLOTS:
-    data.plot_data(trial=3)
+    print("Loaded matrix with shape", sigbufs.shape)
+    f.close()
 
 
-#### Model order
-mv = cp.Mvar
-# find best model order using Vieira-Morf algorithm
-best_p, crit = mv.order_akaike(sigbufs, p_max=15, method='yw')
-if PLOTS:
-    plt.plot(1+np.arange(len(crit)), crit, 'g')
-    plt.title("Model order estimation")
-    plt.xlabel("order(p)")
-    plt.ylabel("AIC(p)")
-    plt.grid()
-    plt.show()
-    print(crit)
-
-print("Best p =", best_p)
-
-
-# fit mvar using Yule-Walker algorithm and order p
-data.fit_mvar(p=best_p, method='yw')
-ar, vr = data.mvar_coefficients
-print(data._parameters)
-
-
-#### Compute connectivity matrices with DTF and PDC measures
-if COMPUTE_MATS:
-    # investigate connectivity using DTF
-    dtf_values = data.conn('dtf',resolution=80)
-    dtf_significance = data.significance(Nrep=100, alpha=0.05)
-    print("dtf_shape:",dtf_values.shape)
-    print("\nDTF sign:",dtf_significance)
+    data = cp.Data(sigbufs, fs=160., chan_names=signal_labels, data_info=file_name)
     if PLOTS:
-        data.plot_conn("DTF measure")
+        data.plot_data(trial=3)
 
-    # investigate connectivity using PDC
-    pdc_values = data.conn('pdc',resolution=80)
-    #pdc_values = data.short_time_conn('pdc', nfft=100, no=10)
-    pdc_significance = data.significance(Nrep=100, alpha=0.05)
-    print("pdc_shape:",pdc_values.shape)
-    print("\nPDC sign:",pdc_significance)
+
+    #### Model order
+    mv = cp.Mvar
+    # find best model order using Vieira-Morf algorithm
+    best_p, crit = mv.order_akaike(sigbufs, p_max=15, method='yw')
     if PLOTS:
-        data.plot_conn("PDC measure")
-        #data.plot_short_time_conn("PDC")
+        plt.plot(1+np.arange(len(crit)), crit, 'g')
+        plt.title("Model order estimation")
+        plt.xlabel("order(p)")
+        plt.ylabel("AIC(p)")
+        plt.grid()
+        plt.show()
+        print(crit)
 
-    for i in range(8,14):
-        save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i,run=file_name[9:12])
-
-
-#### Compute adjacency matrix 
-"""
-TODO -- to check this values, prolly wrong
-DTF: with a threshold of 0.07881 we obtain a neetwork density of 0.2006 (20.01%) 
-PDC: with a threshold of 0.04597 we obtain a neetwork density of 0.2003 (20.03%)
-"""
-if ADJACENCY:
-    conn_mat = load_matrix(conn_method="dtf")
-    print("mat shape:",conn_mat.shape)
-
-    adj_mat = compute_adjacency(conn_mat, threshold=0.03)  # 0.04597 for PDC
-    #print(adj_mat)
-    max_edges = 64*(64-1)
-    print("Resutling network density:", np.sum(adj_mat)/max_edges)
+    print("Best p =", best_p)
 
 
-"""
-print()
-print(dtf_values[10])
-print()
-print(pdc_values[10])
-"""
+    # fit mvar using Yule-Walker algorithm and order p
+    data.fit_mvar(p=best_p, method='yw')
+    ar, vr = data.mvar_coefficients
+    print(data._parameters)
+
+
+    #### Compute connectivity matrices with DTF and PDC measures
+    if COMPUTE_MATS:
+        # investigate connectivity using DTF
+        dtf_values = data.conn('dtf',resolution=80)
+        dtf_significance = data.significance(Nrep=100, alpha=0.05)
+        print("dtf_shape:",dtf_values.shape)
+        print("\nDTF sign:",dtf_significance)
+        if PLOTS:
+            data.plot_conn("DTF measure")
+
+        # investigate connectivity using PDC
+        pdc_values = data.conn('pdc',resolution=80)
+        #pdc_values = data.short_time_conn('pdc', nfft=100, no=10)
+        pdc_significance = data.significance(Nrep=100, alpha=0.05)
+        print("pdc_shape:",pdc_values.shape)
+        print("\nPDC sign:",pdc_significance)
+        if PLOTS:
+            data.plot_conn("PDC measure")
+            #data.plot_short_time_conn("PDC")
+
+        #for i in range(8,14):
+        #    save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i,run=file_name[9:12])
+
+
+    #### Compute adjacency matrix 
+    """
+    TODO -- to check this values, prolly wrong
+    DTF 10hz R01: threshold of 0.1378 network density -> 0.2006 (20.01%) 
+    PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
+    """
+    if ADJACENCY:
+        conn_mat = load_matrix(conn_method="dtf")
+        print("mat shape:",conn_mat.shape)
+
+        adj_mat = compute_adjacency(conn_mat, threshold=0.03)  # 0.04597 for PDC
+        #print(adj_mat)
+        max_edges = 64*(64-1)
+        print("Resutling network density:", np.sum(adj_mat)/max_edges)
+
+
+    """
+    print()
+    print(dtf_values[10])
+    print()
+    print(pdc_values[10])
+    """
