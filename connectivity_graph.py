@@ -127,18 +127,49 @@ def print_adj():
 
 
 
+
+
 def p1_5(G):
+    """
+    Prints a topological representation of the networks
+    Node colors depend on their degree
+    """
     with open("data/channel_locations.txt") as f:
         pos = {}
         for line in f:
-            l = line.split(sep='        ')
+            l = line.split(sep='        ')  # yes, there are 8 spaces in the file.
             if l[0] != '\ufeff#':
                 pos.update({ str(l[1]) : [float(l[2]), float(l[3])] })
+    
+    def p1_5_helper(G, pos, degree):
+        """
+        Helper function to now write two times the same plt stuff
+        """
+        node_color = []
+        for node in G.nodes():
+            if degree == 'in':
+                node_color.append(G.in_degree(node))
+            else:
+                node_color.append(G.out_degree(node))
 
-    nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True)
+        cmap = 'viridis'
+        vmin = min(node_color)
+        vmax = max(node_color)
 
+        nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, vmin=vmin, vmax=vmax,
+                        node_size=700, edge_color='black', node_color=node_color, cmap=cmap)
 
+        plt.title("Topological representation of the network - {} degree".format(degree))
 
+        sm = plt.cm.ScalarMappable(
+            cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
+        sm._A = []
+        plt.colorbar(sm)
+        plt.show()
+
+    p1_5_helper(G, pos, 'in')
+    p1_5_helper(G, pos, 'out')
+    
 
 if __name__ == "__main__":
     #### Loading EEG data from edf file
