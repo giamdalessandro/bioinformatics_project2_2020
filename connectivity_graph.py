@@ -38,14 +38,14 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
     f_pdc.close()
     return
 
-def load_matrix(conn_method="DTF", freq=10, run="R01"):
+def load_matrix(conn_method="dtf", freq=10, run="R01"):
     """
     Load the adjacency matrix from file
-        - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'};
+        - conn_method: the method used to compute the connectivity matrix, one of {'dtf','pdc'};
         - freq       : the frequqncy value related to the matrix data;
         - run        : the related run of the experiment, one of {'R01','R02'}.
     """
-    mat_file = "data/dtf_{}_{}hz_auto.txt".format(run,freq) if conn_method == "DTF" else "data/pdc_{}_{}hz_auto.txt".format(run,freq) 
+    mat_file = "data/{}_{}_{}hz_auto.txt".format(conn_method,run,freq) 
     mat_list = []
     print("Loading matrix from '{}' ...".format(mat_file))
 
@@ -72,10 +72,10 @@ def compute_adjacency(conn_mat, threshold=0.05):
 
     return adj_mat
 
-def load_conn_graph(conn="DTF", freq=10, run="R01"):
+def load_conn_graph(conn="dtf", freq=10, run="R01"):
     """
     Load the connectivity graph from the related connectivity matrix.
-        - conn : the method used to compute the connectivity matrix, one of {'DTF','PDC'};
+        - conn : the method used to compute the connectivity matrix, one of {'dtf','pdc'};
         - freq : the frequqncy value related to the matrix data;
         - run  : the related run of the experiment, one of {'R01','R02'}.
     """
@@ -83,6 +83,7 @@ def load_conn_graph(conn="DTF", freq=10, run="R01"):
     adj_mat = compute_adjacency(load_matrix(conn_method=conn,freq=freq,run=run))
 
     return nx.from_numpy_array(adj_mat,create_using=nx.DiGraph)
+
 
 
 file_name = "data/S003R02_fixed.edf"
@@ -156,7 +157,7 @@ DTF: with a threshold of 0.07881 we obtain a neetwork density of 0.2006 (20.01%)
 PDC: with a threshold of 0.04597 we obtain a neetwork density of 0.2003 (20.03%)
 """
 if ADJACENCY:
-    conn_mat = load_matrix(conn_method='DTF')
+    conn_mat = load_matrix(conn_method="dtf")
     print("mat shape:",conn_mat.shape)
 
     adj_mat = compute_adjacency(conn_mat, threshold=0.03)  # 0.04597 for PDC
