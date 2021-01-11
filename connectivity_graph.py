@@ -1,10 +1,11 @@
 import pyedflib
 import numpy as np
+import networkx as nx
 import connectivipy as cp
 import matplotlib.pyplot as plt
 
 PLOTS        = False
-COMPUTE_MATS = True
+COMPUTE_MATS = False
 ADJACENCY    = False
 
 
@@ -37,14 +38,14 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
     f_pdc.close()
     return
 
-def load_matrix(conn_method="DTF", freq=10):
+def load_matrix(conn_method="DTF", freq=10, run="R01"):
     """
     Load the adjacency matrix from file
         - conn_method: the method used to compute the connectivity matrix, one of {'DTF','PDC'}.
     """
-    mat_file = "data/dtf_matrix_{}hz_auto.txt".format(freq) if conn_method == "DTF" else "data/pdc_matrix_{}hz_auto.txt".format(freq) 
+    mat_file = "data/dtf_{}_{}hz_auto.txt".format(run,freq) if conn_method == "DTF" else "data/pdc_{}_{}hz_auto.txt".format(run,freq) 
     mat_list = []
-    print("\nLoading matrix from '{}' ...".format(mat_file))
+    print("Loading matrix from '{}' ...".format(mat_file))
 
     with open(mat_file, "r") as f:
         for row in f.readlines():
@@ -68,6 +69,12 @@ def compute_adjacency(conn_mat, threshold=0.05):
                 adj_mat[i][j] = 1
 
     return adj_mat
+
+def load_conn_graph(conn="DTF", freq=10, run="R01"):
+    print("\nInitializing graph from {}-{}-{}hz matrix ...".format(conn,run,freq))
+    adj_mat = compute_adjacency(load_matrix(conn_method=conn,freq=freq,run=run))
+
+    return nx.from_numpy_array(adj_mat,create_using=nx.DiGraph)
 
 
 file_name = "data/S003R02_fixed.edf"

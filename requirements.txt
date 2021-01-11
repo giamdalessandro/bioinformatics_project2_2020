@@ -2,3 +2,4 @@ numpy
 pyEDFlib
 matplotlib
 connectivipy
+networkx
