@@ -4,11 +4,11 @@ import connectivipy as cp
 import matplotlib.pyplot as plt
 
 PLOTS        = False
-COMPUTE_MATS = False
+COMPUTE_MATS = True
 ADJACENCY    = False
 
 
-def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8):
+def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
     """
     Save adjacency matrices obtained from DTF and PDC connectivity analysis to file
         - dtf_mat   : connectivity matrix obtained with DTF measure;
@@ -17,8 +17,8 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8):
                 dim (n_channels,n_channels);
         - freq      : frequecy value of analysis.
     """
-    dtf_path = "data/dtf_matrix_{}hz_auto.txt".format(freq)
-    pdc_path = "data/pdc_matrix_{}hz_auto.txt".format(freq)
+    dtf_path = "data/dtf_{}_{}hz_auto.txt".format(run,freq)
+    pdc_path = "data/pdc_{}_{}hz_auto.txt".format(run,freq)
 
     print("\nSaving DTF and PDC matrices respectively to {} and {}".format(dtf_path,pdc_path))
     f_dtf = open(dtf_path, "w")
@@ -70,7 +70,7 @@ def compute_adjacency(conn_mat, threshold=0.05):
     return adj_mat
 
 
-file_name = "data/S003R01_fixed.edf"
+file_name = "data/S003R02_fixed.edf"
 print("\nAnalyzing file", file_name)
 f = pyedflib.EdfReader(file_name)
 n = f.signals_in_file
@@ -131,7 +131,7 @@ if COMPUTE_MATS:
         #data.plot_short_time_conn("PDC")
 
     for i in range(8,14):
-        save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i)
+        save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i,run=file_name[9:12])
 
 
 #### Compute adjacency matrix 
