@@ -83,7 +83,59 @@ def load_conn_graph(conn="pdc", freq=10, run="R01"):
     print("\nInitializing graph from {}-{}-{}hz matrix ...".format(conn,run,freq))
     adj_mat = compute_adjacency(load_matrix(conn_method=conn,freq=freq,run=run))
 
-    return nx.from_numpy_array(adj_mat,create_using=nx.DiGraph)
+    G = nx.from_numpy_array(adj_mat,create_using=nx.DiGraph)
+
+    # relabel nodes cause there's no labels in the original EDF file
+    # (well, there are, but they are not automatically loaded, so...)
+    with open("data/channel_locations.txt") as f:
+        mapping = {}
+        for line in f:
+            l = line.split(sep='        ')
+            if l[0] != '\ufeff#':
+                mapping.update( { int(l[0]) - 1 : str(l[1])})
+    return nx.relabel_nodes(G, mapping)
+
+
+def print_adj():
+    """
+    Prints adjacency matrix
+    """
+
+    ## PDC ##
+    mat = load_matrix(conn_method='pdc', freq=10, run='R01')
+    plt.matshow(mat)
+    plt.title("PDC adjacency matrix")
+    plt.show()
+
+    mat = compute_adjacency(mat, threshold=0.1226)
+    density = 100*np.sum(mat)/4032
+    plt.matshow(mat)
+    plt.title("PDC binary adjacency matrix with density = {:.02f}%".format(density))
+    plt.show()
+
+    ## DTF ##
+    mat = load_matrix(conn_method='dtf', freq=10, run='R01')
+    plt.matshow(mat)
+    plt.title("DTF adjacency matrix")
+    plt.show()
+
+    mat = compute_adjacency(mat, threshold=0.1378)
+    density = 100*np.sum(mat)/4032
+    plt.matshow(mat)
+    plt.title("DTF binary adjacency matrix with density = {:.02f}%".format(density))
+    plt.show()
+
+
+
+def p1_5(G):
+    print("cacca")
+    # read file
+    # store in a dict the positions
+    # print graph
+
+
+
+
 
 
 if __name__ == "__main__":
@@ -108,9 +160,9 @@ if __name__ == "__main__":
 
     #### Model order
     mv = cp.Mvar
-    # find best model order using Vieira-Morf algorithm
-    best_p, crit = mv.order_akaike(sigbufs, p_max=15, method='yw')
+    best_p = 5
     if PLOTS:
+        best_p, crit = mv.order_akaike(sigbufs, p_max=15, method='yw')
         plt.plot(1+np.arange(len(crit)), crit, 'g')
         plt.title("Model order estimation")
         plt.xlabel("order(p)")
@@ -157,31 +209,5 @@ if __name__ == "__main__":
     PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
     """
 
-    """
-    Print adjacency matrix
-    """
-
-    ## PDC ##
-    mat = load_matrix(conn_method='pdc', freq=10, run='R01')
-    plt.matshow(mat)
-    plt.title("PDC adjacency matrix")
-    plt.show()
-
-    mat = compute_adjacency(mat, threshold=0.1226)
-    density = 100*np.sum(mat)/4032
-    plt.matshow(mat)
-    plt.title("PDC binary adjacency matrix with density = {:.02f}%".format(density))
-    plt.show()
-
-    ## DTF ##
-    mat = load_matrix(conn_method='dtf', freq=10, run='R01')
-    plt.matshow(mat)
-    plt.title("DTF adjacency matrix")
-    plt.show()
-
-    mat = compute_adjacency(mat, threshold=0.1378)
-    density = 100*np.sum(mat)/4032
-    plt.matshow(mat)
-    plt.title("DTF binary adjacency matrix with density = {:.02f}%".format(density))
-    plt.show()
-    
+    G = load_conn_graph(conn="pdc", freq=10, run="R01")
+    print(G.nodes())
