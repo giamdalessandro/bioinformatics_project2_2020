@@ -12,11 +12,12 @@ ADJACENCY    = False
 def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
     """
     Save adjacency matrices obtained from DTF and PDC connectivity analysis to file
-        - dtf_mat   : connectivity matrix obtained with DTF measure;
-        - pdc_mat   : connectivity matrix obtained with PDC measure;
-        - n_channels: number of channels in the data, i.e. the resulting matrices 
+        - dtf_mat    : connectivity matrix obtained with DTF measure;
+        - pdc_mat    : connectivity matrix obtained with PDC measure;
+        - n_channels : number of channels in the data, i.e. the resulting matrices 
                 dim (n_channels,n_channels);
-        - freq      : frequecy value of analysis.
+        - freq       : frequecy value related to the matrix data;
+        - run        : the related run of the experiment, one of {'R01','R02'}.
     """
     dtf_path = "data/dtf_{}_{}hz_auto.txt".format(run,freq)
     pdc_path = "data/pdc_{}_{}hz_auto.txt".format(run,freq)
@@ -41,9 +42,9 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
 def load_matrix(conn_method="dtf", freq=10, run="R01"):
     """
     Load the adjacency matrix from file
-        - conn_method: the method used to compute the connectivity matrix, one of {'dtf','pdc'};
-        - freq       : the frequqncy value related to the matrix data;
-        - run        : the related run of the experiment, one of {'R01','R02'}.
+        - conn_method : the method used to compute the connectivity matrix, one of {'dtf','pdc'};
+        - freq        : the frequqncy value related to the matrix data;
+        - run         : the related run of the experiment, one of {'R01','R02'}.
     """
     mat_file = "data/{}_{}_{}hz_auto.txt".format(conn_method,run,freq) 
     mat_list = []
@@ -59,8 +60,8 @@ def load_matrix(conn_method="dtf", freq=10, run="R01"):
 def compute_adjacency(conn_mat, threshold=0.05):    
     """
     Compute binary adjacency matrix from the given connectivity matrix.
-        - conn_mat : the connectivity matrix to be binarified;
-        - threshold: each cell of the resulting matrix will be considered 1 if its value
+        - conn_mat  : the connectivity matrix to be binarified;
+        - threshold : each cell of the resulting matrix will be considered 1 if its value
                 is greater or equal than 'threshold', 0 otherwise. 
     """
     adj_mat = np.zeros(shape=conn_mat.shape)
@@ -85,7 +86,7 @@ def load_conn_graph(conn="dtf", freq=10, run="R01"):
     return nx.from_numpy_array(adj_mat,create_using=nx.DiGraph)
 
 
-
+#### Loading EEG data from edf file
 file_name = "data/S003R02_fixed.edf"
 print("\nAnalyzing file", file_name)
 f = pyedflib.EdfReader(file_name)
