@@ -1,15 +1,21 @@
-import networkx
+import networkx as nx
 from connectivity_graph import load_conn_graph
 
 
 triad_cfg = {
-	'003' : 'Null',
-	'012' : 'Single-edge',
-	'021C': 'Pass-along',
-	'021D': 'Double-dominant',
-	'021U': 'Double-subordinate',
-	'030C': 'Cycle',
-	'030T': 'Transitive'
+	'021D': 'type-1',
+	'021C': 'Three-chain',
+	'021U': 'type-3',
+    '111D': 'type-4',
+    '111U': 'type-5',
+    '030T': 'Feed-forward',
+	'030C': 'Feedback',
+    '201' : 'type-8',
+    '120D': 'type-9',
+    '120U': 'type-10',
+    '120C': 'type-11',
+    '210' : 'type-12',
+    '300' : 'type-13'
 }
 
 
@@ -19,10 +25,6 @@ census = nx.triadic_census(net_G)
 #sp = triadSignificanceProfile(net_G, triad_cfg)
 
 f_census = {}
-f_census['group-size'] = [N_IND]
-f_census['flee-dist'] = [params['female.FleeDist']]
-f_census['aggr-intensity'] = [('mild' if params['Rating.Dom.female.Intensity'] == 0.1 else 'fierce')]
-f_census['steepness'] = round(steep,4)
 
 print('\nNetwork Triadic Census:')
 for k,v in sorted(census.items()):
