@@ -24,7 +24,7 @@ def mapTriadCodes(census, rand_census, triad_cfg):
 	
 	return (real, random)
 
-def triadSignificanceProfile(G, triad_cfg):
+def significanceProfile(G, triad_cfg):
     """
     Compute the significance profile of the patterns mapped in triad_cfg,
     inside directed graph G.
@@ -34,7 +34,7 @@ def triadSignificanceProfile(G, triad_cfg):
             (e.g. triad_cfg = {'003' : 'Null', '012' : 'Single-edge'})
     """
     print('Computing Z-score...')
-	census = nx.triadic_census(G)
+    census = nx.triadic_census(G)
     in_degree_sequence = [d for n, d in G.in_degree()]  # in degree sequence
     out_degree_sequence = [d for n, d in G.out_degree()]  # out degree sequence
     #print("In_degree sequence %s" % in_degree_sequence)
@@ -90,7 +90,7 @@ triad_cfg = {
 net_G = load_conn_graph()
 census = nx.triadic_census(net_G)
 
-sp = triadSignificanceProfile(net_G, triad_cfg)
+sp = significanceProfile(net_G, triad_cfg)
 
 f_census = {}
 print('\ncomputing network triadic census...\n')
