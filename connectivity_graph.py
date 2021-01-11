@@ -128,12 +128,14 @@ def print_adj():
 
 
 def p1_5(G):
-    print("cacca")
-    # read file
-    # store in a dict the positions
-    # print graph
+    with open("data/channel_locations.txt") as f:
+        pos = {}
+        for line in f:
+            l = line.split(sep='        ')
+            if l[0] != '\ufeff#':
+                pos.update({ str(l[1]) : [float(l[2]), float(l[3])] })
 
-
+    nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True)
 
 
 
@@ -210,4 +212,4 @@ if __name__ == "__main__":
     """
 
     G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    print(G.nodes())
+    p1_5(G)
