@@ -96,7 +96,7 @@ def load_conn_graph(conn="pdc", freq=10, run="R01"):
     return nx.relabel_nodes(G, mapping)
 
 
-def print_adj():
+def p1_1_print_adj():
     """
     Prints adjacency matrix
     """
@@ -126,14 +126,15 @@ def print_adj():
     plt.show()
 
 
-
-
-
-def p1_5(G):
+def p1_5(G, nodelist=None, edgelist=None):
     """
     Prints a topological representation of the networks
     Node colors depend on their degree
     """
+    if nodelist is None:
+        nodelist = G.nodes()
+    if edgelist is None:
+        edgelist = G.edges()
     with open("data/channel_locations.txt") as f:
         pos = {}
         for line in f:
@@ -157,7 +158,8 @@ def p1_5(G):
         vmax = max(node_color)
 
         nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, vmin=vmin, vmax=vmax,
-                        node_size=700, edge_color='black', node_color=node_color, cmap=cmap)
+                        node_size=700, edge_color='black', node_color=node_color, cmap=cmap,
+                        edgelist=edgelist, nodelist=nodelist)
 
         plt.title("Topological representation of the network - {} degree".format(degree))
 
@@ -243,4 +245,7 @@ if __name__ == "__main__":
     """
 
     G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    p1_5(G)
+    print("{} nodes\t{} edges".format(len(G.nodes()), len(G.edges())))
+    if PLOTS:
+        p1_5(G)
+
