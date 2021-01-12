@@ -27,7 +27,7 @@ def p3_2(G):
                 if e2 != e1 and (e1[0],e2[0]) not in G.edges() and (e2[0],e1[0]) not in G.edges():
                     motif_G.add_edge(e1[0],e1[1])
                     motif_G.add_edge(e2[0],e1[1])
-
+    print("[3.2] >> found {} edges between {} nodes.".format(len(G.edges()), len(G.nodes())))
     p1_5(motif_G)
 
 def p3_3(freq_mat, ch_name="Po4"):
@@ -35,6 +35,7 @@ def p3_3(freq_mat, ch_name="Po4"):
     Plots frequency of motif involving 'ch_name' channel.
     """
     # TODO ch. 59 <-> Po4.
+    print("[3.3] >> displaying the motif in which {} is involved.".format(ch_name))
     plt.bar(np.arange(1, 14), freq_mat[:, 59])
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
