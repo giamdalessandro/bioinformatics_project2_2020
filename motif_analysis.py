@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from bct import motif3struct_bin, motif4struct_bin
 from connectivity_graph import compute_adjacency, load_matrix, load_conn_graph, p1_5
 
+PLOTS = False
 
 """ TO INSTALL bctpy 
 $ git clone https://github.com/aestrivex/bctpy
@@ -33,8 +34,8 @@ def p3_3(freq_mat, ch_name="Po4"):
     """
     Plots frequency of motif involving 'ch_name' channel.
     """
-    # TODO ch. 59 <-> Po4.  
-    plt.bar(np.arange(1,14), M[:,59])
+    # TODO ch. 59 <-> Po4.
+    plt.bar(np.arange(1, 14), freq_mat[:, 59])
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
     plt.xticks(np.arange(0,14,1))
@@ -62,20 +63,21 @@ def p3_4(adj_mat):
 M = adj_mat = compute_adjacency(load_matrix())
 m_3, M_3 = motif3struct_bin(M)
 
-print("Motif frequency:",m_3)
-plt.bar(np.arange(1,14), m_3)
-plt.xlabel("Motif ID")
-plt.ylabel("frequency")
-plt.xticks(np.arange(0,14,1))
-plt.title("Network class-3 motif frequency in the graph")
-plt.show()
+if PLOTS:
+    print("Motif frequency:",m_3)
+    plt.bar(np.arange(1,14), m_3)
+    plt.xlabel("Motif ID")
+    plt.ylabel("frequency")
+    plt.xticks(np.arange(0,14,1))
+    plt.title("Network class-3 motif frequency in the graph")
+    plt.show()
 
-print("Motif 1 node frequency:",M_3[0])
-plt.matshow(M_3)
-plt.xlabel("Node ID")
-plt.ylabel("Motif ID")
-plt.title("Node class-3 motif frequency fingerprint")
-plt.show()
+    print("Motif 1 node frequency:",M_3[0])
+    plt.matshow(M_3)
+    plt.xlabel("Node ID")
+    plt.ylabel("Motif ID")
+    plt.title("Node class-3 motif frequency fingerprint")
+    plt.show()
 
 
 
