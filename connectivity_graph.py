@@ -127,10 +127,10 @@ def p1_1_print_adj():
     plt.show()
 
  
-def p1_1():
-    #### Loading EEG data from edf file
+def p1_1(point='1', compute_mats=COMPUTE_MATS):
+    #### Load EEG data from edf file
     file_name = "data/S003R01_fixed.edf"
-    print("\n[1.1] >> Analyzing file", file_name)
+    print("\n[1.{}] >> Analyzing file {}".format(point, file_name))
     f = pyedflib.EdfReader(file_name)
     n = f.signals_in_file
     signal_labels = f.getSignalLabels()
@@ -138,14 +138,13 @@ def p1_1():
     for i in np.arange(n):
         sigbufs[i, :] = f.readSignal(i)
 
-    print("[1.1] >> Loaded matrix with shape", sigbufs.shape)
+    print("[1.{}] >> Loaded matrix with shape {}".format(point, sigbufs.shape))
     f.close()
 
     data = cp.Data(sigbufs, fs=160., chan_names=signal_labels, data_info=file_name)
-    if PLOTS:
-        data.plot_data(trial=3)
+    data.plot_data(trial=3)
 
-    #### Model order
+    #### MVAR
     mv = cp.Mvar
     best_p = 5
     if PLOTS:
@@ -156,18 +155,14 @@ def p1_1():
         plt.ylabel("AIC(p)")
         plt.grid()
         plt.show()
-        print(crit)
 
-    print("[1.1] >> Best p =", best_p)
+    print("[1.{}] >> Best p = {}".format(point, best_p))
     data.fit_mvar(p=best_p, method='yw')
-    ar, vr = data.mvar_coefficients
-    print(data._parameters)
-    
     if PLOTS:
         p1_1_print_adj()
 
     #### Compute connectivity matrices with DTF and PDC measures
-    if COMPUTE_MATS:
+    if compute_mats:
         # investigate connectivity using DTF
         dtf_values = data.conn('dtf',resolution=80)
         dtf_significance = data.significance(Nrep=100, alpha=0.05)
@@ -206,6 +201,8 @@ def p1_3():
 
 def p1_4():
     print("[1.4] >> Still to be implemented...")
+    p1_1(point='4', compute_mats=True)
+    
 
 
 def p1_5(G, nodelist=None, edgelist=None):

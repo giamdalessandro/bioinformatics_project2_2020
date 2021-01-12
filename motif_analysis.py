@@ -34,6 +34,7 @@ def p3_1():
     plt.show()
     return M_3
 
+
 def p3_2(G):
     """
     Plots a new graph with the same nodes as G, containing only G edges involved
