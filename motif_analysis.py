@@ -93,3 +93,31 @@ for k,v in sorted(census.items()):
 	if k in triad_cfg:
 		f_census[triad_cfg[k]] = [v]
 		print(triad_cfg[k] + ': \t' + str(v))
+
+
+
+
+"""
+
+$ git clone https://github.com/aestrivex/bctpy
+$ cd bctpy
+$ python3 setup.py build
+$ python3 setup.py install
+$ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.6.egg/bct
+
+
+
+from bct import motif3struct_bin
+from connectivity_graph import compute_adjacency, load_matrix
+
+M = adj_mat = compute_adjacency(load_matrix())
+m, M = motif3struct_bin(M)
+plt.bar(np.arange(1,14), m)
+plt.xlabel("Motif ID")
+plt.title("Motif frequency in the graph")
+plt.show()
+
+# che cazz è
+plt.matshow(M)
+plt.show()
+"""
