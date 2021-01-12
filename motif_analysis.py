@@ -67,8 +67,7 @@ plt.show()
 
 
 #### 3.2
-G = load_conn_graph()
-def p3_2(G)
+def p3_2(G):
     """
     Plots a new graph with the same nodes as G, containing only G edges involved
     in motif of type 1.
@@ -83,3 +82,18 @@ def p3_2(G)
                     motif_G.add_edge(e2[0],e1[1])
 
     p1_5(motif_G)
+
+#### 3.3
+def p3_3(freq_mat, ch_name="Po4"):
+    # ch. 59 <-> Po4.
+    plt.bar(np.arange(1,14), M[:,59])
+    plt.xlabel("Motif ID")
+    plt.ylabel("frequency")
+    plt.xticks(np.arange(0,14,1))
+    plt.title("Motif frequency - channel {}".format(ch_name))
+    plt.show()
+
+
+
+#p3_2(G=load_conn_graph())
+p3_3(freq_mat=M)
