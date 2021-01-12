@@ -24,7 +24,7 @@ def mapTriadCodes(census, rand_census, triad_cfg):
 	
 	return (real, random)
 
-def significanceProfile(G, triad_cfg):
+def computeZscore(G, triad_cfg):
     """
     Compute the significance profile of the patterns mapped in triad_cfg,
     inside directed graph G.
@@ -41,7 +41,7 @@ def significanceProfile(G, triad_cfg):
     #print("Out_degree sequence %s" % out_degree_sequence)
 
     random_nets_census = []
-    for i in range(100):
+    for i in range(1000):
         rand_G = nx.directed_configuration_model(in_degree_sequence, out_degree_sequence, create_using=nx.DiGraph, seed=i)
         random_nets_census.append(nx.triadic_census(rand_G))
 
@@ -51,23 +51,16 @@ def significanceProfile(G, triad_cfg):
 
     z_score = []
     for p in real_census.keys():
-        #print(p)
+        print(p)
         N_real_p = real_census[p]
         N_rand_p = np.mean(random_census[p])
         std = np.std(random_census[p])
 
         z_p =  ((N_real_p - N_rand_p)/std if std != 0 else 0)
         z_score.append(z_p)
-
-    sp = []
-    for i in range(len(z_score)):
-        z_norm = np.linalg.norm(z_score)
-        norm_z_score = (z_score[i]/z_norm if z_norm != 0 else z_score[i])
-        sp.append(round(norm_z_score,4))
     
-    print('Significance profile is:')
-    print(sp)
-    return sp
+    print('Z-score:',z_score)
+    return z_score
 
 
 triad_cfg = {
@@ -90,7 +83,7 @@ triad_cfg = {
 net_G = load_conn_graph()
 census = nx.triadic_census(net_G)
 
-sp = significanceProfile(net_G, triad_cfg)
+sp = computeZscore(net_G, triad_cfg)
 
 f_census = {}
 print('\ncomputing network triadic census...\n')
