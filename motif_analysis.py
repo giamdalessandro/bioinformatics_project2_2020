@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-from connectivity_graph import load_conn_graph
+from connectivity_graph import load_conn_graph, p1_5
 
 """
 triad_cfg = {
@@ -57,6 +57,7 @@ plt.title("Network motif frequency in the graph")
 plt.show()
 
 # che cazz è
+print("Motif 1 node frequency:",M[0])
 plt.matshow(M)
 plt.xlabel("Node ID")
 plt.ylabel("Motif ID")
@@ -69,7 +70,6 @@ plt.show()
 G = load_conn_graph()
 motif_G = nx.create_empty_copy(G)
 
-print("Motif 1 node frequency:",M[0])
 for node in G.nodes():
     for e1 in G.in_edges(node):
         for e2 in G.in_edges(node):
@@ -77,14 +77,4 @@ for node in G.nodes():
                 motif_G.add_edge(e1[0],e1[1])
                 motif_G.add_edge(e2[0],e1[1])
 
-
-with open("data/channel_locations.txt") as f:
-    pos = {}
-    for line in f:
-        l = line.split(sep='        ')  # yes, there are 8 spaces in the file.
-        if l[0] != '\ufeff#':
-            pos.update({ str(l[1]) : [float(l[2]), float(l[3])] })
-
-nx.draw_networkx(motif_G, pos=pos, arrows=True, with_labels=True, node_size=700, 
-                 edge_color='black', nodelist=motif_G.nodes())
-plt.show()
+p1_5(motif_G)
