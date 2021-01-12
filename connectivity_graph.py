@@ -1,3 +1,4 @@
+import os
 import pyedflib
 import numpy as np
 import networkx as nx
@@ -129,11 +130,22 @@ def p1_1_print_adj():
  
 def p1_1(point='1', compute_mats=COMPUTE_MATS):
     #### Load EEG data from edf file
-    file_name = "data/S003R01_fixed.edf"
+    file_name = "data/S003R01_fixed"
+    
+    if point == '4':
+        if not os.path.isfile(file_name + '_dropped.edf'):
+            small_group = ['Fp1.', 'Fp2.', 'F7..', 'F3..', 'Fz..',
+                       'F4..', 'F8..', 'T7..', 'C3..', 'Cz..',
+                       'C4..', 'T8..', 'P7..', 'P3..', 'Pz..',
+                       'P4..', 'P8..', 'O1..', 'O2..']
+            pyedflib.highlevel.drop_channels(file_name, to_keep=small_group)
+        file_name = file_name + '_dropped'
+
     print("\n[1.{}] >> Analyzing file {}".format(point, file_name))
-    f = pyedflib.EdfReader(file_name)
+    f = pyedflib.EdfReader(file_name + ".edf")
     n = f.signals_in_file
     signal_labels = f.getSignalLabels()
+    print(signal_labels)
     sigbufs = np.zeros((n, f.getNSamples()[0]))
     for i in np.arange(n):
         sigbufs[i, :] = f.readSignal(i)
@@ -145,10 +157,14 @@ def p1_1(point='1', compute_mats=COMPUTE_MATS):
     data.plot_data(trial=3)
 
     #### MVAR
-    mv = cp.Mvar
-    best_p = 5
+    if point == '1':
+        best_p = 5
+    elif point == '4':
+        best_p = 13
+    
     if PLOTS:
-        best_p, crit = mv.order_akaike(sigbufs, p_max=15, method='yw')
+        mv = cp.Mvar
+        best_p, crit = mv.order_akaike(sigbufs, p_max=30, method='yw')
         plt.plot(1+np.arange(len(crit)), crit, 'g')
         plt.title("Model order estimation")
         plt.xlabel("order(p)")
@@ -202,7 +218,7 @@ def p1_3():
 def p1_4():
     print("[1.4] >> Still to be implemented...")
     p1_1(point='4', compute_mats=True)
-    
+
 
 
 def p1_5(G, nodelist=None, edgelist=None):
@@ -252,3 +268,8 @@ def p1_5(G, nodelist=None, edgelist=None):
 
     p1_5_helper(G, pos, 'in')
     p1_5_helper(G, pos, 'out')
+
+
+
+
+p1_4()
