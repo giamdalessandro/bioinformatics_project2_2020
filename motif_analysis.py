@@ -52,10 +52,29 @@ def p3_4(adj_mat):
     """
     m_4, M_4 = motif4struct_bin(adj_mat)
 
-    plt.bar(np.arange(1,200), m_4)
+    print("[3.4] >> Displaying frequencies of 4-node motifs.")
+    plt.bar(np.arange(0,200), m_4)
+    plt.subplots_adjust(left=0.05, right=0.95, top=0.92, bottom=0.08)
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
-    plt.xticks(np.arange(0,200,1))
+    ticks = np.arange(0, 201, 5)
+    ticks[0] = 1
+    ticks[-1] = 199
+    plt.xticks(ticks, rotation='vertical')
+
+    """
+    makes the plot larger to fit all 200 values, but it's unpractical
+
+        plt.gca().margins(x=0)
+        plt.gcf().canvas.draw()
+        maxsize = 11
+        m=0.2
+        s = maxsize/plt.gcf().dpi*200+2*m
+        margin = m/plt.gcf().get_size_inches()[0]
+        plt.gcf().subplots_adjust(left=margin, right=1.-margin)
+        plt.gcf().set_size_inches(s, plt.gcf().get_size_inches()[1])
+    """
+    
     plt.title("Network class-4 motif frequency in the graph")
     plt.show()
 
@@ -84,10 +103,10 @@ if PLOTS:
 
 
 #### 3.2
-p3_2(G=load_conn_graph())
+#p3_2(G=load_conn_graph())
 
 #### 3.3
-# p3_3(freq_mat=M_3)
+#p3_3(freq_mat=M_3)
 
 #### 3.4
-#p3_4(adj_mat=adj_mat)
+p3_4(adj_mat=M)
