@@ -128,17 +128,17 @@ def p1_1_print_adj():
     plt.show()
 
  
-def p1_1(point='1', compute_mats=COMPUTE_MATS):
-    #### Load EEG data from edf file
-    file_name = "data/S003R01_fixed"
+def p1_1(file_name="data/S003R02_fixed", point='1', compute_mats=COMPUTE_MATS):
     
-    if point == '4':
+    #### Load EEG data from edf file
+    if point == '4':        ### <<<<<<<<<<<<<<<<<<
         if not os.path.isfile(file_name + '_dropped.edf'):
             small_group = ['Fp1.', 'Fp2.', 'F7..', 'F3..', 'Fz..',
                        'F4..', 'F8..', 'T7..', 'C3..', 'Cz..',
                        'C4..', 'T8..', 'P7..', 'P3..', 'Pz..',
                        'P4..', 'P8..', 'O1..', 'O2..']
-            pyedflib.highlevel.drop_channels(file_name, to_keep=small_group)
+            pyedflib.highlevel.drop_channels(file_name+".edf", to_keep=small_group)
+            # first time it computes the edf files it crashes, but the file is there... <<<<<<<<<<<<<<<<<<
         file_name = file_name + '_dropped'
 
     print("\n[1.{}] >> Analyzing file {}".format(point, file_name))
@@ -157,10 +157,13 @@ def p1_1(point='1', compute_mats=COMPUTE_MATS):
     data.plot_data(trial=3)
 
     #### MVAR
-    if point == '1':
+    if point == '1':    # best for both R01 and R02
         best_p = 5
     elif point == '4':
-        best_p = 13
+        if file_name == "data/S003R01_fixed_dropped.edf":
+            best_p = 13
+        elif file_name == "data/S003R02_fixed_dropped.edf":
+            best_p = 14
     
     if PLOTS:
         mv = cp.Mvar
