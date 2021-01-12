@@ -41,8 +41,23 @@ def p3_3(freq_mat, ch_name="Po4"):
     plt.title("Motif frequency - channel {}".format(ch_name))
     plt.show()
 
-def p3_4():
-    return NotImplementedError
+def p3_4(adj_mat):
+    """
+    Plots frequency of class-4 motif involving in the graph 
+    described by 'adj_mat' adjacency matrix.
+    """
+    m_4, M_4 = motif4struct_bin(adj_mat)
+
+    plt.bar(np.arange(1,200), m_4)
+    plt.xlabel("Motif ID")
+    plt.ylabel("frequency")
+    plt.xticks(np.arange(0,200,1))
+    plt.title("Network class-4 motif frequency in the graph")
+    plt.show()
+
+    return m_4, M_4
+
+
 
 M = adj_mat = compute_adjacency(load_matrix())
 m_3, M_3 = motif3struct_bin(M)
@@ -65,17 +80,10 @@ plt.show()
 
 
 #### 3.2
-#p3_2(G=load_conn_graph())
+p3_2(G=load_conn_graph())
 
 #### 3.3
-#p3_3(freq_mat=M_3)
+p3_3(freq_mat=M_3)
 
 #### 3.4
-m_4, M_4 = motif4struct_bin(adj_mat)
-
-plt.bar(np.arange(1,200), m_4)
-plt.xlabel("Motif ID")
-plt.ylabel("frequency")
-plt.xticks(np.arange(0,200,1))
-plt.title("Network class-4 motif frequency in the graph")
-plt.show()
+#p3_4(adj_mat=adj_mat)
