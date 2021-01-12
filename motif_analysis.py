@@ -19,16 +19,17 @@ def p3_2(G):
     Plots a new graph with the same nodes as G, containing only G edges involved
     in motif of type 1.
     """
+    print("[3.2] >> found {} edges between {} nodes in the original graph.".format(len(G.edges()), len(G.nodes())))
     motif_G = nx.create_empty_copy(G)
-
     for node in G.nodes():
         for e1 in G.in_edges(node):
             for e2 in G.in_edges(node):
                 if e2 != e1 and (e1[0],e2[0]) not in G.edges() and (e2[0],e1[0]) not in G.edges():
                     motif_G.add_edge(e1[0],e1[1])
                     motif_G.add_edge(e2[0],e1[1])
-    print("[3.2] >> found {} edges between {} nodes.".format(len(G.edges()), len(G.nodes())))
+    print("[3.2] >> found {} edges between {} nodes in the new graph.".format(len(motif_G.edges()),len(motif_G.nodes())))
     p1_5(motif_G)
+
 
 def p3_3(freq_mat, ch_name="Po4"):
     """
@@ -42,6 +43,7 @@ def p3_3(freq_mat, ch_name="Po4"):
     plt.xticks(np.arange(0,14,1))
     plt.title("Motif frequency - channel {}".format(ch_name))
     plt.show()
+
 
 def p3_4(adj_mat):
     """
@@ -81,12 +83,11 @@ if PLOTS:
     plt.show()
 
 
-
 #### 3.2
 p3_2(G=load_conn_graph())
 
 #### 3.3
-p3_3(freq_mat=M_3)
+# p3_3(freq_mat=M_3)
 
 #### 3.4
 #p3_4(adj_mat=adj_mat)
