@@ -68,13 +68,18 @@ plt.show()
 
 #### 3.2
 G = load_conn_graph()
-motif_G = nx.create_empty_copy(G)
+def p3_2(G)
+    """
+    Plots a new graph with the same nodes as G, containing only G edges involved
+    in motif of type 1.
+    """
+    motif_G = nx.create_empty_copy(G)
 
-for node in G.nodes():
-    for e1 in G.in_edges(node):
-        for e2 in G.in_edges(node):
-            if e2 != e1 and (e1[0],e2[0]) not in G.edges() and (e2[0],e1[0]) not in G.edges():
-                motif_G.add_edge(e1[0],e1[1])
-                motif_G.add_edge(e2[0],e1[1])
+    for node in G.nodes():
+        for e1 in G.in_edges(node):
+            for e2 in G.in_edges(node):
+                if e2 != e1 and (e1[0],e2[0]) not in G.edges() and (e2[0],e1[0]) not in G.edges():
+                    motif_G.add_edge(e1[0],e1[1])
+                    motif_G.add_edge(e2[0],e1[1])
 
-p1_5(motif_G)
+    p1_5(motif_G)
