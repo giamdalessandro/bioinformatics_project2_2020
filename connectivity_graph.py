@@ -128,7 +128,7 @@ def p1_1_print_adj():
     plt.show()
 
  
-def p1_1(file_name="data/S003R02_fixed", point='1', compute_mats=COMPUTE_MATS):
+def p1_1(file_name="data/S003R02_fixed", point='1'):
     
     #### Load EEG data from edf file
     if point == '4':        ### <<<<<<<<<<<<<<<<<<
@@ -180,8 +180,11 @@ def p1_1(file_name="data/S003R02_fixed", point='1', compute_mats=COMPUTE_MATS):
     if PLOTS:
         p1_1_print_adj()
 
+    if point == '4':
+        return data
+
     #### Compute connectivity matrices with DTF and PDC measures
-    if compute_mats:
+    if COMPUTE_MATS:
         # investigate connectivity using DTF
         dtf_values = data.conn('dtf',resolution=80)
         dtf_significance = data.significance(Nrep=100, alpha=0.05)
@@ -218,10 +221,25 @@ def p1_3():
     print("[1.3] >> Still to be implemented...")
 
 
-def p1_4():
-    print("[1.4] >> Still to be implemented...")
-    p1_1(point='4', compute_mats=True)
+def p1_4(R='R01'):
+    data = p1_1(point='4')
+    pdc_values = data.conn('pdc', resolution=80)
+    pdc_significance = data.significance(Nrep=100, alpha=0.05)
+    pdc_mat = pdc_values[10]
+    pdc_path = "data/pdc_{}_10hz_19_channels.txt".format(R)
 
+    if not os.path.isfile(pdc_path):
+        f_pdc = open(pdc_path, "w")
+        for i in range(19):
+            for j in range(19):
+                if j == 18:
+                    f_pdc.write(str(pdc_mat[i][j]) + "\n")
+                else:
+                    f_pdc.write(str(pdc_mat[i][j]) + " ")
+        f_pdc.close()
+    
+    if PLOTS:
+        data.plot_conn("PDC measure")
 
 
 def p1_5(G, nodelist=None, edgelist=None):
@@ -274,5 +292,6 @@ def p1_5(G, nodelist=None, edgelist=None):
 
 
 
+### MAIN 
 
 p1_4()
