@@ -3,66 +3,7 @@ import networkx as nx
 from connectivity_graph import load_conn_graph
 
 
-
-def mapTriadCodes(census, rand_census, triad_cfg):
-	"""
-	Maps nx.triadic_census() subgraph codes to explicit to triadic patterns names.
-	"""
-	real = {}
-	for k,v in sorted(census.items()):
-		if k in triad_cfg:
-			real[triad_cfg[k]] = v
-
-	random = {}
-	for rc in rand_census:
-		for k,v in sorted(rc.items()):
-			if k in triad_cfg:
-				if triad_cfg[k] not in random.keys():
-					random[triad_cfg[k]] = []
-				
-				random[triad_cfg[k]].append(v)
-	
-	return (real, random)
-
-def computeZscore(G, triad_cfg):
-    """
-    Compute the significance profile of the patterns mapped in triad_cfg,
-    inside directed graph G.
-        - G          : directed graph representing the network; 
-        - triads_cfg : dict mapping interesting triadic patterns codes, 
-            as in nx.triadic_census(), with explicit names. 
-            (e.g. triad_cfg = {'003' : 'Null', '012' : 'Single-edge'})
-    """
-    print('Computing Z-score...')
-    census = nx.triadic_census(G)
-    in_degree_sequence = [d for n, d in G.in_degree()]  # in degree sequence
-    out_degree_sequence = [d for n, d in G.out_degree()]  # out degree sequence
-    #print("In_degree sequence %s" % in_degree_sequence)
-    #print("Out_degree sequence %s" % out_degree_sequence)
-
-    random_nets_census = []
-    for i in range(1000):
-        rand_G = nx.directed_configuration_model(in_degree_sequence, out_degree_sequence, create_using=nx.DiGraph, seed=i)
-        random_nets_census.append(nx.triadic_census(rand_G))
-
-    real_census, random_census = mapTriadCodes(census,random_nets_census,triad_cfg)
-    #print(real_census)
-    #print(random_census)
-
-    z_score = []
-    for p in real_census.keys():
-        print(p)
-        N_real_p = real_census[p]
-        N_rand_p = np.mean(random_census[p])
-        std = np.std(random_census[p])
-
-        z_p =  ((N_real_p - N_rand_p)/std if std != 0 else 0)
-        z_score.append(z_p)
-    
-    print('Z-score:',z_score)
-    return z_score
-
-
+'''
 triad_cfg = {
 	'021D': 'type-1',
 	'021C': 'Three-chain',
@@ -78,35 +19,17 @@ triad_cfg = {
     '210' : 'type-12',
     '300' : 'type-13'
 }
-
-
-net_G = load_conn_graph()
-census = nx.triadic_census(net_G)
-
-sp = computeZscore(net_G, triad_cfg)
-
-f_census = {}
-print('\ncomputing network triadic census...\n')
-print('triadType  \tN')
-print('--------------------')
-for k,v in sorted(census.items()):
-	if k in triad_cfg:
-		f_census[triad_cfg[k]] = [v]
-		print(triad_cfg[k] + ': \t' + str(v))
-
-
-
+'''
 
 """
-
 $ git clone https://github.com/aestrivex/bctpy
 $ cd bctpy
 $ python3 setup.py build
 $ python3 setup.py install
 $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.6.egg/bct
+"""
 
-
-
+import matplotlib.pyplot as plt
 from bct import motif3struct_bin
 from connectivity_graph import compute_adjacency, load_matrix
 
@@ -120,4 +43,3 @@ plt.show()
 # che cazz è
 plt.matshow(M)
 plt.show()
-"""
