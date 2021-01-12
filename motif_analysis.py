@@ -67,28 +67,24 @@ plt.show()
 
 #### 3.2
 G = load_conn_graph()
-print(len(G.edges()))
-edgelist = []
-with open("data/channel_locations.txt") as f:
-        pos = {}
-        for line in f:
-            l = line.split(sep='        ')  # yes, there are 8 spaces in the file.
-            if l[0] != '\ufeff#':
-                pos.update({ str(l[1]) : [float(l[2]), float(l[3])] })
+motif_G = nx.create_empty_copy(G)
 
-#G = nx.from_numpy_array(adj_mat, create_using=nx.DiGraph)
-#motif_G = nx.create_empty_copy(G)
 print("Motif 1 node frequency:",M[0])
 for node in G.nodes():
-    
     for e1 in G.in_edges(node):
         for e2 in G.in_edges(node):
             if e2 != e1 and (e1[0],e2[0]) not in G.edges() and (e2[0],e1[0]) not in G.edges():
-                edgelist.append(e1)
-                edgelist.append(e2)
-                #motif_G.add_edge(v1,node)
-                #motif_G.add_edge(v2,node)
+                motif_G.add_edge(e1[0],e1[1])
+                motif_G.add_edge(e2[0],e1[1])
 
-nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, node_size=700, 
-                 edge_color='black', edgelist=edgelist, nodelist=G.nodes())
+
+with open("data/channel_locations.txt") as f:
+    pos = {}
+    for line in f:
+        l = line.split(sep='        ')  # yes, there are 8 spaces in the file.
+        if l[0] != '\ufeff#':
+            pos.update({ str(l[1]) : [float(l[2]), float(l[3])] })
+
+nx.draw_networkx(motif_G, pos=pos, arrows=True, with_labels=True, node_size=700, 
+                 edge_color='black', nodelist=motif_G.nodes())
 plt.show()
