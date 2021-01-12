@@ -14,6 +14,26 @@ $ python3 setup.py install
 $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.6.egg/bct
 """
 
+def p3_1():
+    M = compute_adjacency(load_matrix())
+    m_3, M_3 = motif3struct_bin(M)
+
+    print("[3.1] >> Motif frequency:", m_3)
+    plt.bar(np.arange(1, 14), m_3)
+    plt.xlabel("Motif ID")
+    plt.ylabel("frequency")
+    plt.xticks(np.arange(0, 14, 1))
+    plt.title("Network class-3 motif frequency in the graph")
+    plt.show()
+
+    print("[3.1] >> Motif 1 node frequency:", M_3[0])
+    plt.matshow(M_3)
+    plt.xlabel("Node ID")
+    plt.ylabel("Motif ID")
+    plt.title("Node class-3 motif frequency fingerprint")
+    plt.show()
+    return M_3
+
 def p3_2(G):
     """
     Plots a new graph with the same nodes as G, containing only G edges involved
@@ -45,12 +65,13 @@ def p3_3(freq_mat, ch_name="Po4"):
     plt.show()
 
 
-def p3_4(adj_mat):
+def p3_4():
     """
     Plots frequency of class-4 motif involving in the graph 
     described by 'adj_mat' adjacency matrix.
     """
-    m_4, M_4 = motif4struct_bin(adj_mat)
+    M = compute_adjacency(load_matrix())
+    m_4, M_4 = motif4struct_bin(M)
 
     print("[3.4] >> Displaying frequencies of 4-node motifs.")
     plt.bar(np.arange(0,200), m_4)
@@ -82,31 +103,3 @@ def p3_4(adj_mat):
 
 
 
-M = adj_mat = compute_adjacency(load_matrix())
-m_3, M_3 = motif3struct_bin(M)
-
-if PLOTS:
-    print("Motif frequency:",m_3)
-    plt.bar(np.arange(1,14), m_3)
-    plt.xlabel("Motif ID")
-    plt.ylabel("frequency")
-    plt.xticks(np.arange(0,14,1))
-    plt.title("Network class-3 motif frequency in the graph")
-    plt.show()
-
-    print("Motif 1 node frequency:",M_3[0])
-    plt.matshow(M_3)
-    plt.xlabel("Node ID")
-    plt.ylabel("Motif ID")
-    plt.title("Node class-3 motif frequency fingerprint")
-    plt.show()
-
-
-#### 3.2
-#p3_2(G=load_conn_graph())
-
-#### 3.3
-#p3_3(freq_mat=M_3)
-
-#### 3.4
-p3_4(adj_mat=M)

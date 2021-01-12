@@ -4,10 +4,11 @@ import networkx as nx
 import connectivipy as cp
 import matplotlib.pyplot as plt
 
-PLOTS        = False
+PLOTS        = True
 COMPUTE_MATS = False
 ADJACENCY    = False
 
+## point 1.1 func ##
 
 def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
     """
@@ -125,58 +126,11 @@ def p1_1_print_adj():
     plt.title("DTF binary adjacency matrix with density = {:.02f}%".format(density))
     plt.show()
 
-
-def p1_5(G, nodelist=None, edgelist=None):
-    """
-    Prints a topological representation of the networks
-    Node colors depend on their degree
-    """
-    if nodelist is None:
-        nodelist = G.nodes()
-    if edgelist is None:
-        edgelist = G.edges()
-    with open("data/channel_locations.txt") as f:
-        pos = {}
-        for line in f:
-            l = line.split(sep='        ')  # yes, there are 8 spaces in the file.
-            if l[0] != '\ufeff#':
-                pos.update({ str(l[1]) : [float(l[2]), float(l[3])] })
-    
-    def p1_5_helper(G, pos, degree):
-        """
-        Helper function to now write two times the same plt stuff
-        """
-        node_color = []
-        for node in G.nodes():
-            if degree == 'in':
-                node_color.append(G.in_degree(node))
-            else:
-                node_color.append(G.out_degree(node))
-
-        cmap = 'viridis'
-        vmin = min(node_color)
-        vmax = max(node_color)
-
-        nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, vmin=vmin, vmax=vmax,
-                        node_size=700, edge_color='black', node_color=node_color, cmap=cmap,
-                        edgelist=edgelist, nodelist=nodelist)
-
-        plt.title("Topological representation of the network - {} degree".format(degree))
-
-        sm = plt.cm.ScalarMappable(
-            cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
-        sm._A = []
-        plt.colorbar(sm)
-        plt.show()
-
-    p1_5_helper(G, pos, 'in')
-    p1_5_helper(G, pos, 'out')
-    
-
-if __name__ == "__main__":
+ 
+def p1_1():
     #### Loading EEG data from edf file
     file_name = "data/S003R01_fixed.edf"
-    print("\nAnalyzing file", file_name)
+    print("\n[1.1] >> Analyzing file", file_name)
     f = pyedflib.EdfReader(file_name)
     n = f.signals_in_file
     signal_labels = f.getSignalLabels()
@@ -184,14 +138,12 @@ if __name__ == "__main__":
     for i in np.arange(n):
         sigbufs[i, :] = f.readSignal(i)
 
-    print("Loaded matrix with shape", sigbufs.shape)
+    print("[1.1] >> Loaded matrix with shape", sigbufs.shape)
     f.close()
-
 
     data = cp.Data(sigbufs, fs=160., chan_names=signal_labels, data_info=file_name)
     if PLOTS:
         data.plot_data(trial=3)
-
 
     #### Model order
     mv = cp.Mvar
@@ -206,14 +158,13 @@ if __name__ == "__main__":
         plt.show()
         print(crit)
 
-    print("Best p =", best_p)
-
-
-    # fit mvar using Yule-Walker algorithm and order p
+    print("[1.1] >> Best p =", best_p)
     data.fit_mvar(p=best_p, method='yw')
     ar, vr = data.mvar_coefficients
     print(data._parameters)
-
+    
+    if PLOTS:
+        p1_1_print_adj()
 
     #### Compute connectivity matrices with DTF and PDC measures
     if COMPUTE_MATS:
@@ -244,8 +195,63 @@ if __name__ == "__main__":
     PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
     """
 
-    G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    print("{} nodes\t{} edges".format(len(G.nodes()), len(G.edges())))
-    if PLOTS:
-        p1_5(G)
 
+def p1_2():
+    print("[1.2] >> Still to be implemented...")
+
+
+def p1_3():
+    print("[1.3] >> Still to be implemented...")
+
+
+def p1_4():
+    print("[1.4] >> Still to be implemented...")
+
+
+def p1_5(G, nodelist=None, edgelist=None):
+    """
+    Prints a topological representation of the networks
+    Node colors depend on their degree
+    """
+    if nodelist is None:
+        nodelist = G.nodes()
+    if edgelist is None:
+        edgelist = G.edges()
+    with open("data/channel_locations.txt") as f:
+        pos = {}
+        for line in f:
+            # yes, there are 8 spaces in the file.
+            l = line.split(sep='        ')
+            if l[0] != '\ufeff#':
+                pos.update({str(l[1]): [float(l[2]), float(l[3])]})
+
+    def p1_5_helper(G, pos, degree):
+        """
+        Helper function to now write two times the same plt stuff
+        """
+        node_color = []
+        for node in G.nodes():
+            if degree == 'in':
+                node_color.append(G.in_degree(node))
+            else:
+                node_color.append(G.out_degree(node))
+
+        cmap = 'viridis'
+        vmin = min(node_color)
+        vmax = max(node_color)
+
+        nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, vmin=vmin, vmax=vmax,
+                         node_size=700, edge_color='black', node_color=node_color, cmap=cmap,
+                         edgelist=edgelist, nodelist=nodelist)
+
+        plt.title(
+            "Topological representation of the network - {} degree".format(degree))
+
+        sm = plt.cm.ScalarMappable(
+            cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
+        sm._A = []
+        plt.colorbar(sm)
+        plt.show()
+
+    p1_5_helper(G, pos, 'in')
+    p1_5_helper(G, pos, 'out')
