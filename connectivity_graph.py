@@ -120,7 +120,7 @@ def already_computed():
         for freq in range(8, 14):
             dtf_path = "data/dtf_{}_{}hz_auto.txt".format(run, freq)
             pdc_path = "data/pdc_{}_{}hz_auto.txt".format(run, freq)
-            if not os.path.isfile(dtf_path) or not os.path.isfile(dtf_path):
+            if not os.path.isfile(dtf_path) or not os.path.isfile(pdc_path):
                 return False
     return True
 
@@ -176,7 +176,7 @@ def p1_1(file_name="data/S003R01_fixed", point='1'):
     f.close()
 
     data = cp.Data(sigbufs, fs=160., chan_names=signal_labels, data_info=file_name)
-    with warnings.catch_warnings():
+    with warnings.catch_warnings():             # stupid warning about the plot...
         warnings.simplefilter("ignore")
         fxn()
         data.plot_data(trial=3)
@@ -201,10 +201,7 @@ def p1_1(file_name="data/S003R01_fixed", point='1'):
         plt.show()
 
     print("[1.{}] >> Best p = {}".format(point, best_p))
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        fxn()
-        data.fit_mvar(p=best_p, method='yw')
+    data.fit_mvar(p=best_p, method='yw')
     
     if point == '4':
         return data
@@ -249,7 +246,7 @@ def p1_4(R='R01'):
 
     if not os.path.isfile(pdc_path):
         pdc_values = data.conn('pdc', resolution=80)
-        pdc_significance = data.significance(Nrep=100, alpha=0.05)
+        data.significance(Nrep=100, alpha=0.05)         # returns pdc_significance but what to do with it? However, it does side effect
         pdc_mat = pdc_values[10]
         f_pdc = open(pdc_path, "w")
         for i in range(19):
