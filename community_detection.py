@@ -1,4 +1,4 @@
-import louvain as lv
+import louvain
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -24,9 +24,14 @@ G.vs['label'] = mapping
 
 ig.summary(G)
 
+best_partition = louvain.find_partition(G, louvain.ModularityVertexPartition)  # finds best partition
+print(best_partition)
+ig.plot(best_partition, layout=G.layout("kk"))
 
 
-
+partition = louvain.CPMVertexPartition(G, resolution_parameter=0.1)
+optimiser = louvain.Optimiser()
+diff = optimiser.optimise_partition(partition)
 
 
 
