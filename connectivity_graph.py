@@ -5,9 +5,10 @@ import networkx as nx
 import connectivipy as cp
 import matplotlib.pyplot as plt
 
-PLOTS        = False
+PLOTS        = True
 COMPUTE_MATS = False
 ADJACENCY    = False
+OPTIMIZE_P   = False
 
 ## point 1.1 func ##
 
@@ -40,6 +41,7 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
     f_dtf.close()
     f_pdc.close()
     return
+
 
 def load_matrix(conn_method="pdc", freq=10, run="R01"):
     """
@@ -78,6 +80,7 @@ def compute_adjacency(conn_mat, threshold=0.1226):
 
     return adj_mat
 
+
 def load_conn_graph(conn="pdc", freq=10, run="R01"):
     """
     Load the connectivity graph from the related connectivity matrix.
@@ -101,41 +104,46 @@ def load_conn_graph(conn="pdc", freq=10, run="R01"):
     return nx.relabel_nodes(G, mapping)
 
 
-def p1_1_print_adj():
+def already_computed():
+    """
+    If we have already computed the adj mats for point 1.1 do not compute them again\n
+    They are computed for both runs for all freq in the alpha band.
+    """
+    for run in ['R01', 'R02']:
+        for freq in range(8, 14):
+            dtf_path = "data/dtf_{}_{}hz_auto.txt".format(run, freq)
+            pdc_path = "data/pdc_{}_{}hz_auto.txt".format(run, freq)
+            if not os.path.isfile(dtf_path) or not os.path.isfile(dtf_path):
+                return False
+    return True
+
+
+def print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226):
     """
     Prints adjacency matrix
+    ------------------------
+    TODO - - to check this values, prolly wrong
+    DTF 10hz R01: threshold of 0.1378 network density -> 0.2006 (20.01%)
+    PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
+    DTF 10hz R01: ???
+    PDC 10hz R01: ???    
     """
 
-    ## PDC ##
-    mat = load_matrix(conn_method='pdc', freq=10, run='R01')
+    mat = load_matrix(conn_method=conn_method, freq=freq, run=run)
     plt.matshow(mat)
-    plt.title("PDC adjacency matrix")
+    plt.title("{} adjacency matrix of run {} @{}Hz".format(conn_method, run, freq))
     plt.colorbar()
     plt.show()
 
-    mat = compute_adjacency(mat, threshold=0.1226)
+    mat = compute_adjacency(mat, threshold=threshold)
     density = 100*np.sum(mat)/4032
     plt.matshow(mat)
-    plt.title("PDC binary adjacency matrix with density = {:.02f}%".format(density))
-    plt.colorbar()
-    plt.show()
-
-    ## DTF ##
-    mat = load_matrix(conn_method='dtf', freq=10, run='R01')
-    plt.matshow(mat)
-    plt.title("DTF adjacency matrix")
-    plt.colorbar() 
-    plt.show()
-
-    mat = compute_adjacency(mat, threshold=0.1378)
-    density = 100*np.sum(mat)/4032
-    plt.matshow(mat)
-    plt.title("DTF binary adjacency matrix with density = {:.02f}%".format(density))
+    plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format(conn_method, run, freq, density))
     plt.colorbar()
     plt.show()
 
  
-def p1_1(file_name="data/S003R02_fixed", point='1'):
+def p1_1(file_name="data/S003R01_fixed", point='1'):
     
     #### Load EEG data from edf file
     if point == '4':        ### <<<<<<<<<<<<<<<<<<
@@ -145,7 +153,7 @@ def p1_1(file_name="data/S003R02_fixed", point='1'):
                        'C4..', 'T8..', 'P7..', 'P3..', 'Pz..',
                        'P4..', 'P8..', 'O1..', 'O2..']
             pyedflib.highlevel.drop_channels(file_name+".edf", to_keep=small_group)
-            # first time it computes the edf files it crashes, but the file is there... <<<<<<<<<<<<<<<<<<
+            # NOTE >>>> first time it computes the edf files it crashes, but the file is there... <<<<<<<<<<<<<<<<<<
         file_name = file_name + '_dropped'
 
     print("\n[1.{}] >> Analyzing file {}".format(point, file_name))
@@ -163,15 +171,14 @@ def p1_1(file_name="data/S003R02_fixed", point='1'):
     data.plot_data(trial=3)
 
     #### MVAR
-    if point == '1':    # best for both R01 and R02
-        best_p = 5
-    elif point == '4':
+    best_p = 5      # best for both R01 and R02 using 64 channels
+    if point == '4':
         if file_name == "data/S003R01_fixed_dropped.edf":
             best_p = 13
         elif file_name == "data/S003R02_fixed_dropped.edf":
             best_p = 14
     
-    if PLOTS:
+    if OPTIMIZE_P:
         mv = cp.Mvar
         best_p, crit = mv.order_akaike(sigbufs, p_max=30, method='yw')
         plt.plot(1+np.arange(len(crit)), crit, 'g')
@@ -183,40 +190,36 @@ def p1_1(file_name="data/S003R02_fixed", point='1'):
 
     print("[1.{}] >> Best p = {}".format(point, best_p))
     data.fit_mvar(p=best_p, method='yw')
-    #if PLOTS:
-    p1_1_print_adj()
-
     if point == '4':
         return data
 
     #### Compute connectivity matrices with DTF and PDC measures
-    if COMPUTE_MATS:
+    if not already_computed() or COMPUTE_MATS:
         # investigate connectivity using DTF
         dtf_values = data.conn('dtf',resolution=80)
         dtf_significance = data.significance(Nrep=100, alpha=0.05)
-        print("dtf_shape:",dtf_values.shape)
-        print("\nDTF sign:",dtf_significance)
+        print("[1.1] >> dtf_shape:",dtf_values.shape)
+        print("\n[1.1] >> DTF sign:", dtf_significance)
         if PLOTS:
             data.plot_conn("DTF measure")
 
         # investigate connectivity using PDC
         pdc_values = data.conn('pdc',resolution=80)
-        #pdc_values = data.short_time_conn('pdc', nfft=100, no=10)
         pdc_significance = data.significance(Nrep=100, alpha=0.05)
-        print("pdc_shape:",pdc_values.shape)
-        print("\nPDC sign:",pdc_significance)
+        print("[1.1] >> pdc_shape:", pdc_values.shape)
+        print("\n[1.1] >> PDC sign:", pdc_significance)
         if PLOTS:
             data.plot_conn("PDC measure")
-            #data.plot_short_time_conn("PDC")
 
-        #for i in range(8,14):
-        #    save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i,run=file_name[9:12])
+        for i in range(8,14):
+            save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i,run=file_name[9:12])
 
-    """
-    TODO -- to check this values, prolly wrong
-    DTF 10hz R01: threshold of 0.1378 network density -> 0.2006 (20.01%) 
-    PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
-    """
+    if PLOTS:
+        print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226)
+        print_adj(conn_method='dtf', freq=10, run='R01', threshold=0.1378)
+
+
+    
 
 
 def p1_2():
@@ -245,6 +248,7 @@ def p1_4(R='R01'):
         f_pdc.close()
     
     if PLOTS:
+        print("[1.4] >> Plotting connectivity...")
         data.plot_conn("PDC measure")
 
 
@@ -297,7 +301,10 @@ def p1_5(G, nodelist=None, edgelist=None):
     p1_5_helper(G, pos, 'out')
 
 
+def p1_6():
+    print("[1.6] >> Still to be implemented...")
+
 
 ### MAIN 
-p1_1()
-#p1_4()
+#p1_1()
+p1_4()
