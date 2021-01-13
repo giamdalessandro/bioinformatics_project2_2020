@@ -309,6 +309,7 @@ def p1_5(G, nodelist=None, edgelist=None):
         nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, vmin=vmin, vmax=vmax,
                          node_size=700, edge_color='black', node_color=node_color, cmap=cmap,
                          edgelist=edgelist, nodelist=nodelist)
+                         
 
         plt.title(
             "Topological representation of the network - {} degree".format(degree))

@@ -84,21 +84,31 @@ def best_partition_louvain(conn_method="pdc", freq=10, run="R01", auto='auto', t
 
 
 def p4_1(conn_method="pdc", freq=10, run="R01", auto='auto', threshold=0.1226):
-    G = load_conn_graph(conn=conn_method, freq=freq, run=run, auto=auto, threshold=threshold)
-    print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
     
     partition = best_partition_louvain(conn_method=conn_method, freq=freq,
                                        run=run, auto=auto, threshold=threshold)
-    partition = relabel_partition(partition)
+    return relabel_partition(partition)
 
 
+def p4_2(G, partition, algorithm='Louvain'):
+    """
+    Display a topographical representation of the community structure
+    """
+    pos = load_channel_coordinates()
+    cmap = cm.get_cmap('viridis', max(partition.values()) + 1)
+    nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, nodelist=partition.keys(), node_size=700,
+                     cmap=cmap, node_color=list(partition.values()), edge_color='black')
+    plt.title("Topographical representation of the community structure found using the {} algorithm".format(algorithm))
+    
+    plt.legend()
+    plt.show()
 
-p4_1()
-#
-#pos = load_channel_coordinates()
-#cmap = cm.get_cmap('viridis', max(partition.values()) + 1)
-#nx.draw_networkx_nodes(G, pos=pos, nodelist=partition.keys(), node_size=40,
-#                       cmap=cmap, node_color=list(partition.values()))
-#nx.draw_networkx_edges(G, pos, alpha=0.5)
-#plt.show()
+
+G = load_conn_graph(conn="pdc", freq=10, run="R01",
+                    auto='auto', threshold=0.1226)
+print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
+
+partition = p4_1()
+p4_2(G, partition)
+
 
