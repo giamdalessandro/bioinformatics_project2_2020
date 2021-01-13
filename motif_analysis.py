@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from bct import motif3struct_bin, motif4struct_bin
+from bct import motif3struct_bin, motif3funct_bin, motif4struct_bin, motif4funct_bin
 from connectivity_graph import compute_adjacency, load_matrix, load_conn_graph, p1_5
 
 PLOTS = False
@@ -16,7 +16,7 @@ $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.
 
 def p3_1():
     M = compute_adjacency(load_matrix())
-    m_3, M_3 = motif3struct_bin(M)
+    m_3, M_3 = motif3funct_bin(M)
 
     print("[3.1] >> Motif frequency:", m_3)
     plt.bar(np.arange(1, 14), m_3)
@@ -72,7 +72,7 @@ def p3_4():
     described by 'adj_mat' adjacency matrix.
     """
     M = compute_adjacency(load_matrix())
-    m_4, M_4 = motif4struct_bin(M)
+    m_4, M_4 = motif4funct_bin(M)
 
     print("[3.4] >> Displaying frequencies of 4-node motifs.")
     plt.bar(np.arange(0,200), m_4)
