@@ -102,11 +102,36 @@ def p4_2(G, partition, algorithm='Louvain'):
     plt.show()
 
 
+def p4_3(G):
+    from cdlib import algorithms
+    import networkx as nx
+    coms = algorithms.infomap(G)
+    d = coms.to_node_community_map()
+    print(d)
+
+    partition = {}
+    for k in d.keys():
+        for p in d[k]:
+            if p not in partition.keys():
+                l = [k]
+                partition.update({p : l})
+            else:
+                partition[p].append(k)
+    print("[4.3] >> Partitions found: {}\n".format(len(partition)))
+    print(partition)
+    return partition
+
+
+
+
+### main
+
 G = load_conn_graph(conn="pdc", freq=10, run="R01",
                     auto='auto', threshold=0.1226)
 print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
 
-partition = p4_1()
-p4_2(G, partition)
+#partition = p4_1()
+#p4_2(G, partition)
 
+p4_3(G)
 
