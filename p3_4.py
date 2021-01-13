@@ -73,8 +73,8 @@ def draw_network(G):
     plt.axis('off')
     pathlib.Path("output").mkdir(exist_ok=True)
     print("Writing network figure to output/karate.png")
-    plt.savefig("output/karate.png")
-    # plt.show()
+    #plt.savefig("output/karate.png")
+    plt.show()
 
 
 conn_mat = load_matrix(conn_method="pdc", freq=10, run='R01', auto='auto')
