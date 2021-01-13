@@ -10,7 +10,8 @@ from connectivity_graph import load_conn_graph, load_channel_coordinates, load_m
 
 def relabel_partition(partition):
     """
-    Relabels node in the partition obtained using igraph
+    Relabels node in the partition obtained using igraph\n
+    It's not optimized nor elegant, but the graph is small, so...
     """
     partition = list(partition)
     d = {}
@@ -28,20 +29,19 @@ def relabel_partition(partition):
                     pos.update({int(l[0])-1: str(l[1])})
         return pos
 
-    """ Penso sia tipo così, non riesco a runnarlo però
-    print(mapping)
-    for i in range(len(partition)):
-        for node_id in partition[i]:
-            d.update({partition[i]: i})
-    return d
-    """
     mapping = map_index_to_channels()
     for i in range(len(partition)):
         part = []
         for p in partition[i]:
             part.append(mapping[p])
         d.update({i: part})
-    return d
+    #print(d)
+
+    partition = {}
+    for k in d.keys():
+        for p in d[k]:
+            partition.update({ p : k})
+    return partition
     
 
 conn_mat = load_matrix(conn_method="pdc", freq=10, run="R01", auto='auto')
@@ -87,8 +87,9 @@ partition, diff = louvain.find_partition(G, louvain.ModularityVertexPartition)  
 '''
 
 
-
+# print(partition)
 partition = relabel_partition(partition)
+# print(partition)
 
 G = load_conn_graph(conn='pdc', freq=10, run='R01')
 print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
