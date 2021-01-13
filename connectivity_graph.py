@@ -5,7 +5,7 @@ import networkx as nx
 import connectivipy as cp
 import matplotlib.pyplot as plt
 
-PLOTS        = True
+PLOTS        = False
 COMPUTE_MATS = False
 ADJACENCY    = False
 
@@ -57,7 +57,10 @@ def load_matrix(conn_method="pdc", freq=10, run="R01"):
             mat_list.append(row.strip().split(" "))
         f.close()
 
-    return np.array(mat_list, dtype=np.float32)
+    conn_mat = np.array(mat_list, dtype=np.float32)
+    np.fill_diagonal(conn_mat, 0.)
+    return conn_mat
+
 
 def compute_adjacency(conn_mat, threshold=0.1226):    
     """
@@ -107,24 +110,28 @@ def p1_1_print_adj():
     mat = load_matrix(conn_method='pdc', freq=10, run='R01')
     plt.matshow(mat)
     plt.title("PDC adjacency matrix")
+    plt.colorbar()
     plt.show()
 
     mat = compute_adjacency(mat, threshold=0.1226)
     density = 100*np.sum(mat)/4032
     plt.matshow(mat)
     plt.title("PDC binary adjacency matrix with density = {:.02f}%".format(density))
+    plt.colorbar()
     plt.show()
 
     ## DTF ##
     mat = load_matrix(conn_method='dtf', freq=10, run='R01')
     plt.matshow(mat)
     plt.title("DTF adjacency matrix")
+    plt.colorbar() 
     plt.show()
 
     mat = compute_adjacency(mat, threshold=0.1378)
     density = 100*np.sum(mat)/4032
     plt.matshow(mat)
     plt.title("DTF binary adjacency matrix with density = {:.02f}%".format(density))
+    plt.colorbar()
     plt.show()
 
  
@@ -145,7 +152,6 @@ def p1_1(file_name="data/S003R02_fixed", point='1'):
     f = pyedflib.EdfReader(file_name + ".edf")
     n = f.signals_in_file
     signal_labels = f.getSignalLabels()
-    print(signal_labels)
     sigbufs = np.zeros((n, f.getNSamples()[0]))
     for i in np.arange(n):
         sigbufs[i, :] = f.readSignal(i)
@@ -177,8 +183,8 @@ def p1_1(file_name="data/S003R02_fixed", point='1'):
 
     print("[1.{}] >> Best p = {}".format(point, best_p))
     data.fit_mvar(p=best_p, method='yw')
-    if PLOTS:
-        p1_1_print_adj()
+    #if PLOTS:
+    p1_1_print_adj()
 
     if point == '4':
         return data
@@ -293,5 +299,5 @@ def p1_5(G, nodelist=None, edgelist=None):
 
 
 ### MAIN 
-
-p1_4()
+p1_1()
+#p1_4()
