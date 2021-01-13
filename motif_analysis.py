@@ -73,13 +73,12 @@ def p3_4():
     """
     M = compute_adjacency(load_matrix())
     m_4, M_4 = motif4funct_bin(M)
-    print(m_4.shape)
     print("[3.4] >> Displaying frequencies of 4-node motifs.")
     plt.bar(np.arange(0,199), m_4)
     plt.subplots_adjust(left=0.05, right=0.95, top=0.92, bottom=0.08)
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
-    ticks = np.arange(0, 201, 5)
+    ticks = np.arange(0, 200, 5)
     ticks[0] = 1
     ticks[-1] = 199
     plt.xticks(ticks, rotation='vertical')
