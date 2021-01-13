@@ -88,7 +88,7 @@ def compute_adjacency(conn_mat, threshold=0.1226):
     return adj_mat
 
 
-def load_conn_graph(conn="pdc", freq=10, run="R01", relabel=True):
+def load_conn_graph(conn="pdc", freq=10, run="R01", auto="auto", threshold=0.1226):
     """
     Load the connectivity graph from the related connectivity matrix.
         - conn : the method used to compute the connectivity matrix, one of {'dtf','pdc'};
@@ -96,11 +96,9 @@ def load_conn_graph(conn="pdc", freq=10, run="R01", relabel=True):
         - run  : the related run of the experiment, one of {'R01','R02'}.
     """
     print("\nInitializing graph from {}-{}-{}hz matrix ...".format(conn,run,freq))
-    adj_mat = compute_adjacency(load_matrix(conn_method=conn,freq=freq,run=run))
+    adj_mat = compute_adjacency(load_matrix(conn_method=conn,freq=freq,run=run,auto=auto), threshold=threshold)
 
     G = nx.from_numpy_array(adj_mat,create_using=nx.DiGraph)
-    if not relabel:
-        return G
     # relabel nodes cause there's no labels in the original EDF file
     # (well, there are, but they are not automatically loaded, so...)
     with open("data/channel_locations.txt") as f:
