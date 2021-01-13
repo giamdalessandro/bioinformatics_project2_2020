@@ -27,7 +27,14 @@ def relabel_partition(partition):
                 if l[0] != '\ufeff#':
                     pos.update({int(l[0])-1: str(l[1])})
         return pos
-    
+
+    """ Penso sia tipo così, non riesco a runnarlo però
+    print(mapping)
+    for i in range(len(partition)):
+        for node_id in partition[i]:
+            d.update({partition[i]: i})
+    return d
+    """
     mapping = map_index_to_channels()
     for i in range(len(partition)):
         part = []
@@ -35,7 +42,7 @@ def relabel_partition(partition):
             part.append(mapping[p])
         d.update({i: part})
     return d
-
+    
 
 conn_mat = load_matrix(conn_method="pdc", freq=10, run="R01", auto='auto')
 adj_mat  = compute_adjacency(conn_mat, threshold=0.1226)
