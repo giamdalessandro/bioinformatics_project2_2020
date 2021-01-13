@@ -263,6 +263,20 @@ def p1_4(R='R01'):
         # data.plot_conn("PDC measure")     # is it even useful?
 
 
+def load_channel_coordinates():
+    """
+    Loads channels coordinates in a disctionary and returns it
+    """
+    with open("data/channel_locations.txt") as f:
+        pos = {}
+        for line in f:
+            # yes, there are 8 spaces in the file.
+            l = line.split(sep='        ')
+            if l[0] != '\ufeff#':
+                pos.update({str(l[1]): [float(l[2]), float(l[3])]})
+    return pos
+
+
 def p1_5(G, nodelist=None, edgelist=None):
     """
     Prints a topological representation of the networks
@@ -272,13 +286,8 @@ def p1_5(G, nodelist=None, edgelist=None):
         nodelist = G.nodes()
     if edgelist is None:
         edgelist = G.edges()
-    with open("data/channel_locations.txt") as f:
-        pos = {}
-        for line in f:
-            # yes, there are 8 spaces in the file.
-            l = line.split(sep='        ')
-            if l[0] != '\ufeff#':
-                pos.update({str(l[1]): [float(l[2]), float(l[3])]})
+    
+    pos = load_channel_coordinates()
 
     def p1_5_helper(G, pos, degree):
         """
@@ -317,4 +326,4 @@ def p1_6():
 
 
 ### MAIN 
-p1_4()
+#p1_4()

@@ -3,4 +3,4 @@ pyEDFlib
 matplotlib
 connectivipy
 networkx
-python-louvain
+louvain
