@@ -1,8 +1,8 @@
-
 import numpy as np
 import networkx as nx    
 
 from connectivity_graph import load_matrix, compute_adjacency
+
 
 def getKey(item):
     return item[1]
@@ -51,7 +51,6 @@ def graph_indices_part_2_1(adj_mat):
     
     return Cf_avg_real, PL_avg_real
 
-
 def graph_indices_part_2_2(Cf_real, PL_real, random_graph='erdos'):
     if random_graph == 'erdos':
         G_Rand = nx.erdos_renyi_graph(n=N, p=0.4, directed=True)
@@ -73,8 +72,7 @@ def graph_indices_part_2_4(conn_mat, thresholds):
         print("Threshold: ", threshold," Resutling network density:", np.sum(adj_mat)/max_edges)
         
         graph_indices_part_2_1(adj_mat)
-        print('\n')
-        
+        print('\n')        
 
 def graph_indices_part_2_7(conn_mat, threshold):
     weights = np.random.uniform(0, 2, (N,N))  # random generated weght with shape (n,n)
@@ -125,7 +123,7 @@ def graph_indices_part_2_7(conn_mat, threshold):
             
         
         
-conn_method = 'DTF'
+conn_method = 'dtf'
 random_graph = 'erdos' # 'watts' and erdos are options
 N = 64
 nodes_idx = [i for i in range(N)]  # [0,1,2..., N]
@@ -146,7 +144,6 @@ Cf_real, PL_real = graph_indices_part_2_1(adj_mat)
 print('\n================== P 2.2 ==============================')
 print('small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
 # small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
-
 Small_worldness = graph_indices_part_2_2(Cf_real, PL_real, random_graph)
 
 
