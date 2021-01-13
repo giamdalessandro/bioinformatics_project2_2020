@@ -1,3 +1,4 @@
+import warnings
 import os
 import pyedflib
 import numpy as np
@@ -9,6 +10,12 @@ PLOTS        = True
 COMPUTE_MATS = False
 ADJACENCY    = False
 OPTIMIZE_P   = False
+
+
+def fxn():
+    warnings.warn("future",  FutureWarning)
+    warnings.warn("warning", Warning)
+
 
 ## point 1.1 func ##
 
@@ -43,14 +50,14 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
     return
 
 
-def load_matrix(conn_method="pdc", freq=10, run="R01"):
+def load_matrix(conn_method="pdc", freq=10, run="R01", auto='auto'):
     """
     Load the adjacency matrix from file
         - conn_method : the method used to compute the connectivity matrix, one of {'dtf','pdc'};
         - freq        : the frequqncy value related to the matrix data;
         - run         : the related run of the experiment, one of {'R01','R02'}.
     """
-    mat_file = "data/{}_{}_{}hz_auto.txt".format(conn_method,run,freq) 
+    mat_file = "data/{}_{}_{}hz_{}.txt".format(conn_method, run, freq, auto) 
     mat_list = []
     print("Loading matrix from '{}' ...".format(mat_file))
 
@@ -118,7 +125,7 @@ def already_computed():
     return True
 
 
-def print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226):
+def print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226, auto='auto'):
     """
     Prints adjacency matrix
     ------------------------
@@ -129,18 +136,19 @@ def print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226):
     PDC 10hz R01: ???    
     """
 
-    mat = load_matrix(conn_method=conn_method, freq=freq, run=run)
+    mat = load_matrix(conn_method=conn_method, freq=freq, run=run, auto=auto)
     plt.matshow(mat)
     plt.title("{} adjacency matrix of run {} @{}Hz".format(conn_method, run, freq))
     plt.colorbar()
     plt.show()
 
-    mat = compute_adjacency(mat, threshold=threshold)
-    density = 100*np.sum(mat)/4032
-    plt.matshow(mat)
-    plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format(conn_method, run, freq, density))
-    plt.colorbar()
-    plt.show()
+    if threshold is not None:
+        mat = compute_adjacency(mat, threshold=threshold)
+        density = 100*np.sum(mat)/4032
+        plt.matshow(mat)
+        plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format(conn_method, run, freq, density))
+        plt.colorbar()
+        plt.show()
 
  
 def p1_1(file_name="data/S003R01_fixed", point='1'):
@@ -168,19 +176,23 @@ def p1_1(file_name="data/S003R01_fixed", point='1'):
     f.close()
 
     data = cp.Data(sigbufs, fs=160., chan_names=signal_labels, data_info=file_name)
-    data.plot_data(trial=3)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        fxn()
+        data.plot_data(trial=3)
 
-    #### MVAR
-    best_p = 5      # best for both R01 and R02 using 64 channels
-    if point == '4':
-        if file_name == "data/S003R01_fixed_dropped.edf":
-            best_p = 13
-        elif file_name == "data/S003R02_fixed_dropped.edf":
-            best_p = 14
-    
-    if OPTIMIZE_P:
-        mv = cp.Mvar
-        best_p, crit = mv.order_akaike(sigbufs, p_max=30, method='yw')
+    print("[1.{}] >> Optimizing p...".format(point))
+    mv = cp.Mvar
+    best_p, crit = mv.order_akaike(sigbufs, p_max=30, method='yw')    
+    if PLOTS:
+        #### MVAR
+        # best_p = 5      # best for both R01 and R02 using 64 channels
+        # if point == '4':
+        #     if file_name == "data/S003R01_fixed_dropped.edf":
+        #         best_p = 13
+        #     elif file_name == "data/S003R02_fixed_dropped.edf":
+        #         best_p = 14
+
         plt.plot(1+np.arange(len(crit)), crit, 'g')
         plt.title("Model order estimation")
         plt.xlabel("order(p)")
@@ -189,7 +201,11 @@ def p1_1(file_name="data/S003R01_fixed", point='1'):
         plt.show()
 
     print("[1.{}] >> Best p = {}".format(point, best_p))
-    data.fit_mvar(p=best_p, method='yw')
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        fxn()
+        data.fit_mvar(p=best_p, method='yw')
+    
     if point == '4':
         return data
 
@@ -219,9 +235,6 @@ def p1_1(file_name="data/S003R01_fixed", point='1'):
         print_adj(conn_method='dtf', freq=10, run='R01', threshold=0.1378)
 
 
-    
-
-
 def p1_2():
     print("[1.2] >> Still to be implemented...")
 
@@ -232,12 +245,12 @@ def p1_3():
 
 def p1_4(R='R01'):
     data = p1_1(point='4')
-    pdc_values = data.conn('pdc', resolution=80)
-    pdc_significance = data.significance(Nrep=100, alpha=0.05)
-    pdc_mat = pdc_values[10]
     pdc_path = "data/pdc_{}_10hz_19_channels.txt".format(R)
 
     if not os.path.isfile(pdc_path):
+        pdc_values = data.conn('pdc', resolution=80)
+        pdc_significance = data.significance(Nrep=100, alpha=0.05)
+        pdc_mat = pdc_values[10]
         f_pdc = open(pdc_path, "w")
         for i in range(19):
             for j in range(19):
@@ -249,7 +262,8 @@ def p1_4(R='R01'):
     
     if PLOTS:
         print("[1.4] >> Plotting connectivity...")
-        data.plot_conn("PDC measure")
+        print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='19_channels')
+        # data.plot_conn("PDC measure")
 
 
 def p1_5(G, nodelist=None, edgelist=None):
@@ -306,5 +320,4 @@ def p1_6():
 
 
 ### MAIN 
-#p1_1()
 p1_4()
