@@ -260,7 +260,7 @@ def p1_4(R='R01'):
     if PLOTS:
         print("[1.4] >> Plotting connectivity...")
         print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='19_channels')
-        # data.plot_conn("PDC measure")
+        # data.plot_conn("PDC measure")     # is it even useful?
 
 
 def p1_5(G, nodelist=None, edgelist=None):
