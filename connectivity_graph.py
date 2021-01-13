@@ -88,7 +88,7 @@ def compute_adjacency(conn_mat, threshold=0.1226):
     return adj_mat
 
 
-def load_conn_graph(conn="pdc", freq=10, run="R01"):
+def load_conn_graph(conn="pdc", freq=10, run="R01", relabel=True):
     """
     Load the connectivity graph from the related connectivity matrix.
         - conn : the method used to compute the connectivity matrix, one of {'dtf','pdc'};
@@ -99,7 +99,8 @@ def load_conn_graph(conn="pdc", freq=10, run="R01"):
     adj_mat = compute_adjacency(load_matrix(conn_method=conn,freq=freq,run=run))
 
     G = nx.from_numpy_array(adj_mat,create_using=nx.DiGraph)
-
+    if not relabel:
+        return G
     # relabel nodes cause there's no labels in the original EDF file
     # (well, there are, but they are not automatically loaded, so...)
     with open("data/channel_locations.txt") as f:
@@ -263,7 +264,7 @@ def p1_4(R='R01'):
         # data.plot_conn("PDC measure")     # is it even useful?
 
 
-def load_channel_coordinates():
+def load_channel_coordinates(label=True):
     """
     Loads channels coordinates in a disctionary and returns it
     """
@@ -273,7 +274,10 @@ def load_channel_coordinates():
             # yes, there are 8 spaces in the file.
             l = line.split(sep='        ')
             if l[0] != '\ufeff#':
-                pos.update({str(l[1]): [float(l[2]), float(l[3])]})
+                if label:
+                    pos.update({str(l[1]): [float(l[2]), float(l[3])]})
+                else:
+                    pos.update({int(l[0])-1 : [float(l[2]), float(l[3])]})
     return pos
 
 
