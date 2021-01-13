@@ -99,8 +99,6 @@ def p4_2(G, partition, algorithm='Louvain'):
     nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, nodelist=partition.keys(), node_size=700,
                      cmap=cmap, node_color=list(partition.values()), edge_color='black')
     plt.title("Topographical representation of the community structure found using the {} algorithm".format(algorithm))
-    
-    plt.legend()
     plt.show()
 
 
