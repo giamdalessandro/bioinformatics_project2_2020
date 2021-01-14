@@ -1,5 +1,6 @@
 import numpy as np
-import networkx as nx    
+import networkx as nx
+import matplotlib.pyplot as plt
 
 from connectivity_graph import load_matrix, compute_adjacency
 
@@ -44,11 +45,22 @@ def graph_indices_part_2_1(adj_mat):
     out_degrees = list(G_Real.out_degree(nodes_idx))  # degree of all nodes as tuple of (node,degree) form
     
     
-    degree_sorted = sorted(degrees, key=getKey)
+    degree_sorted = sorted(degrees, key=getKey, reverse=False)
     
     top_10_degrees = degree_sorted[-10:]
     print("Resutling highest 10 degrees (node, degree) format:", top_10_degrees) 
     
+    # adding a plot
+    nodeid_best_degree = [str(n[0]) for n in top_10_degrees]
+    best_degree        = [n[1] for n in top_10_degrees]
+
+    plt.barh(np.arange(0,10), best_degree, color="green")
+    plt.yticks(np.arange(0,10),labels=nodeid_best_degree)
+    plt.ylabel("node ID")
+    plt.xlabel("node degree")
+    plt.title("Top 10 channels per local degree")
+    plt.show()
+
     return Cf_avg_real, PL_avg_real
 
 def graph_indices_part_2_2(Cf_real, PL_real, random_graph='erdos'):
@@ -140,7 +152,7 @@ print("Resutling network density:", np.sum(adj_mat)/max_edges)
 print('\n================== P 2.1 ==============================')
 Cf_real, PL_real = graph_indices_part_2_1(adj_mat)
 
-
+"""
 print('\n================== P 2.2 ==============================')
 print('small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
 # small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
@@ -158,6 +170,4 @@ graph_indices_part_2_4(conn_mat, thresholds)
 print('\n================== P 2.7 ==============================')
 threshold = threshold_20_percent_density
 graph_indices_part_2_7(conn_mat, threshold)
-
-
-
+"""
