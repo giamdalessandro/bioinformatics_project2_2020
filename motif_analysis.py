@@ -46,11 +46,11 @@ def p3_2(G):
         for e1 in G.in_edges(node):
             for e2 in G.in_edges(node):
                 if e2 != e1 and (e1[0], e2[0]) not in G.edges() and (e2[0], e1[0]) not in G.edges() and (e1[1], e1[0]) not in G.edges() and (e2[1], e2[0]) not in G.edges():
-                    motif_G.add_edge(e1[0],e1[1], color='k',  width=1.5)
-                    motif_G.add_edge(e2[0],e2[1], color='k',  width=1.5)
-                # else:
-                #     motif_G.add_edge(e1[0], e2[1], color='k', width=0.5)
-                #     motif_G.add_edge(e2[0], e1[1], color='k', width=0.5)
+                    motif_G.add_edge(e1[0],e1[1], color='r')
+                    motif_G.add_edge(e2[0],e2[1], color='r')
+    for edge in G.edges():
+        if edge not in motif_G.edges():
+            motif_G.add_edge(edge[0], edge[1], color='b')
     print("[3.2] >> found {} edges between {} nodes in the new graph.".format(len(motif_G.edges()),len(motif_G.nodes())))
     p1_5(motif_G, point='3.2')
 
