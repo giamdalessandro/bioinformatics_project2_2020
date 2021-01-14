@@ -12,7 +12,6 @@ def relabel_partition(partition):
     Relabels node in the partition obtained using igraph\n
     It's not optimized nor elegant, but the graph is small, so...
     """
-    print('\n', partition, '\n')
     partition = list(partition)
     d = {}
 
@@ -22,11 +21,10 @@ def relabel_partition(partition):
         for p in partition[i]:
             part.append(mapping[p])
         d.update({i: part})
-        
     partition = {}
-    print("[4.1] >> Partitions found: {}\n".format(len(d)))
+    print("[4.1] >> Communities found: {}\n".format(len(d)))
     for k in d.keys():
-        print("[Partition {}]".format(k))
+        print("[Community {}]".format(k))
         for p in d[k]:
             partition.update({ p : k})
             print(p, end=" ", flush=True)
@@ -89,8 +87,8 @@ def best_partition_infomap(G):
     print(f"Found {im.num_top_modules} modules with codelength: {im.codelength}")
 
     communities = im.get_modules()
-    print("[4.3] >> Communities found;", communities)
     nx.set_node_attributes(G, communities, 'community')
+    return communities
 
 
 ####
@@ -115,12 +113,25 @@ def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226
     adj_mat = compute_adjacency(conn_mat, threshold=threshold)
     G = nx.from_numpy_array(adj_mat, create_using=nx.DiGraph)
 
-    best_partition_infomap(G)
+    communities = best_partition_infomap(G)
     mapping = map_index_to_channels()
     G = nx.relabel_nodes(G, mapping)
+
+    ### this is just to print the result, not needed for the logic
+    l = []
+    for i in range(len(set(communities.values()))):
+        l.append(list())
+    for node, comm in communities.items():
+        l[comm-1].append(mapping[node])
+    print("[4.3] >> Communities found: {}\n".format(len(l)))
+    for i in range(len(l)):
+        print("[Community {}]".format(i))
+        for node in l[i]:
+            print(node, end=" ", flush=True)
+        print('\n')
+    ###
     
     communities = [c - 1 for c in nx.get_node_attributes(G, 'community').values()]
-    print('\n\n', communities, '\n\n')
     p1_5(G, point='4.3', communities=communities)
 
 
