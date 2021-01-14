@@ -20,7 +20,7 @@ def find_communities(G):
     Annotates nodes with 'community' id.
     """
 
-    im = infomap.Infomap("--two-level")
+    im = infomap.Infomap("--two-level --directed --verbose")
 
     print("Building Infomap network from a NetworkX graph...")
     for source, target in G.edges:
@@ -31,7 +31,12 @@ def find_communities(G):
 
     print(f"Found {im.num_top_modules} modules with codelength: {im.codelength}")
 
+    print("\n#node flow:")
+    for node in im.nodes:
+        print(node.node_id, node.flow)
+
     communities = im.get_modules()
+    print("[4.3] >> Communities found;", communities)
     nx.set_node_attributes(G, communities, 'community')
 
 
@@ -71,15 +76,13 @@ def draw_network(G):
                      color=cmap_dark(communities[n]))
 
     plt.axis('off')
-    pathlib.Path("output").mkdir(exist_ok=True)
-    print("Writing network figure to output/karate.png")
-    #plt.savefig("output/karate.png")
     plt.show()
 
 
 conn_mat = load_matrix(conn_method="pdc", freq=10, run='R01', auto='auto')
 adj_mat = compute_adjacency(conn_mat, threshold=0.1226)
 G = nx.from_numpy_array(adj_mat, create_using=nx.DiGraph)
+# G = nx.karate_club_graph()
 print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
 
 find_communities(G)
