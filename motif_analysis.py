@@ -149,6 +149,6 @@ def p3_4():
 
     return m_4, M_4
 
-
-G = load_conn_graph(conn="pdc", freq=10, run="R01")
-p3_2(G)
+if __name__ == '__main__':
+    G = load_conn_graph(conn="pdc", freq=10, run="R01")
+    p3_2(G)

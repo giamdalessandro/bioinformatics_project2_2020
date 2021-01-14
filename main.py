@@ -2,13 +2,11 @@ from connectivity_graph import *
 from motif_analysis import *
 from community_detection import *
 
-G = load_conn_graph(conn="pdc", freq=10, run="R01")
+
 
 """
 TODO
-- 1.1   choose freq or band?
-            if freq, which freq?
-        shuffle rows/cols?
+- 1.1   shuffle rows/cols?
 - 1.3
 - 1.4   try to find the libraries
 - 1.6   same as 1.1
@@ -17,27 +15,24 @@ TODO
         check that we are performing the statistical test
 """
 
-# def task1():
+def task1():
+    # we check if we can use just one frequencies of the alpha band or the entire band
+    check_mean_var_EEG_rithm()
 
-
-# PART 1
-p1_1()
-
-p1_2()
-p1_3()
-p1_4()
-
-if PLOTS:
-    print("[1.5] >> {} nodes\t{} edges".format(len(G.nodes()), len(G.edges())))
+    # since the values of the variance matrix above thresold are few, we will use a specific frequence - 10Hz
+    p1_1()
+    p1_2()
+    p1_3()
+    p1_4()
     p1_5(G)
 
+ 
+G = load_conn_graph(conn="pdc", freq=10, run="R01")
+print("[1.5] >> {} nodes\t{} edges".format(len(G.nodes()), len(G.edges())))
 
+task1()
 
-# PART 2
-
-
-
-
+'''
 # PART 3
 M_3 = p3_1()
 p3_2(G)
@@ -60,3 +55,4 @@ for S1 in partition_louvain.values():
             print("Louvain community:", S1)
             print("Infomap community:", S2)
             print("Jaccard is {}%\n".format(j))
+'''
