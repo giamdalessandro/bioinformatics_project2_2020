@@ -210,22 +210,21 @@ def graph_indices_part_2_7(conn_mat, threshold):
     print("Resutling highest 10 degrees (node, degree) format:", top_10_degrees_weighted) 
             
         
-def p2_3(freq, run, threshold):
+def p2_3(freq, run, threshold_pdc, threshold_dtf):
     """
     Computes for both pdc and dtf method:
         - cl (Average Clustering Coefficient)
         - pl (Average Path Length)
-    and compares them in a plot
     """
-    pdc_mat = compute_adjacency(load_matrix(conn_method='pdc', freq=freq, run=run), threshold=threshold)    
-    dtf_mat = compute_adjacency(load_matrix(conn_method='dtf', freq=freq, run=run), threshold=threshold)
+    pdc_mat = compute_adjacency(load_matrix(conn_method='pdc', freq=freq, run=run), threshold=threshold_pdc)    
+    dtf_mat = compute_adjacency(load_matrix(conn_method='dtf', freq=freq, run=run), threshold=threshold_dtf)
     cl_pdc, pl_pdc = graph_indices_part_2_1(pdc_mat)
     cl_dtf, pl_dtf = graph_indices_part_2_1(dtf_mat)
 
-    print("[2.3] >> Average Clustering Coefficient PDC:", cl_pdc)
-    print("[2.3] >> Average Clustering Coefficient DTF:", cl_dtf)
-    print("[2.3] >> Average PAth Length PDC:", pl_pdc)
-    print("[2.3] >> Average PAth Length DTF:", pl_dtf)
+    print("[2.3] >> Average Clustering Coefficient PDC: {:.2f}%".format(100*cl_pdc))
+    print("[2.3] >> Average Clustering Coefficient DTF: {:.2f}%".format(100*cl_dtf))
+    print("[2.3] >> Average PAth Length PDC: {:.2f}".format(pl_pdc))
+    print("[2.3] >> Average PAth Length DTF: {:.2f}".format(pl_dtf))
 
 
 
@@ -251,6 +250,10 @@ print('\n================== P 2.2 ==============================')
 print('small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
 # small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
 Small_worldness = graph_indices_part_2_2(Cf_real, PL_real, random_graph)
+
+
+print('\n================== P 2.3 ==============================')
+p2_3(freq=10, run='R01', threshold_pdc=0.1226, threshold_dtf=0.1378)
 
 
 print('\n================== P 2.4 ==============================')

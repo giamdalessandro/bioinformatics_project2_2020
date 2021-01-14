@@ -142,8 +142,8 @@ def print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226, auto='aut
     TODO - - to check this values, prolly wrong
     DTF 10hz R01: threshold of 0.1378 network density -> 0.2006 (20.01%)
     PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
-    DTF 10hz R01: ???
-    PDC 10hz R01: ???    
+    DTF 10hz R02: ???
+    PDC 10hz R02: ???    
     """
 
     mat = load_matrix(conn_method=conn_method, freq=freq, run=run, auto=auto)
@@ -195,13 +195,6 @@ def p1_1(file_name="data/S003R01_fixed", point='1'):
     mv = cp.Mvar
     best_p, crit = mv.order_akaike(sigbufs, p_max=30, method='yw')    
     if PLOTS:
-        #### MVAR
-        # best_p = 5      # best for both R01 and R02 using 64 channels
-        # if point == '4':
-        #     if file_name == "data/S003R01_fixed_dropped.edf":
-        #         best_p = 13
-        #     elif file_name == "data/S003R02_fixed_dropped.edf":
-        #         best_p = 14
 
         plt.plot(1+np.arange(len(crit)), crit, 'g')
         plt.title("Model order estimation")
