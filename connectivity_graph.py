@@ -167,7 +167,7 @@ def already_computed():
     return True
 
 
-def print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226, auto='auto'):
+def print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='auto'):
     """
     Prints adjacency matrix
     ------------------------
@@ -187,13 +187,14 @@ def print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226, auto='aut
     if threshold is not None:
         mat = compute_adjacency(mat, threshold=threshold)
         density = 100*np.sum(mat)/4032
+        print("Density = {:.02f}%".format(density))
         plt.matshow(mat)
         plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format(conn_method, run, freq, density))
         plt.colorbar()
         plt.show()
 
  
-def p1_1(file_name="data/S003R01_fixed", point='1'):
+def p1_1(file_name="data/S003R01_fixed", freq=10, run='R01', point='1'):
     
     #### Load EEG data from edf file
     if point == '4':        ### <<<<<<<<<<<<<<<<<<
@@ -218,16 +219,17 @@ def p1_1(file_name="data/S003R01_fixed", point='1'):
     f.close()
 
     data = cp.Data(sigbufs, fs=160., chan_names=signal_labels, data_info=file_name)
+    ''' not required
     with warnings.catch_warnings():             # stupid warning about the plot...
         warnings.simplefilter("ignore")
         fxn()
         data.plot_data(trial=3)
+    '''
 
     print("[1.{}] >> Optimizing p...".format(point))
     mv = cp.Mvar
     best_p, crit = mv.order_akaike(sigbufs, p_max=30, method='yw')    
     if PLOTS:
-
         plt.plot(1+np.arange(len(crit)), crit, 'g')
         plt.title("Model order estimation")
         plt.xlabel("order(p)")
@@ -263,13 +265,13 @@ def p1_1(file_name="data/S003R01_fixed", point='1'):
             save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i,run=file_name[9:12])
 
     if PLOTS:
-        print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226)
-        print_adj(conn_method='dtf', freq=10, run='R01', threshold=0.1378)
-
-
-def p1_2():
-    print("[1.2] >> Still to be implemented...")
-
+        # NOTE: the threshold values here will yield ~20% density in the network.
+        if run == 'R01':
+            print_adj(conn_method='pdc', freq=freq, run=run, threshold=0.1226)
+            print_adj(conn_method='dtf', freq=freq, run=run, threshold=0.1378)
+        elif run == 'R02':
+            print_adj(conn_method='pdc', freq=freq, run=run, threshold=0.1167)
+            print_adj(conn_method='dtf', freq=freq, run=run, threshold=0.1322)
 
 def p1_3():
     print("[1.3] >> Still to be implemented...")
@@ -452,3 +454,6 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 def p1_6():
     print("[1.6] >> Still to be implemented...")
 
+
+#print_adj(conn_method='pdc', freq=10, run='R02', threshold=0.1167)
+#print_adj(conn_method='dtf', freq=10, run='R02', threshold=0.1322)
