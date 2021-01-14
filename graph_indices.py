@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from connectivity_graph import load_matrix, compute_adjacency
+from connectivity_graph import load_matrix, compute_adjacency, load_channel_coordinates
 
 
 def getKey(item):
@@ -40,9 +40,9 @@ def graph_indices_part_2_1(adj_mat):
     print("Resutling global Graph Path Lenght using local shortest path lenghts:", PL_avg_real)
     
     
-    degrees = list(G_Real.degree(nodes_idx))  # degree of all nodes as tuple of (node,degree) form
-    in_degrees = list(G_Real.in_degree(nodes_idx))  # degree of all nodes as tuple of (node,degree) form
-    out_degrees = list(G_Real.out_degree(nodes_idx))  # degree of all nodes as tuple of (node,degree) form
+    degrees     = list(G_Real.degree(nodes_idx))     # degree of all nodes as tuple of (node,degree) form
+    in_degrees  = list(G_Real.in_degree(nodes_idx))  # degree of all nodes as tuple of (node,degree) form
+    out_degrees = list(G_Real.out_degree(nodes_idx)) # degree of all nodes as tuple of (node,degree) form
     
     
     degree_sorted = sorted(degrees, key=getKey, reverse=False)
@@ -50,13 +50,15 @@ def graph_indices_part_2_1(adj_mat):
     top_10_degrees = degree_sorted[-10:]
     print("Resutling highest 10 degrees (node, degree) format:", top_10_degrees) 
     
-    # adding a plot
-    nodeid_best_degree = [str(n[0]) for n in top_10_degrees]
+    # adding a plot for local degree top 10
+    ch_names = load_channel_coordinates(label=False,map_ch=True)
+    nodeid_best_degree = [ch_names[n[0]] for n in top_10_degrees]
     best_degree        = [n[1] for n in top_10_degrees]
 
+    ch_names = load_channel_coordinates(label=False,map_ch=True)
     plt.barh(np.arange(0,10), best_degree, color="green")
     plt.yticks(np.arange(0,10),labels=nodeid_best_degree)
-    plt.ylabel("node ID")
+    plt.ylabel("channel ID")
     plt.xlabel("node degree")
     plt.title("Top 10 channels per local degree")
     plt.show()

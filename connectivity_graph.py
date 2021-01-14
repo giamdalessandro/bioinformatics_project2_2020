@@ -264,7 +264,7 @@ def p1_4(R='R01'):
         # data.plot_conn("PDC measure")     # is it even useful?
 
 
-def load_channel_coordinates(label=True):
+def load_channel_coordinates(label=True, map_ch=False):
     """
     Loads channels coordinates in a disctionary and returns it
     """
@@ -276,6 +276,8 @@ def load_channel_coordinates(label=True):
             if l[0] != '\ufeff#':
                 if label:
                     pos.update({str(l[1]): [float(l[2]), float(l[3])]})
+                elif map_ch:
+                    pos.update({int(l[0])-1 : str(l[1])})
                 else:
                     pos.update({int(l[0])-1 : [float(l[2]), float(l[3])]})
     return pos
