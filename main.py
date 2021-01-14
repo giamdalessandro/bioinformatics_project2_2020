@@ -14,8 +14,6 @@ TODO
 """
 
 def task1():
-    p1_1()
-    p1_2()
     p1_3()
     p1_4()
     p1_5(G)
@@ -29,12 +27,20 @@ check_mean_var_EEG_rithm(plot=False)
 
 # since the values of the variance matrix above thresold are few, we will use a specific frequence - 10Hz
 freq = 10
-G = load_conn_graph(conn="pdc", freq=freq, run="R01")
-print("Loaded {} nodes\t{} edges".format(len(G.nodes()), len(G.edges())))
-task1()
+
+# NOTE that we compute the matrix one time and then we save them
+# to re-run the code that computes them, delete the matrix files
+# e.g. data/pdc_R01_10Hz_auto.txt
+# e.g. data/dtf_R02_12Hz_auto.txt
+# NOTE: p1_1 performs also point 1.2
+p1_1(file_name="data/S003R01_fixed", freq=freq, run='R01')
+p1_1(file_name="data/S003R02_fixed", freq=freq, run='R02')
 
 
 
+
+#G = load_conn_graph(conn="pdc", freq=freq, run="R01")
+#print("Loaded {} nodes\t{} edges".format(len(G.nodes()), len(G.edges())))
 
 
 '''
