@@ -8,6 +8,7 @@ from connectivity_graph import load_matrix, compute_adjacency, load_channel_coor
 def getKey(item):
     return item[1]
 
+
 def graph_indices_part_2_1(adj_mat, plots=True):
     # create graph using adjacency matrix
     G_Real = nx.from_numpy_matrix(adj_mat, create_using=nx.DiGraph)

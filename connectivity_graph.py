@@ -90,6 +90,30 @@ def compute_adjacency(conn_mat, threshold=0.1226):
     return adj_mat
 
 
+def compute_mean_adjacency(conn_method='pdc', run='R01'):
+    aux_mat = []
+    for i in range(8, 14):
+        conn_mat = load_matrix(conn_method=conn_method, freq=i, run=run)
+        aux_mat.append(conn_mat)
+    
+    mean_mat = np.mean(aux_mat, axis=0)
+    plt.matshow(mean_mat)
+    plt.title("Mean {} adjacency matrix of run {} in the alpha-band".format(conn_method, run))
+    plt.colorbar()
+    plt.show()
+
+    aux_mat = []
+    for i in range(8, 14):
+        conn_mat = load_matrix(conn_method='pdc', freq=i, run='R01')
+        aux_mat.append((conn_mat - mean_mat)**2)
+    var_mat = np.mean(aux_mat, axis=0)
+    plt.matshow(var_mat)
+    plt.title("Variance of the {} adjacency matrix of run {} in the alpha-band".format(conn_method, run))
+    plt.colorbar()
+    plt.show()
+    return var_mat
+
+
 def map_index_to_channels():
     """
     Maps channel coordinates to indeces in the file
@@ -423,3 +447,15 @@ def p1_6():
 
 ### MAIN 
 #p1_4()
+
+var_pdc_01 = compute_mean_adjacency(conn_method='pdc', run='R01')
+print("{:.4f}%".format(100*np.sum(compute_adjacency(var_pdc_01, threshold=0.05))/4032))
+
+var_dtf_01 = compute_mean_adjacency(conn_method='dtf', run='R01')
+print("{:.4f}%".format(100*np.sum(compute_adjacency(var_dtf_01, threshold=0.05))/4032))
+
+var_pdc_02 = compute_mean_adjacency(conn_method='pdc', run='R02')
+print("{:.4f}%".format(100*np.sum(compute_adjacency(var_pdc_02, threshold=0.05))/4032))
+
+var_dtf_02 = compute_mean_adjacency(conn_method='dtf', run='R02')
+print("{:.4f}%".format(100*np.sum(compute_adjacency(var_dtf_02, threshold=0.05))/4032))

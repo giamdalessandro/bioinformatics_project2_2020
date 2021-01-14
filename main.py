@@ -17,6 +17,7 @@ TODO
         check that we are performing the statistical test
 """
 
+# def task1():
 
 
 # PART 1
