@@ -42,8 +42,8 @@ def triadSignificanceProfile(G, triad_cfg="fuffa"):
 
     real_census   = m_3
     random_census = random_nets_census
-    print(real_census)
-    print(random_census)
+    #print(real_census)
+    #print(random_census)
 
     z_score = []
     for p in range(len(real_census)):
@@ -161,3 +161,8 @@ G = load_conn_graph(conn="pdc", freq=10, run="R01")
 
 sp = triadSignificanceProfile(G)
 print(G)
+
+"""
+norm z-score, 100 random graphs
+[0.5028, 0.5271, 0.5949, 0.1488, 0.2399, 0.1582, 0.034, -0.0025, -0.0088, -0.025, 0.0281, -0.0495, -0.0753]
+"""
