@@ -6,7 +6,7 @@ import networkx as nx
 import connectivipy as cp
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
-
+from itertools import count
 
 PLOTS        = True
 COMPUTE_MATS = False
@@ -343,14 +343,20 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 
     def p4_3_helper(G, pos, communities):
 
-        cmap = 'viridis' #colors.ListedColormap(['#1f78b4', '#33a02c', '#e31a1c', '#ff7f00', '#6a3d9a'], 'indexed', max(communities) + 1)
-        vmin = min(communities) - 1
+        cmap = 'viridis'
+        vmin = min(communities)
         vmax = max(communities)
-        nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, vmin=vmin, vmax=vmax,
-                         node_size=700, edge_color='black', node_color=communities, cmap=cmap)
+        ec = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
+        nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black',
+                                    node_size=700, node_color=communities, cmap=cmap)
+        lc = nx.draw_networkx_labels(G, pos)
+        cbar = plt.colorbar(nc, ticks=np.arange(len(communities)), spacing='proportional')
+        # vertically oriented colorbar
+        cbar.ax.set_yticklabels(['Community 1', 'Community 2', 'Community 3'])
         plt.title("Topological representation of the network's communities found with Infomap")
         plt.show()
 
+    
 
 
     if point == '1.5':
