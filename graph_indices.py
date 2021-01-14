@@ -50,17 +50,43 @@ def graph_indices_part_2_1(adj_mat):
     top_10_degrees = degree_sorted[-10:]
     print("Resutling highest 10 degrees (node, degree) format:", top_10_degrees) 
     
-    # adding a plot for local degree top 10
+    # adding plots for local indices top 10
+    fig, axs = plt.subplots(1, 3, figsize=(9, 3))
     ch_names = load_channel_coordinates(label=False,map_ch=True)
+
     nodeid_best_degree = [ch_names[n[0]] for n in top_10_degrees]
     best_degree        = [n[1] for n in top_10_degrees]
+    my_colors = ["blue","red","navy","yellow","cyan","gray","brown","magenta","orange","lime"]
 
-    ch_names = load_channel_coordinates(label=False,map_ch=True)
-    plt.barh(np.arange(0,10), best_degree, color="green")
-    plt.yticks(np.arange(0,10),labels=nodeid_best_degree)
-    plt.ylabel("channel ID")
-    plt.xlabel("node degree")
-    plt.title("Top 10 channels per local degree")
+    axs[0].barh(np.arange(0,10), best_degree, color=my_colors)
+    axs[0].set_yticks(np.arange(0,10))
+    axs[0].set_yticklabels(nodeid_best_degree)
+    axs[0].set_ylabel("channel ID")
+    axs[0].set_xlabel("node degree")
+    
+    in_degree_sorted      = sorted(in_degrees, key=getKey, reverse=False)
+    top_10_in_degrees     = in_degree_sorted[-10:]
+    nodeid_best_in_degree = [ch_names[n[0]] for n in top_10_in_degrees]
+    best_in_degree        = [n[1] for n in top_10_in_degrees]
+    my_colors = ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"]
+
+    axs[1].barh(np.arange(0,10), best_in_degree, color=my_colors)
+    axs[1].set_yticks(np.arange(0,10)),
+    axs[1].set_yticklabels(nodeid_best_in_degree)
+    axs[1].set_xlabel("in degree")
+    
+    out_degree_sorted       = sorted(in_degrees, key=getKey, reverse=False)
+    top_10_out_degrees      = in_degree_sorted[-10:]
+    nodeid_best_out_degree = [ch_names[n[0]] for n in top_10_out_degrees]
+    best_out_degree         = [n[1] for n in top_10_out_degrees]
+    my_colors = ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"]
+
+    axs[2].barh(np.arange(0,10), best_out_degree, color=my_colors)
+    axs[2].set_yticks(np.arange(0,10)),
+    axs[2].set_yticklabels(nodeid_best_out_degree)
+    axs[2].set_xlabel("out degree")
+    
+    fig.suptitle("Top 10 channels for local inidces")
     plt.show()
 
     return Cf_avg_real, PL_avg_real
