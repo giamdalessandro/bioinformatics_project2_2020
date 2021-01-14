@@ -45,29 +45,7 @@ def best_partition_louvain(conn_method="pdc", freq=10, run="R01", auto='auto', t
     G = ig.Graph.Adjacency((adj_mat > 0).tolist())
     partition = louvain.find_partition(G, louvain.ModularityVertexPartition)   # finds best partition
     return partition
-    '''
-        best_partition = louvain.find_partition(G, louvain.CPMVertexPartition, resolution_parameter=0.1)
-        print(best_partition)
-        #ig.plot(best_partition, layout=G.layout("kk"))
-
-
-        partition = louvain.CPMVertexPartition(G, resolution_parameter=1.0)
-        optimiser = louvain.Optimiser()
-        old = optimiser.optimise_partition(partition)
-        print("len partition", len(partition), '\tdiff =', old)
-
-        rc = 0.9
-        while True:
-            partition = louvain.CPMVertexPartition(G, resolution_parameter=rc)
-            optimiser = louvain.Optimiser()
-            diff = optimiser.optimise_partition(partition)
-            print("len partition", len(partition), '\tdiff =', diff-old)
-            if diff - old < 0 or len(partition) == 1:
-                break
-            old = diff
-            rc -= 0.1
-    '''
-
+    
 
 def best_partition_infomap(G):
     """
