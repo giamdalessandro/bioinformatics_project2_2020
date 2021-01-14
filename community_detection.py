@@ -75,7 +75,7 @@ def best_partition_infomap(G):
     Annotates nodes with 'community' id.
     """
 
-    im = infomap.Infomap("--directed --prefer-modular-solution")
+    im = infomap.Infomap("--directed")  # --prefer-modular-solution yields more cluster but with less accuracy
 
     print("Building Infomap network from a NetworkX graph...")
     for source, target in G.edges:
@@ -130,7 +130,7 @@ def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226
             print(node, end=" ", flush=True)
         print('\n')
     ###
-    
+
     communities = [c - 1 for c in nx.get_node_attributes(G, 'community').values()]
     p1_5(G, point='4.3', communities=communities)
 
