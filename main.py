@@ -29,12 +29,13 @@ freq = 10
 # e.g. data/dtf_R02_12Hz_auto.txt
 
 p1_1(file_name="data/S003R01_fixed", freq=freq, run='R01')  # NOTE: p1_1 performs also point 1.2
-
+p1_3(conn_method='pdc', freq=10, run='R01')
 
 
 
 
 p1_1(file_name="data/S003R02_fixed", freq=freq, run='R02')  # NOTE: p1_1 performs also point 1.2
+p1_3(conn_method='pdc', freq=10, run='R02')
 
 
 

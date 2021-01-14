@@ -171,7 +171,7 @@ def print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='auto'
     """
     Prints adjacency matrix
     ------------------------
-    TODO - - to check this values, prolly wrong
+    TODO 
     DTF 10hz R01: threshold of 0.1378 network density -> 0.2006 (20.01%)
     PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
     DTF 10hz R02: ???
@@ -190,7 +190,6 @@ def print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='auto'
         print("Density = {:.02f}%".format(density))
         plt.matshow(mat)
         plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format(conn_method, run, freq, density))
-        plt.colorbar()
         plt.show()
 
  
@@ -272,9 +271,6 @@ def p1_1(file_name="data/S003R01_fixed", freq=10, run='R01', point='1'):
         elif run == 'R02':
             print_adj(conn_method='pdc', freq=freq, run=run, threshold=0.1167)
             print_adj(conn_method='dtf', freq=freq, run=run, threshold=0.1322)
-
-def p1_3():
-    print("[1.3] >> Still to be implemented...")
 
 
 def p1_4(R='R01'):
@@ -458,7 +454,7 @@ def p1_6():
 #print_adj(conn_method='pdc', freq=10, run='R02', threshold=0.1167)
 #print_adj(conn_method='dtf', freq=10, run='R02', threshold=0.1322)
 
-def find_t_helper(mat, target, start):
+def find_threshold(mat, target, start):
     print('[1.3] >> Optimizing thresold to reach {}% density..'.format(target))
     old = 100
     best_t = -1
@@ -476,19 +472,19 @@ def find_t_helper(mat, target, start):
         old = abs(curr_d - target)
     return best_t
 
-def find_threshold(conn_method, freq, run):
-    print("[1.3] >>", conn_method, "matrix, run", run )
+def p1_3(conn_method, freq, run):
+    print("------------------------------------------------------")
+    print("[1.3] >> Optimizing ", conn_method, "matrix, run", run)
     mat = load_matrix(conn_method=conn_method, freq=freq, run=run, verbose=False)
-
-    best_t = 0.27   # threshold for minimum freq
+    
+    # threshold for minimum freq with pdc
+    best_t = 0.27   
     for target in list([1, 5, 10, 20, 30, 50]):
-        best_t = find_t_helper(mat, target, best_t)
+        best_t = find_threshold(mat, target, best_t)
         new_mat = compute_adjacency(mat, threshold=best_t)
-        density = 100*np.sum(new_mat)/(4032-64*2)
+        density = 100*np.sum(new_mat)/4032
         print("Density ~ {:.02f}% with threshold = {}\n".format(density, best_t))
-        
+        plt.matshow(new_mat)
+        plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format(conn_method, run, freq, density))
+        plt.show()
 
-find_threshold(conn_method='pdc', freq=10, run='R01')
-find_threshold(conn_method='pdc', freq=10, run='R02')
-find_threshold(conn_method='dtf', freq=10, run='R01')
-find_threshold(conn_method='dtf', freq=10, run='R02')
