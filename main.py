@@ -6,7 +6,9 @@ G = load_conn_graph(conn="pdc", freq=10, run="R01")
 
 """
 TODO
-- 1.1   choose freq or band? if freq, which freq?
+- 1.1   choose freq or band?
+            if freq, which freq?
+        shuffle rows/cols?
 - 1.3
 - 1.4   try to find the libraries
 - 1.6   same as 1.1

@@ -403,7 +403,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         for node in G.nodes():
             node_color_in.append(G.in_degree(node))
             node_color_out.append(G.out_degree(node))
-            node_color_sum.append(G.out_degree(node) - G.in_degree(node))
+            node_color_sum.append(G.out_degree(node) + G.in_degree(node))
         p1_5_helper(G, pos, degree='in' , node_color=node_color_in)
         p1_5_helper(G, pos, degree='out', node_color=node_color_out)
         p1_5_helper(G, pos, degree='sum', node_color=node_color_sum)
