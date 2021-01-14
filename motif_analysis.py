@@ -151,13 +151,15 @@ def p3_4():
     return m_4, M_4
 
 
-G = load_conn_graph(conn="pdc", freq=10, run="R01")
-#p3_2(G)
 
-sp = significanceProfile(G)
-print(G)
+if __name__ == '__main__':
+    G = load_conn_graph(conn="pdc", freq=10, run="R01")
+    p3_2(G)
 
-"""
-norm z-score, 100 random graphs
-[0.5028, 0.5271, 0.5949, 0.1488, 0.2399, 0.1582, 0.034, -0.0025, -0.0088, -0.025, 0.0281, -0.0495, -0.0753]
-"""
+    """
+    sp = significanceProfile(G)
+    print(sp)
+
+    norm z-score, 100 random graphs
+    [0.5028, 0.5271, 0.5949, 0.1488, 0.2399, 0.1582, 0.034, -0.0025, -0.0088, -0.025, 0.0281, -0.0495, -0.0753]
+    """

@@ -52,7 +52,7 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
     return
 
 
-def load_matrix(conn_method="pdc", freq=10, run="R01", auto='auto'):
+def load_matrix(conn_method="pdc", freq=10, run="R01", auto='auto', verbose=True):
     """
     Load the adjacency matrix from file
         - conn_method : the method used to compute the connectivity matrix, one of {'dtf','pdc'};
@@ -61,7 +61,8 @@ def load_matrix(conn_method="pdc", freq=10, run="R01", auto='auto'):
     """
     mat_file = "data/{}_{}_{}hz_{}.txt".format(conn_method, run, freq, auto) 
     mat_list = []
-    print("Loading matrix from '{}' ...".format(mat_file))
+    if verbose:
+        print("Loading matrix from '{}' ...".format(mat_file))
 
     with open(mat_file, "r") as f:
         for row in f.readlines():
@@ -93,7 +94,7 @@ def compute_adjacency(conn_mat, threshold=0.1226):
 def compute_mean_adjacency(conn_method='pdc', run='R01'):
     aux_mat = []
     for i in range(8, 14):
-        conn_mat = load_matrix(conn_method=conn_method, freq=i, run=run)
+        conn_mat = load_matrix(conn_method=conn_method, freq=i, run=run, verbose=False)
         aux_mat.append(conn_mat)
     
     mean_mat = np.mean(aux_mat, axis=0)
@@ -104,7 +105,7 @@ def compute_mean_adjacency(conn_method='pdc', run='R01'):
 
     aux_mat = []
     for i in range(8, 14):
-        conn_mat = load_matrix(conn_method='pdc', freq=i, run='R01')
+        conn_mat = load_matrix(conn_method=conn_method, freq=i, run=run,  verbose=False)
         aux_mat.append((conn_mat - mean_mat)**2)
     var_mat = np.mean(aux_mat, axis=0)
     plt.matshow(var_mat)
@@ -112,6 +113,13 @@ def compute_mean_adjacency(conn_method='pdc', run='R01'):
     plt.colorbar()
     plt.show()
     return var_mat
+
+
+def check_mean_var_EEG_rithm(plot=True):
+    if plot:
+        for meth in ['pdc', 'dtf']:
+            for run in ['R01', 'R02']:
+                compute_mean_adjacency(conn_method=meth, run=run)
 
 
 def map_index_to_channels():
@@ -444,18 +452,3 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 def p1_6():
     print("[1.6] >> Still to be implemented...")
 
-
-### MAIN 
-#p1_4()
-
-var_pdc_01 = compute_mean_adjacency(conn_method='pdc', run='R01')
-print("{:.4f}%".format(100*np.sum(compute_adjacency(var_pdc_01, threshold=0.05))/4032))
-
-var_dtf_01 = compute_mean_adjacency(conn_method='dtf', run='R01')
-print("{:.4f}%".format(100*np.sum(compute_adjacency(var_dtf_01, threshold=0.05))/4032))
-
-var_pdc_02 = compute_mean_adjacency(conn_method='pdc', run='R02')
-print("{:.4f}%".format(100*np.sum(compute_adjacency(var_pdc_02, threshold=0.05))/4032))
-
-var_dtf_02 = compute_mean_adjacency(conn_method='dtf', run='R02')
-print("{:.4f}%".format(100*np.sum(compute_adjacency(var_dtf_02, threshold=0.05))/4032))
