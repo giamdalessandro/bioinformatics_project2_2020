@@ -93,6 +93,9 @@ def best_partition_infomap(G):
     nx.set_node_attributes(G, communities, 'community')
 
 
+####
+
+
 def p4_1(conn_method="pdc", freq=10, run="R01", auto='auto', threshold=0.1226):
     
     partition = best_partition_louvain(conn_method=conn_method, freq=freq,
@@ -115,8 +118,9 @@ def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226
     best_partition_infomap(G)
     mapping = map_index_to_channels()
     G = nx.relabel_nodes(G, mapping)
-
+    
     communities = [c - 1 for c in nx.get_node_attributes(G, 'community').values()]
+    print('\n\n', communities, '\n\n')
     p1_5(G, point='4.3', communities=communities)
 
 
