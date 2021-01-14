@@ -457,3 +457,27 @@ def p1_6():
 
 #print_adj(conn_method='pdc', freq=10, run='R02', threshold=0.1167)
 #print_adj(conn_method='dtf', freq=10, run='R02', threshold=0.1322)
+
+
+def find_threshold(conn_method, freq, run):
+    for target in list([1, 5, 10, 30, 50]):
+        print('[1.3] >> Optimizing thresold to reach {}% density..'.format(target))
+        mat = load_matrix(conn_method=conn_method, freq=freq, run=run, verbose=False)
+        best = 1000
+        threshold = 0
+        vv = np.arange(0., 1., 0.0001)
+        for t in vv:
+            mat = compute_adjacency(mat, threshold=t)
+            density = 100*np.sum(mat)/4032
+            print(density)
+            print(abs(density - target), '<?', best)
+            if abs(density - target) <= best:
+                best = abs(density - target)
+                best_density = density
+                threshold = t 
+            else:
+                break
+        print("Density = {:.02f}% with threshold = {}\n".format(density, threshold))
+            
+
+find_threshold(conn_method='pdc', freq=10, run='R02')
