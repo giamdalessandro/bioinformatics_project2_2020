@@ -325,11 +325,10 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 
     def p4_3_helper(G, pos, communities):
 
-        cmap = colors.ListedColormap(
-            ['#1f78b4', '#33a02c', '#e31a1c', '#ff7f00', '#6a3d9a'], 'indexed', max(communities) + 1)
-        # vmin = min(communities)
-        # vmax = max(communities)
-        nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True,# vmin=vmin, vmax=vmax,
+        cmap = 'viridis' #colors.ListedColormap(['#1f78b4', '#33a02c', '#e31a1c', '#ff7f00', '#6a3d9a'], 'indexed', max(communities) + 1)
+        vmin = min(communities) - 1
+        vmax = max(communities)
+        nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, vmin=vmin, vmax=vmax,
                          node_size=700, edge_color='black', node_color=communities, cmap=cmap)
         plt.title("Topological representation of the network's communities found with Infomap ")
         plt.show()

@@ -29,7 +29,7 @@ def find_communities(G):
     print("[4.3] >> Communities found;", communities)
     nx.set_node_attributes(G, communities, 'community')
 
-
+'''
 def draw_network(G):
     # position map
     pos = nx.spring_layout(G)
@@ -66,7 +66,7 @@ def draw_network(G):
 
     plt.axis('off')
     plt.show()
-
+'''
 
 conn_mat = load_matrix(conn_method="pdc", freq=10, run='R01', auto='auto')
 adj_mat = compute_adjacency(conn_mat, threshold=0.1226)
@@ -81,6 +81,6 @@ with open("data/channel_locations.txt") as f:
         if l[0] != '\ufeff#':
             mapping.update({int(l[0]) - 1: str(l[1])})
 G = nx.relabel_nodes(G, mapping)
-#draw_network(G)
+
 communities = [c - 1 for c in nx.get_node_attributes(G, 'community').values()]
 p1_5(G, point='4.3', communities=communities)
