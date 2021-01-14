@@ -322,9 +322,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
                          edgelist=edgelist, nodelist=nodelist)
 
         plt.title("Topological representation of the network - {} degree".format(degree))
-
-        sm = plt.cm.ScalarMappable(
-            cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
+        sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
         sm._A = []
         plt.colorbar(sm)
         plt.show()
@@ -337,7 +335,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         for i in S:
             colorbar_labels.append('Community {}'.format(i+1))
 
-        cmap = 'viridis'
+        cmap = 'Spectral'
         vmin = min(communities.values())
         vmax = max(communities.values())
         _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
@@ -357,7 +355,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         for i in S:
             colorbar_labels.append('Community {}'.format(i+1))
 
-        cmap = 'viridis'
+        cmap = 'Spectral'
         vmin = min(communities)
         vmax = max(communities)
         _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
