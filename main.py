@@ -2,8 +2,6 @@ from connectivity_graph import *
 from motif_analysis import *
 from community_detection import *
 
-
-
 """
 TODO
 - 1.1   shuffle rows/cols?
@@ -16,21 +14,28 @@ TODO
 """
 
 def task1():
-    # we check if we can use just one frequencies of the alpha band or the entire band
-    check_mean_var_EEG_rithm()
-
-    # since the values of the variance matrix above thresold are few, we will use a specific frequence - 10Hz
     p1_1()
     p1_2()
     p1_3()
     p1_4()
     p1_5(G)
 
- 
-G = load_conn_graph(conn="pdc", freq=10, run="R01")
-print("[1.5] >> {} nodes\t{} edges".format(len(G.nodes()), len(G.edges())))
 
+RUN = ['R01', 'R02']
+ESTIMATORS = ['pdc', 'dtf']
+
+# we check if we can use just one frequencies of the alpha band or the entire band
+check_mean_var_EEG_rithm(plot=False)
+
+# since the values of the variance matrix above thresold are few, we will use a specific frequence - 10Hz
+freq = 10
+G = load_conn_graph(conn="pdc", freq=freq, run="R01")
+print("Loaded {} nodes\t{} edges".format(len(G.nodes()), len(G.edges())))
 task1()
+
+
+
+
 
 '''
 # PART 3

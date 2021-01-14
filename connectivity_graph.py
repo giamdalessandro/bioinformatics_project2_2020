@@ -115,10 +115,11 @@ def compute_mean_adjacency(conn_method='pdc', run='R01'):
     return var_mat
 
 
-def check_mean_var_EEG_rithm():
-    for meth in ['pdc', 'dtf']:
-        for run in ['R01', 'R02']:
-            compute_mean_adjacency(conn_method=meth, run=run)
+def check_mean_var_EEG_rithm(plot=True):
+    if plot:
+        for meth in ['pdc', 'dtf']:
+            for run in ['R01', 'R02']:
+                compute_mean_adjacency(conn_method=meth, run=run)
 
 
 def map_index_to_channels():
