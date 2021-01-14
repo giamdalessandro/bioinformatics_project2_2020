@@ -10,8 +10,6 @@ TODO
 - 1.3
 - 1.4   try to find the libraries
 - 1.6   same as 1.1
-- 2.3
-- 2.5
 - 2.6
 - 3.1   struct or func motif? 
         check that we are performing the statistical test
