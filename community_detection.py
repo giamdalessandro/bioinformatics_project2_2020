@@ -130,8 +130,8 @@ def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226
 G = load_conn_graph(conn="pdc", freq=10, run="R01", auto='auto', threshold=0.1226)
 print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
 
-#partition = p4_1()
-#p4_2(G, partition)
+partition = p4_1()
+p4_2(G, partition)
 p4_3(G)
 
 #NOTE: implementare una metrica (Jaccard ?) per vedere quanto le due partition sono simili

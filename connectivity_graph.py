@@ -331,12 +331,21 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 
 
     def p4_2_helper(G, pos, communities):
+        
+        colorbar_labels = []
+        S = set(communities.values())
+        for i in S:
+            colorbar_labels.append('Community {}'.format(i+1))
 
         cmap = 'viridis'
-        vmin = min(communities.values()) - 1
+        vmin = min(communities.values())
         vmax = max(communities.values())
-        nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, nodelist=communities.keys(), node_size=700,
-                         cmap=cmap, vmin=vmin, vmax=vmax, node_color=list(communities.values()), edge_color='black')
+        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
+        nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700,
+                                    nodelist=communities.keys(), node_color=list(communities.values()), cmap=cmap)
+        _  = nx.draw_networkx_labels(G, pos)
+        cbar = plt.colorbar(nc, ticks=np.arange(len(communities)), spacing='proportional')
+        cbar.ax.set_yticklabels(colorbar_labels)
         plt.title("Topological representation of the network's communities found with Louvain")
         plt.show()
 
@@ -348,15 +357,12 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         for i in S:
             colorbar_labels.append('Community {}'.format(i+1))
 
-
-        #['Community 1', 'Community 2', 'Community 3']
         cmap = 'viridis'
         vmin = min(communities)
         vmax = max(communities)
-        ec = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
-        nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black',
-                                    node_size=700, node_color=communities, cmap=cmap)
-        lc = nx.draw_networkx_labels(G, pos)
+        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
+        nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700, node_color=communities, cmap=cmap)
+        _  = nx.draw_networkx_labels(G, pos)
         cbar = plt.colorbar(nc, ticks=np.arange(len(communities)), spacing='proportional')
         cbar.ax.set_yticklabels(colorbar_labels)
         plt.title("Topological representation of the network's communities found with Infomap")
