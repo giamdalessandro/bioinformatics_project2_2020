@@ -5,6 +5,8 @@ import numpy as np
 import networkx as nx
 import connectivipy as cp
 import matplotlib.pyplot as plt
+import matplotlib.colors as colors
+
 
 PLOTS        = True
 COMPUTE_MATS = False
@@ -279,7 +281,7 @@ def load_channel_coordinates(label=True):
     return pos
 
 
-def p1_5(G, nodelist=None, edgelist=None):
+def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
     """
     Prints a topological representation of the networks
     Node colors depend on their degree
@@ -309,10 +311,8 @@ def p1_5(G, nodelist=None, edgelist=None):
         nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, vmin=vmin, vmax=vmax,
                          node_size=700, edge_color='black', node_color=node_color, cmap=cmap,
                          edgelist=edgelist, nodelist=nodelist)
-                         
 
-        plt.title(
-            "Topological representation of the network - {} degree".format(degree))
+        plt.title("Topological representation of the network - {} degree".format(degree))
 
         sm = plt.cm.ScalarMappable(
             cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
@@ -320,9 +320,24 @@ def p1_5(G, nodelist=None, edgelist=None):
         plt.colorbar(sm)
         plt.show()
 
-    p1_5_helper(G, pos, 'in')
-    p1_5_helper(G, pos, 'out')
 
+    def p4_3_helper(G, pos, communities):
+
+        cmap = colors.ListedColormap(
+            ['#1f78b4', '#33a02c', '#e31a1c', '#ff7f00', '#6a3d9a'], 'indexed', max(communities) + 1)
+        # vmin = min(communities)
+        # vmax = max(communities)
+        nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True,# vmin=vmin, vmax=vmax,
+                         node_size=700, edge_color='black', node_color=communities, cmap=cmap)
+        plt.title("Topological representation of the network's communities found with Infomap ")
+        plt.show()
+
+
+    if point == '1.5':
+        p1_5_helper(G, pos, 'in')
+        p1_5_helper(G, pos, 'out')
+    elif point == '4.3':
+        p4_3_helper(G, pos, communities)
 
 def p1_6():
     print("[1.6] >> Still to be implemented...")

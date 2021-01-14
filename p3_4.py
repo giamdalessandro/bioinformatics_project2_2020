@@ -5,13 +5,7 @@ import pathlib
 
 import infomap
 
-from connectivity_graph import load_conn_graph, load_channel_coordinates, load_matrix, compute_adjacency, p1_5
-
-
-"""
-Generate and draw a network with NetworkX, colored
-according to the community structure found by Infomap.
-"""
+from connectivity_graph import load_matrix, compute_adjacency, p1_5
 
 
 def find_communities(G):
@@ -20,7 +14,7 @@ def find_communities(G):
     Annotates nodes with 'community' id.
     """
 
-    im = infomap.Infomap("--two-level --directed --verbose")
+    im = infomap.Infomap("--directed --prefer-modular-solution")
 
     print("Building Infomap network from a NetworkX graph...")
     for source, target in G.edges:
@@ -31,10 +25,6 @@ def find_communities(G):
 
     print(f"Found {im.num_top_modules} modules with codelength: {im.codelength}")
 
-    print("\n#node flow:")
-    for node in im.nodes:
-        print(node.node_id, node.flow)
-
     communities = im.get_modules()
     print("[4.3] >> Communities found;", communities)
     nx.set_node_attributes(G, communities, 'community')
@@ -44,8 +34,7 @@ def draw_network(G):
     # position map
     pos = nx.spring_layout(G)
     # community index
-    communities = [
-        c - 1 for c in nx.get_node_attributes(G, 'community').values()]
+    communities = [c - 1 for c in nx.get_node_attributes(G, 'community').values()]
     num_communities = max(communities) + 1
 
     # color map from http://colorbrewer2.org/
@@ -82,8 +71,16 @@ def draw_network(G):
 conn_mat = load_matrix(conn_method="pdc", freq=10, run='R01', auto='auto')
 adj_mat = compute_adjacency(conn_mat, threshold=0.1226)
 G = nx.from_numpy_array(adj_mat, create_using=nx.DiGraph)
-# G = nx.karate_club_graph()
 print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
 
 find_communities(G)
-draw_network(G)
+with open("data/channel_locations.txt") as f:
+    mapping = {}
+    for line in f:
+        l = line.split(sep='        ')
+        if l[0] != '\ufeff#':
+            mapping.update({int(l[0]) - 1: str(l[1])})
+G = nx.relabel_nodes(G, mapping)
+#draw_network(G)
+communities = [c - 1 for c in nx.get_node_attributes(G, 'community').values()]
+p1_5(G, point='4.3', communities=communities)
