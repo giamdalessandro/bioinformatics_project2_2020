@@ -2,9 +2,11 @@ from connectivity_graph import *
 from motif_analysis import *
 from community_detection import *
 
+G = load_conn_graph(conn="pdc", freq=10, run="R01")
+
+
 # PART 1
 p1_1()
-G = load_conn_graph(conn="pdc", freq=10, run="R01")
 
 p1_2()
 p1_3()

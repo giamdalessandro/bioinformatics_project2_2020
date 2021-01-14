@@ -45,11 +45,14 @@ def p3_2(G):
     for node in G.nodes():
         for e1 in G.in_edges(node):
             for e2 in G.in_edges(node):
-                if e2 != e1 and (e1[0],e2[0]) not in G.edges() and (e2[0],e1[0]) not in G.edges():
-                    motif_G.add_edge(e1[0],e1[1])
-                    motif_G.add_edge(e2[0],e1[1])
+                if e2 != e1 and (e1[0], e2[0]) not in G.edges() and (e2[0], e1[0]) not in G.edges() and (e1[1], e1[0]) not in G.edges() and (e2[1], e2[0]) not in G.edges():
+                    motif_G.add_edge(e1[0],e1[1], color='k',  width=1.5)
+                    motif_G.add_edge(e2[0],e2[1], color='k',  width=1.5)
+                # else:
+                #     motif_G.add_edge(e1[0], e2[1], color='k', width=0.5)
+                #     motif_G.add_edge(e2[0], e1[1], color='k', width=0.5)
     print("[3.2] >> found {} edges between {} nodes in the new graph.".format(len(motif_G.edges()),len(motif_G.nodes())))
-    p1_5(motif_G)
+    p1_5(motif_G, point='3.2')
 
 
 def p3_3(freq_mat, ch_name="Po4"):
@@ -102,5 +105,5 @@ def p3_4():
     return m_4, M_4
 
 
-
-p3_4()
+G = load_conn_graph(conn="pdc", freq=10, run="R01")
+p3_2(G)
