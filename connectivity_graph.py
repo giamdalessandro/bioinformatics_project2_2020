@@ -458,30 +458,38 @@ def p1_6():
 #print_adj(conn_method='pdc', freq=10, run='R02', threshold=0.1167)
 #print_adj(conn_method='dtf', freq=10, run='R02', threshold=0.1322)
 
+def find_t_helper(mat, target, start):
+    print('[1.3] >> Optimizing thresold to reach {}% density..'.format(target))
+    old = 100
+    best_t = -1
+    eps = 0.1
+    start = 0.27
+    # it's faster if we decrease our threshold
+    vv = np.arange(start, 0.06, -0.0001)
+    for t in vv:
+        new_mat = compute_adjacency(mat, threshold=t)
+        curr_d = 100*np.sum(new_mat)/(4032-64*2)
+        if abs(curr_d - target) <= eps:
+            if abs(curr_d - target) <= old:
+                best_t = t
+            else:
+                break
+        old = abs(curr_d - target)
+    return best_t
 
 def find_threshold(conn_method, freq, run):
+    print("[1.3] >>", conn_method, "matrix, run", run )
+    mat = load_matrix(conn_method=conn_method, freq=freq, run=run, verbose=False)
+
+    best_t = 0.25   # threshold for minimum freq
     for target in list([1, 5, 10, 20, 30, 50]):
-        print('[1.3] >> Optimizing thresold to reach {}% density..'.format(target))
-        mat = load_matrix(conn_method=conn_method, freq=freq, run=run, verbose=False)
-        old    = 100
-        best_t = -1
-        eps = 0.1
-        vv = np.arange(0.27, 0.06, -0.00001)      # it's faster if we decrease our threshold
-        for t in vv:
-            new_mat = compute_adjacency(mat, threshold=t)
-            curr_d = 100*np.sum(new_mat)/(4032-64*2)
-            if abs(curr_d - target) <= eps:
-                if abs(curr_d - target) <= old:
-                    best_t = t 
-                else:
-                    break
-            old = abs(curr_d - target)
-                
-            #print("density new matrix:", curr_d, "with þ =", t)
-            #print(curr_d, '<?', best_d)
+        best_t = find_t_helper(mat, target, best_t)
         new_mat = compute_adjacency(mat, threshold=best_t)
         density = 100*np.sum(new_mat)/(4032-64*2)
         print("Density ~ {:.02f}% with threshold = {}\n".format(density, best_t))
         
 
+find_threshold(conn_method='pdc', freq=10, run='R01')
 find_threshold(conn_method='pdc', freq=10, run='R02')
+find_threshold(conn_method='dtf', freq=10, run='R01')
+find_threshold(conn_method='dtf', freq=10, run='R02')
