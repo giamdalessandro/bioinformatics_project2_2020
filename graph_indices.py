@@ -148,7 +148,7 @@ def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%'
     ax[0].set_xlabel("network density")
     ax[0].set_ylabel("avg clustering coefficient")
     ax[0].grid(axis="y")
-    #ax[0].legend()
+    ax[0].legend()
 
     ax[1].bar(np.arange(len(avg_pl)), avg_pl, width=0.4, color="coral", label="avg path length")
     ax[1].set_xticks(np.arange(len(densities)))
@@ -157,11 +157,12 @@ def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%'
     ax[1].set_xlabel("network density")
     ax[1].set_ylabel("avg path length")
     ax[1].grid(axis="y")
-    #ax[1].legend()
+    ax[1].legend()
 
     fig.suptitle("Global graph indices per network density")
     plt.show()
     return
+
 
 def graph_indices_part_2_7(conn_mat, threshold):
     weights = np.random.uniform(0, 2, (N,N))  # random generated weght with shape (n,n)
@@ -175,7 +176,8 @@ def graph_indices_part_2_7(conn_mat, threshold):
     weighted_adj_mat = np.multiply(weights, adj_mat) # mask weiths using adjacency matrix
     
     G_weighted = nx.from_numpy_matrix(weighted_adj_mat, create_using=nx.DiGraph)
-    
+    #print(G_weighted.edges(data="weight"))
+
     for u, v, weight in G_weighted.edges(data="weight"):
         if weight is not None:
             # print(f'weight ==== {u} --> {v}: {weight}')
@@ -209,7 +211,15 @@ def graph_indices_part_2_7(conn_mat, threshold):
     
     top_10_degrees_weighted = degree_sorted_weighted[-10:]
     print("Resutling highest 10 degrees (node, degree) format:", top_10_degrees_weighted) 
-            
+
+    my_colors = [
+        ["blue","red","navy","yellow","cyan","gray","brown","magenta","orange","lime"],
+        ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"],
+        ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"]
+    ]
+    plot2_1(degrees_weighted,in_degrees_weighted,out_degrees_weighted,colors=my_colors)
+
+    return  
         
 def p2_3(freq, run, threshold_pdc, threshold_dtf):
     """
@@ -266,7 +276,7 @@ thresholds = [0.41, 0.24, 0.187, 0.137, 0.1, 0.055]
 graph_indices_part_2_4(conn_mat, thresholds)
 '''
 
-"""
+
 print('\n================== P 2.7 ==============================')
 threshold = threshold_20_percent_density
 graph_indices_part_2_7(conn_mat, threshold)
