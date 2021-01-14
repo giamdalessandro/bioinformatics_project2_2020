@@ -29,7 +29,7 @@ def relabel_partition(partition):
             partition.update({ p : k})
             print(p, end=" ", flush=True)
         print('\n')
-    return partition
+    return partition, d
 
 
 # NOTE: to check, dunno if it's really the best partition
@@ -45,29 +45,7 @@ def best_partition_louvain(conn_method="pdc", freq=10, run="R01", auto='auto', t
     G = ig.Graph.Adjacency((adj_mat > 0).tolist())
     partition = louvain.find_partition(G, louvain.ModularityVertexPartition)   # finds best partition
     return partition
-    '''
-        best_partition = louvain.find_partition(G, louvain.CPMVertexPartition, resolution_parameter=0.1)
-        print(best_partition)
-        #ig.plot(best_partition, layout=G.layout("kk"))
-
-
-        partition = louvain.CPMVertexPartition(G, resolution_parameter=1.0)
-        optimiser = louvain.Optimiser()
-        old = optimiser.optimise_partition(partition)
-        print("len partition", len(partition), '\tdiff =', old)
-
-        rc = 0.9
-        while True:
-            partition = louvain.CPMVertexPartition(G, resolution_parameter=rc)
-            optimiser = louvain.Optimiser()
-            diff = optimiser.optimise_partition(partition)
-            print("len partition", len(partition), '\tdiff =', diff-old)
-            if diff - old < 0 or len(partition) == 1:
-                break
-            old = diff
-            rc -= 0.1
-    '''
-
+    
 
 def best_partition_infomap(G):
     """
@@ -133,16 +111,32 @@ def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226
 
     communities = [c - 1 for c in nx.get_node_attributes(G, 'community').values()]
     p1_5(G, point='4.3', communities=communities)
+    return l
+
+
+def jaccard(S1, S2):
+    S1 = set(S1)
+    S2 = set(S2)
+    return 100*len(S1.intersection(S2))/len(S1.union(S2))
 
 
 
 ### main
 
-G = load_conn_graph(conn="pdc", freq=10, run="R01", auto='auto', threshold=0.1226)
-print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
+if __name__ == '__main__':
+    G = load_conn_graph(conn="pdc", freq=10, run="R01", auto='auto', threshold=0.1226)
+    print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
 
-partition = p4_1()
-p4_2(G, partition)
-p4_3(G)
+    partition, partition_louvain = p4_1()
+    p4_2(G, partition)
+    partition_infomap = p4_3(G)
 
-#NOTE: implementare una metrica (Jaccard ?) per vedere quanto le due partition sono simili
+    #NOTE: implementare una metrica (Jaccard ?) per vedere quanto le due partition sono simili
+
+    for S1 in partition_louvain.values(): 
+        for S2 in partition_infomap:
+            j = jaccard(S1, S2)             # S1 and S2 are list of nodes
+            if j > 0:
+                print("Louvain community:", S1)
+                print("Infomap community:", S2)
+                print("Jaccard is {}%\n".format(j))
