@@ -4,7 +4,7 @@ import networkx as nx
 import community as cl
 import infomap
 
-from connectivity_graph import load_conn_graph, load_channel_coordinates, load_matrix, compute_adjacency, p1_5
+from connectivity_graph import load_conn_graph, load_channel_coordinates, load_matrix, compute_adjacency, p1_5, map_index_to_channels
 
 
 def relabel_partition(partition):
@@ -15,19 +15,6 @@ def relabel_partition(partition):
     print('\n', partition, '\n')
     partition = list(partition)
     d = {}
-
-    def map_index_to_channels():
-        """
-        Maps channel coordinates to indeces in the file
-        """
-        with open("data/channel_locations.txt") as f:
-            pos = {}
-            for line in f:
-                # yes, there are 8 spaces in the file.
-                l = line.split(sep='        ')
-                if l[0] != '\ufeff#':
-                    pos.update({int(l[0])-1: str(l[1])})
-        return pos
 
     mapping = map_index_to_channels()
     for i in range(len(partition)):
@@ -124,21 +111,13 @@ def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226
     conn_mat = load_matrix(conn_method=conn_method, freq=freq, run=run, auto=auto)
     adj_mat = compute_adjacency(conn_mat, threshold=threshold)
     G = nx.from_numpy_array(adj_mat, create_using=nx.DiGraph)
-    print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
 
     best_partition_infomap(G)
-    with open("data/channel_locations.txt") as f:
-        mapping = {}
-        for line in f:
-            l = line.split(sep='        ')
-            if l[0] != '\ufeff#':
-                mapping.update({int(l[0]) - 1: str(l[1])})
+    mapping = map_index_to_channels()
     G = nx.relabel_nodes(G, mapping)
 
     communities = [c - 1 for c in nx.get_node_attributes(G, 'community').values()]
     p1_5(G, point='4.3', communities=communities)
-
-
 
 
 
@@ -151,3 +130,4 @@ partition = p4_1()
 p4_2(G, partition)
 p4_3(G)
 
+#NOTE: implementare una metrica (Jaccard ?) per vedere quanto le due partition sono simili

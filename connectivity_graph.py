@@ -90,6 +90,22 @@ def compute_adjacency(conn_mat, threshold=0.1226):
     return adj_mat
 
 
+def map_index_to_channels():
+    """
+    Maps channel coordinates to indeces in the file
+    """
+    # relabel nodes cause there's no labels in the original EDF file
+    # (well, there are, but they are not automatically loaded, so...)
+    with open("data/channel_locations.txt") as f:
+        pos = {}
+        for line in f:
+            # yes, there are 8 spaces in the file.
+            l = line.split(sep='        ')
+            if l[0] != '\ufeff#':
+                pos.update({int(l[0])-1: str(l[1])})
+    return pos
+
+
 def load_conn_graph(conn="pdc", freq=10, run="R01", auto="auto", threshold=0.1226):
     """
     Load the connectivity graph from the related connectivity matrix.
@@ -101,14 +117,7 @@ def load_conn_graph(conn="pdc", freq=10, run="R01", auto="auto", threshold=0.122
     adj_mat = compute_adjacency(load_matrix(conn_method=conn,freq=freq,run=run,auto=auto), threshold=threshold)
 
     G = nx.from_numpy_array(adj_mat,create_using=nx.DiGraph)
-    # relabel nodes cause there's no labels in the original EDF file
-    # (well, there are, but they are not automatically loaded, so...)
-    with open("data/channel_locations.txt") as f:
-        mapping = {}
-        for line in f:
-            l = line.split(sep='        ')
-            if l[0] != '\ufeff#':
-                mapping.update( { int(l[0]) - 1 : str(l[1])})
+    mapping = map_index_to_channels()
     return nx.relabel_nodes(G, mapping)
 
 
