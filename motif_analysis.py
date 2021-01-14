@@ -15,7 +15,7 @@ $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.
 """
 
 
-def triadSignificanceProfile(G, triad_cfg="fuffa"):
+def significanceProfile(G, triad_cfg="fuffa"):
     """
     Compute the significance profile of the patterns mapped in triad_cfg, 
     inside directed graph G.
@@ -27,10 +27,8 @@ def triadSignificanceProfile(G, triad_cfg="fuffa"):
     M = compute_adjacency(load_matrix())
     m_3, M_3 = motif3funct_bin(M)
 
-    in_degree_sequence  = [d for n, d in G.in_degree()]   # in degree sequence
-    out_degree_sequence = [d for n, d in G.out_degree()]  # out degree sequence
-    #print("In_degree sequence %s" % in_degree_sequence)
-    #print("Out_degree sequence %s" % out_degree_sequence)
+    in_degree_sequence  = [d for n, d in G.in_degree()]   # in-degree sequence
+    out_degree_sequence = [d for n, d in G.out_degree()]  # out-degree sequence
 
     random_nets_census = []
     for i in range(100):
@@ -42,9 +40,6 @@ def triadSignificanceProfile(G, triad_cfg="fuffa"):
 
     real_census   = m_3
     random_census = random_nets_census
-    #print(real_census)
-    #print(random_census)
-
     z_score = []
     for p in range(len(real_census)):
         print(p)
@@ -159,7 +154,7 @@ def p3_4():
 G = load_conn_graph(conn="pdc", freq=10, run="R01")
 #p3_2(G)
 
-sp = triadSignificanceProfile(G)
+sp = significanceProfile(G)
 print(G)
 
 """
