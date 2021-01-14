@@ -8,7 +8,7 @@ from connectivity_graph import load_matrix, compute_adjacency, load_channel_coor
 def getKey(item):
     return item[1]
 
-def graph_indices_part_2_1(adj_mat):
+def graph_indices_part_2_1(adj_mat, plots=True):
     # create graph using adjacency matrix
     G_Real = nx.from_numpy_matrix(adj_mat, create_using=nx.DiGraph)
     print("Resutling network density:", np.sum(adj_mat)/max_edges)
@@ -46,50 +46,62 @@ def graph_indices_part_2_1(adj_mat):
     
     
     degree_sorted = sorted(degrees, key=getKey, reverse=False)
-    
     top_10_degrees = degree_sorted[-10:]
     print("Resutling highest 10 degrees (node, degree) format:", top_10_degrees) 
-    
-    # adding plots for local indices top 10
+
+    if plots:
+        my_colors = [
+            ["blue","red","navy","yellow","cyan","gray","brown","magenta","orange","lime"],
+            ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"],
+            ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"]
+        ]
+        plot2_1(degrees,in_degrees,out_degrees,my_colors)
+
+    return Cf_avg_real, PL_avg_real
+
+
+def plot2_1(node_degs, in_degs, out_degs, colors):
+    """
+    Plots top 10 nodes for local indices: degree, in-degree, out-degree 
+    """
     fig, axs = plt.subplots(1, 3, figsize=(9, 3))
     ch_names = load_channel_coordinates(label=False,map_ch=True)
 
+    degree_sorted      = sorted(node_degs, key=getKey, reverse=False)
+    top_10_degrees     = degree_sorted[-10:]
     nodeid_best_degree = [ch_names[n[0]] for n in top_10_degrees]
     best_degree        = [n[1] for n in top_10_degrees]
-    my_colors = ["blue","red","navy","yellow","cyan","gray","brown","magenta","orange","lime"]
 
-    axs[0].barh(np.arange(0,10), best_degree, color=my_colors)
+    axs[0].barh(np.arange(0,10), best_degree, color=colors[0])
     axs[0].set_yticks(np.arange(0,10))
     axs[0].set_yticklabels(nodeid_best_degree)
     axs[0].set_ylabel("channel ID")
     axs[0].set_xlabel("node degree")
     
-    in_degree_sorted      = sorted(in_degrees, key=getKey, reverse=False)
+    in_degree_sorted      = sorted(in_degs, key=getKey, reverse=False)
     top_10_in_degrees     = in_degree_sorted[-10:]
     nodeid_best_in_degree = [ch_names[n[0]] for n in top_10_in_degrees]
     best_in_degree        = [n[1] for n in top_10_in_degrees]
-    my_colors = ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"]
-
-    axs[1].barh(np.arange(0,10), best_in_degree, color=my_colors)
+  
+    axs[1].barh(np.arange(0,10), best_in_degree, color=colors[1])
     axs[1].set_yticks(np.arange(0,10)),
     axs[1].set_yticklabels(nodeid_best_in_degree)
     axs[1].set_xlabel("in degree")
     
-    out_degree_sorted       = sorted(in_degrees, key=getKey, reverse=False)
+    out_degree_sorted       = sorted(out_degs, key=getKey, reverse=False)
     top_10_out_degrees      = in_degree_sorted[-10:]
     nodeid_best_out_degree = [ch_names[n[0]] for n in top_10_out_degrees]
     best_out_degree         = [n[1] for n in top_10_out_degrees]
-    my_colors = ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"]
 
-    axs[2].barh(np.arange(0,10), best_out_degree, color=my_colors)
+    axs[2].barh(np.arange(0,10), best_out_degree, color=colors[2])
     axs[2].set_yticks(np.arange(0,10)),
     axs[2].set_yticklabels(nodeid_best_out_degree)
     axs[2].set_xlabel("out degree")
     
     fig.suptitle("Top 10 channels for local inidces")
     plt.show()
+    return
 
-    return Cf_avg_real, PL_avg_real
 
 def graph_indices_part_2_2(Cf_real, PL_real, random_graph='erdos'):
     if random_graph == 'erdos':
@@ -106,13 +118,49 @@ def graph_indices_part_2_2(Cf_real, PL_real, random_graph='erdos'):
     
     return Small_worldness
 
+
 def graph_indices_part_2_4(conn_mat, thresholds):
+    cl_coeffs = []
+    avg_pl    = []
     for threshold in thresholds:
         adj_mat = compute_adjacency(conn_mat, threshold=threshold)  # 0.04597 for PDC
         print("Threshold: ", threshold," Resutling network density:", np.sum(adj_mat)/max_edges)
         
-        graph_indices_part_2_1(adj_mat)
+        cl, pl = graph_indices_part_2_1(adj_mat,plots=False)
         print('\n')        
+
+        cl_coeffs.append(cl)
+        avg_pl.append(pl)
+    
+    plot2_4(cl_coeffs,avg_pl)
+    return
+
+
+def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%']):
+    fig, ax = plt.subplots(1, 2, figsize=(9, 3))
+    width = 0.4
+
+    ax[0].bar(np.arange(len(cl_coeffs)), cl_coeffs, width=width, color="yellowgreen",label="avg clustering coefficient")
+    ax[0].set_xticks(np.arange(len(densities)))
+    ax[0].set_xticklabels(densities)
+    ax[0].set_yticks(np.arange(0.0,1.3,0.1))
+    ax[0].set_xlabel("network density")
+    ax[0].set_ylabel("avg clustering coefficient")
+    ax[0].grid(axis="y")
+    #ax[0].legend()
+
+    ax[1].bar(np.arange(len(avg_pl)), avg_pl, width=0.4, color="coral", label="avg path length")
+    ax[1].set_xticks(np.arange(len(densities)))
+    ax[1].set_xticklabels(densities)
+    ax[1].set_yticks(np.arange(0.0,1.3,0.1))
+    ax[1].set_xlabel("network density")
+    ax[1].set_ylabel("avg path length")
+    ax[1].grid(axis="y")
+    #ax[1].legend()
+
+    fig.suptitle("Global graph indices per network density")
+    plt.show()
+    return
 
 def graph_indices_part_2_7(conn_mat, threshold):
     weights = np.random.uniform(0, 2, (N,N))  # random generated weght with shape (n,n)
@@ -180,7 +228,7 @@ print("Resutling network density:", np.sum(adj_mat)/max_edges)
 print('\n================== P 2.1 ==============================')
 Cf_real, PL_real = graph_indices_part_2_1(adj_mat)
 
-"""
+
 print('\n================== P 2.2 ==============================')
 print('small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
 # small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
@@ -194,7 +242,7 @@ print('\n================== P 2.4 ==============================')
 thresholds = [0.41, 0.24, 0.187, 0.137, 0.1, 0.055]
 graph_indices_part_2_4(conn_mat, thresholds)
 
-
+"""
 print('\n================== P 2.7 ==============================')
 threshold = threshold_20_percent_density
 graph_indices_part_2_7(conn_mat, threshold)
