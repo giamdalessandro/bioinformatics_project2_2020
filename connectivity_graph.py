@@ -352,6 +352,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
     elif point == '4.3':
         p4_3_helper(G, pos, communities)
 
+
 def p1_6():
     print("[1.6] >> Still to be implemented...")
 

@@ -2,6 +2,7 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import networkx as nx
 import community as cl
+import infomap
 
 from connectivity_graph import load_conn_graph, load_channel_coordinates, load_matrix, compute_adjacency, p1_5
 
@@ -83,6 +84,28 @@ def best_partition_louvain(conn_method="pdc", freq=10, run="R01", auto='auto', t
     '''
 
 
+def best_partition_infomap(G):
+    """
+    Partition network with the Infomap algorithm.
+    Annotates nodes with 'community' id.
+    """
+
+    im = infomap.Infomap("--directed --prefer-modular-solution")
+
+    print("Building Infomap network from a NetworkX graph...")
+    for source, target in G.edges:
+        im.add_link(source, target)
+
+    print("Find communities with Infomap...")
+    im.run()
+
+    print(f"Found {im.num_top_modules} modules with codelength: {im.codelength}")
+
+    communities = im.get_modules()
+    print("[4.3] >> Communities found;", communities)
+    nx.set_node_attributes(G, communities, 'community')
+
+
 def p4_1(conn_method="pdc", freq=10, run="R01", auto='auto', threshold=0.1226):
     
     partition = best_partition_louvain(conn_method=conn_method, freq=freq,
@@ -90,43 +113,41 @@ def p4_1(conn_method="pdc", freq=10, run="R01", auto='auto', threshold=0.1226):
     return relabel_partition(partition)
 
 
-def p4_2(G, partition, algorithm='Louvain'):
+def p4_2(G, partition):
     """
     Display a topographical representation of the community structure
     """
     p1_5(G, point='4.2', communities=partition)
 
 
-def p4_3(G):
-    from cdlib import algorithms
-    import networkx as nx
-    coms = algorithms.infomap(G)
-    d = coms.to_node_community_map()
-    print(d)
+def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226):
+    conn_mat = load_matrix(conn_method=conn_method, freq=freq, run=run, auto=auto)
+    adj_mat = compute_adjacency(conn_mat, threshold=threshold)
+    G = nx.from_numpy_array(adj_mat, create_using=nx.DiGraph)
+    print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
 
-    partition = {}
-    for k in d.keys():
-        for p in d[k]:
-            if p not in partition.keys():
-                l = [k]
-                partition.update({p : l})
-            else:
-                partition[p].append(k)
-    print("[4.3] >> Partitions found: {}\n".format(len(partition)))
-    print(partition)
-    return partition
+    best_partition_infomap(G)
+    with open("data/channel_locations.txt") as f:
+        mapping = {}
+        for line in f:
+            l = line.split(sep='        ')
+            if l[0] != '\ufeff#':
+                mapping.update({int(l[0]) - 1: str(l[1])})
+    G = nx.relabel_nodes(G, mapping)
+
+    communities = [c - 1 for c in nx.get_node_attributes(G, 'community').values()]
+    p1_5(G, point='4.3', communities=communities)
+
 
 
 
 
 ### main
 
-G = load_conn_graph(conn="pdc", freq=10, run="R01",
-                    auto='auto', threshold=0.1226)
+G = load_conn_graph(conn="pdc", freq=10, run="R01", auto='auto', threshold=0.1226)
 print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
 
 partition = p4_1()
 p4_2(G, partition)
-
-#p4_3(G)
+p4_3(G)
 
