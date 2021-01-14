@@ -94,12 +94,7 @@ def p4_2(G, partition, algorithm='Louvain'):
     """
     Display a topographical representation of the community structure
     """
-    pos = load_channel_coordinates()
-    cmap = cm.get_cmap('viridis', max(partition.values()) + 1)
-    nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, nodelist=partition.keys(), node_size=700,
-                     cmap=cmap, node_color=list(partition.values()), edge_color='black')
-    plt.title("Topographical representation of the community structure found using the {} algorithm".format(algorithm))
-    plt.show()
+    p1_5(G, point='4.2', communities=partition)
 
 
 def p4_3(G):

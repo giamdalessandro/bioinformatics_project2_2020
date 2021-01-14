@@ -321,6 +321,17 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         plt.show()
 
 
+    def p4_2_helper(G, pos, communities):
+
+        cmap = 'viridis'
+        vmin = min(communities.values()) - 1
+        vmax = max(communities.values())
+        nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, nodelist=communities.keys(), node_size=700,
+                         cmap=cmap, vmin=vmin, vmax=vmax, node_color=list(communities.values()), edge_color='black')
+        plt.title("Topological representation of the network's communities found with Louvain")
+        plt.show()
+
+
     def p4_3_helper(G, pos, communities):
 
         cmap = 'viridis' #colors.ListedColormap(['#1f78b4', '#33a02c', '#e31a1c', '#ff7f00', '#6a3d9a'], 'indexed', max(communities) + 1)
@@ -328,13 +339,16 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         vmax = max(communities)
         nx.draw_networkx(G, pos=pos, arrows=True, with_labels=True, vmin=vmin, vmax=vmax,
                          node_size=700, edge_color='black', node_color=communities, cmap=cmap)
-        plt.title("Topological representation of the network's communities found with Infomap ")
+        plt.title("Topological representation of the network's communities found with Infomap")
         plt.show()
+
 
 
     if point == '1.5':
         p1_5_helper(G, pos, 'in')
         p1_5_helper(G, pos, 'out')
+    elif point == '4.2':
+        p4_2_helper(G, pos, communities)
     elif point == '4.3':
         p4_3_helper(G, pos, communities)
 
