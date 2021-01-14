@@ -136,28 +136,29 @@ def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226
     return l
 
 
-### main
-
-G = load_conn_graph(conn="pdc", freq=10, run="R01", auto='auto', threshold=0.1226)
-print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
-
-partition, partition_louvain = p4_1()
-p4_2(G, partition)
-partition_infomap = p4_3(G)
-
-#NOTE: implementare una metrica (Jaccard ?) per vedere quanto le due partition sono simili
-print("\n\n\n")
-
 def jaccard(S1, S2):
     S1 = set(S1)
     S2 = set(S2)
     return 100*len(S1.intersection(S2))/len(S1.union(S2))
 
 
-for S1 in partition_louvain.values(): 
-    for S2 in partition_infomap:
-        j = jaccard(S1, S2)             # S1 and S2 are list of nodes
-        if j > 0:
-            print("Louvain community:", S1)
-            print("Infomap community:", S2)
-            print("Jaccard is {}%\n".format(j))
+
+### main
+
+if __name__ == '__main__':
+    G = load_conn_graph(conn="pdc", freq=10, run="R01", auto='auto', threshold=0.1226)
+    print("Graph has {} nodes and {} edges".format(len(G.nodes()), len(G.edges())))
+
+    partition, partition_louvain = p4_1()
+    p4_2(G, partition)
+    partition_infomap = p4_3(G)
+
+    #NOTE: implementare una metrica (Jaccard ?) per vedere quanto le due partition sono simili
+
+    for S1 in partition_louvain.values(): 
+        for S2 in partition_infomap:
+            j = jaccard(S1, S2)             # S1 and S2 are list of nodes
+            if j > 0:
+                print("Louvain community:", S1)
+                print("Infomap community:", S2)
+                print("Jaccard is {}%\n".format(j))
