@@ -42,7 +42,7 @@ def significanceProfile(G, triad_cfg="fuffa"):
     random_census = random_nets_census
     z_score = []
     for p in range(len(real_census)):
-        print(p)
+        #print(p)
         N_real_p = real_census[p]
         N_rand_p = np.mean(random_census[p])
         std = np.std(random_census[p])
@@ -56,8 +56,21 @@ def significanceProfile(G, triad_cfg="fuffa"):
         norm_z_score = (z_score[i]/z_norm if z_norm != 0 else z_score[i])
         sp.append(round(norm_z_score,4))
 
-    print(sp)
+    plot_sp(sp)
     return sp
+
+def plot_sp(sp):
+    patterns = [str(i) for i in np.arange(1,14)]
+    plt.plot(np.arange(len(sp)), sp, 'o-')
+    plt.yticks(np.arange(-0.2, 0.7, 0.1))
+    plt.xticks(np.arange(len(patterns)), labels=patterns)
+    plt.ylabel("normalized Z-score")
+    plt.xlabel("motif ID")
+
+    plt.title("Significance Profile")
+    plt.grid(True)
+    plt.show()
+    return
 
 
 def p3_1():
@@ -154,12 +167,7 @@ def p3_4():
 
 if __name__ == '__main__':
     G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    p3_2(G)
+    #p3_2(G)
 
-    """
     sp = significanceProfile(G)
     print(sp)
-
-    norm z-score, 100 random graphs
-    [0.5028, 0.5271, 0.5949, 0.1488, 0.2399, 0.1582, 0.034, -0.0025, -0.0088, -0.025, 0.0281, -0.0495, -0.0753]
-    """
