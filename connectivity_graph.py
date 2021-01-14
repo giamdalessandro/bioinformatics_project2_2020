@@ -463,7 +463,6 @@ def find_t_helper(mat, target, start):
     old = 100
     best_t = -1
     eps = 0.1
-    start = 0.27
     # it's faster if we decrease our threshold
     vv = np.arange(start, 0.06, -0.0001)
     for t in vv:
@@ -481,7 +480,7 @@ def find_threshold(conn_method, freq, run):
     print("[1.3] >>", conn_method, "matrix, run", run )
     mat = load_matrix(conn_method=conn_method, freq=freq, run=run, verbose=False)
 
-    best_t = 0.25   # threshold for minimum freq
+    best_t = 0.27   # threshold for minimum freq
     for target in list([1, 5, 10, 20, 30, 50]):
         best_t = find_t_helper(mat, target, best_t)
         new_mat = compute_adjacency(mat, threshold=best_t)
