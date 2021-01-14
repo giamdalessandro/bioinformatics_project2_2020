@@ -343,6 +343,13 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 
     def p4_3_helper(G, pos, communities):
 
+        colorbar_labels = []
+        S = set(communities)
+        for i in S:
+            colorbar_labels.append('Community {}'.format(i+1))
+
+
+        #['Community 1', 'Community 2', 'Community 3']
         cmap = 'viridis'
         vmin = min(communities)
         vmax = max(communities)
@@ -351,8 +358,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
                                     node_size=700, node_color=communities, cmap=cmap)
         lc = nx.draw_networkx_labels(G, pos)
         cbar = plt.colorbar(nc, ticks=np.arange(len(communities)), spacing='proportional')
-        # vertically oriented colorbar
-        cbar.ax.set_yticklabels(['Community 1', 'Community 2', 'Community 3'])
+        cbar.ax.set_yticklabels(colorbar_labels)
         plt.title("Topological representation of the network's communities found with Infomap")
         plt.show()
 
