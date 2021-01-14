@@ -14,6 +14,51 @@ $ python3 setup.py install
 $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.6.egg/bct
 """
 
+
+def triadSignificanceProfile(G, triad_cfg):
+	"""
+	Compute the significance profile of the patterns mapped in triad_cfg, 
+	inside directed graph G.
+		- G          : directed graph representing the network; 
+		- triads_cfg : dict mapping interesting triadic patterns codes, 
+			as in nx.triadic_census(), with explicit names. 
+	  		(e.g. triad_cfg = {'003' : 'Null', '012' : 'Single-edge'})
+	"""
+	census = nx.triadic_census(G)
+	in_degree_sequence  = [d for n, d in G.in_degree()]  # in degree sequence
+	out_degree_sequence = [d for n, d in G.out_degree()]  # out degree sequence
+	#print("In_degree sequence %s" % in_degree_sequence)
+	#print("Out_degree sequence %s" % out_degree_sequence)
+
+	random_nets_census = []
+	for i in range(1000):
+		rand_G = nx.directed_configuration_model(in_degree_sequence, out_degree_sequence, create_using=nx.DiGraph, seed=i)
+		random_nets_census.append(nx.triadic_census(rand_G))
+
+	real_census, random_census = mapTriadCodes(census,random_nets_census,triad_cfg)
+	#print(real_census)
+	#print(random_census)
+
+	z_score = []
+	for p in real_census.keys():
+		print(p)
+		N_real_p = real_census[p]
+		N_rand_p = np.mean(random_census[p])
+		std = np.std(random_census[p])
+
+		z_p =  ((N_real_p - N_rand_p)/std if std != 0 else 0)
+		z_score.append(z_p)
+
+	SP = []
+	for i in range(len(z_score)):
+		z_norm = np.linalg.norm(z_score)
+		norm_z_score = (z_score[i]/z_norm if z_norm != 0 else z_score[i])
+		SP.append(round(norm_z_score,4))
+
+	print(SP)
+	return SP
+
+
 def p3_1():
     M = compute_adjacency(load_matrix())
     m_3, M_3 = motif3funct_bin(M)
