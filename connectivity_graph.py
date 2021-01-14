@@ -460,24 +460,28 @@ def p1_6():
 
 
 def find_threshold(conn_method, freq, run):
-    for target in list([1, 5, 10, 30, 50]):
+    for target in list([1, 5, 10, 20, 30, 50]):
         print('[1.3] >> Optimizing thresold to reach {}% density..'.format(target))
         mat = load_matrix(conn_method=conn_method, freq=freq, run=run, verbose=False)
-        best = 1000
-        threshold = 0
-        vv = np.arange(0., 1., 0.0001)
+        old    = 100
+        best_t = -1
+        eps = 0.1
+        vv = np.arange(0.27, 0.06, -0.00001)      # it's faster if we decrease our threshold
         for t in vv:
-            mat = compute_adjacency(mat, threshold=t)
-            density = 100*np.sum(mat)/4032
-            print(density)
-            print(abs(density - target), '<?', best)
-            if abs(density - target) <= best:
-                best = abs(density - target)
-                best_density = density
-                threshold = t 
-            else:
-                break
-        print("Density = {:.02f}% with threshold = {}\n".format(density, threshold))
-            
+            new_mat = compute_adjacency(mat, threshold=t)
+            curr_d = 100*np.sum(new_mat)/(4032-64*2)
+            if abs(curr_d - target) <= eps:
+                if abs(curr_d - target) <= old:
+                    best_t = t 
+                else:
+                    break
+            old = abs(curr_d - target)
+                
+            #print("density new matrix:", curr_d, "with þ =", t)
+            #print(curr_d, '<?', best_d)
+        new_mat = compute_adjacency(mat, threshold=best_t)
+        density = 100*np.sum(new_mat)/(4032-64*2)
+        print("Density ~ {:.02f}% with threshold = {}\n".format(density, best_t))
+        
 
 find_threshold(conn_method='pdc', freq=10, run='R02')
