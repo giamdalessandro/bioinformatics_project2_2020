@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from connectivity_graph import load_matrix, compute_adjacency, load_channel_coordinates
+from connectivity_graph import load_matrix, compute_adjacency, load_channel_coordinates, load_conn_graph, p1_5
 
 
 def getKey(item):
@@ -227,7 +227,12 @@ def p2_3(freq, run, threshold_pdc, threshold_dtf):
     print("[2.3] >> Average PAth Length DTF: {:.2f}".format(pl_dtf))
 
 
+def p2_5(G):
+    print("[2.5] >>")
+    p1_5(G, point=2.5)
 
+
+'''
 conn_method = 'dtf'
 random_graph = 'erdos' # 'watts' and erdos are options
 N = 64
@@ -250,21 +255,27 @@ print('\n================== P 2.2 ==============================')
 print('small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
 # small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
 Small_worldness = graph_indices_part_2_2(Cf_real, PL_real, random_graph)
+'''
 
-
-print('\n================== P 2.3 ==============================')
-p2_3(freq=10, run='R01', threshold_pdc=0.1226, threshold_dtf=0.1378)
-
-
+'''
 print('\n================== P 2.4 ==============================')
 # just change threshold values in crearting adjacency matrix to tune density as 
 # mentioned in P 1.3
 #  densities = [1%, 5%, 10%, 20%, 30%, 50%]
 thresholds = [0.41, 0.24, 0.187, 0.137, 0.1, 0.055]
 graph_indices_part_2_4(conn_mat, thresholds)
+'''
 
 """
 print('\n================== P 2.7 ==============================')
 threshold = threshold_20_percent_density
 graph_indices_part_2_7(conn_mat, threshold)
 """
+
+
+print('\n================== P 2.3 ==============================')
+p2_3(freq=10, run='R01', threshold_pdc=0.1226, threshold_dtf=0.1378)
+
+print('\n================== P 2.5 ==============================')
+G = load_conn_graph(conn="pdc", freq=10, run="R01")
+p2_5(G)

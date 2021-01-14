@@ -338,6 +338,10 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         plt.show()
 
 
+    def p2_5_helper(G, pos):
+
+
+
     def p3_2_helper(G, pos):
         p1_5_helper(G, pos, 'in',  point='3.2')
         p1_5_helper(G, pos, 'out', point='3.2')
@@ -353,7 +357,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         cmap = 'Spectral'
         vmin = min(communities.values())
         vmax = max(communities.values())
-        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
+        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True, node_size=700)
         nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700,
                                     nodelist=communities.keys(), node_color=list(communities.values()), cmap=cmap)
         _  = nx.draw_networkx_labels(G, pos)
@@ -373,7 +377,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         cmap = 'Spectral'
         vmin = min(communities)
         vmax = max(communities)
-        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
+        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True, node_size=700)
         nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700, node_color=communities, cmap=cmap)
         _  = nx.draw_networkx_labels(G, pos)
         cbar = plt.colorbar(nc, ticks=np.arange(len(communities)), spacing='proportional')
@@ -385,6 +389,8 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
     if point == '1.5':
         p1_5_helper(G, pos, 'in')
         p1_5_helper(G, pos, 'out')
+    elif point == '2.5':
+        p2_5_helper(G, pos)
     elif point == '3.2':
         p3_2_helper(G, pos)
     elif point == '4.2':
