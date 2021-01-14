@@ -297,17 +297,10 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
     
     pos = load_channel_coordinates()
 
-    def p1_5_helper(G, pos, degree, point='1.5'):
+    def p1_5_helper(G, pos, degree, node_color, point='1.5'):
         """
         Helper function to now write two times the same plt stuff
         """
-        node_color = []
-        for node in G.nodes():
-            if degree == 'in':
-                node_color.append(G.in_degree(node))
-            else:
-                node_color.append(G.out_degree(node))
-
         cmap = 'viridis' if point == '1.5' else 'plasma'
         vmin = min(node_color)
         vmax = max(node_color)
@@ -339,12 +332,29 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 
 
     def p2_5_helper(G, pos):
-
+        node_color_in  = []
+        node_color_out = []
+        node_color_sum = []
+        for node in G.nodes():
+            node_color_in.append(G.in_degree(node))
+            node_color_out.append(G.out_degree(node))
+            node_color_sum.append(G.out_degree(node)-G.in_degree(node))
+        p1_5_helper(G, pos, degree='in',  node_color=node_color_in,  point='1.5')
+        p1_5_helper(G, pos, degree='out', node_color=node_color_out, point='1.5')
+        p1_5_helper(G, pos, degree='sum', node_color=node_color_sum, point='1.5')
 
 
     def p3_2_helper(G, pos):
-        p1_5_helper(G, pos, 'in',  point='3.2')
-        p1_5_helper(G, pos, 'out', point='3.2')
+        node_color_in  = []
+        node_color_out = []
+        node_color_sum = []
+        for node in G.nodes():
+            node_color_in.append( G.in_degree(node))
+            node_color_out.append(G.out_degree(node))
+            node_color_sum.append(G.out_degree(node) - G.in_degree(node))
+        p1_5_helper(G, pos, degree='in' , node_color=node_color_in,  point='3.2')
+        p1_5_helper(G, pos, degree='out', node_color=node_color_out, point='3.2')
+        p1_5_helper(G, pos, degree='sum', node_color=node_color_sum, point='3.2')
 
 
     def p4_2_helper(G, pos, communities):
@@ -357,7 +367,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         cmap = 'Spectral'
         vmin = min(communities.values())
         vmax = max(communities.values())
-        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True, node_size=700)
+        _  = nx.draw_networkx_edges(G, pos, alpha=0.3, edge_color='black', arrows=True, node_size=700)
         nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700,
                                     nodelist=communities.keys(), node_color=list(communities.values()), cmap=cmap)
         _  = nx.draw_networkx_labels(G, pos)
@@ -377,7 +387,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         cmap = 'Spectral'
         vmin = min(communities)
         vmax = max(communities)
-        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True, node_size=700)
+        _  = nx.draw_networkx_edges(G, pos, alpha=0.3, edge_color='black', arrows=True, node_size=700)
         nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700, node_color=communities, cmap=cmap)
         _  = nx.draw_networkx_labels(G, pos)
         cbar = plt.colorbar(nc, ticks=np.arange(len(communities)), spacing='proportional')
@@ -387,8 +397,16 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 
     
     if point == '1.5':
-        p1_5_helper(G, pos, 'in')
-        p1_5_helper(G, pos, 'out')
+        node_color_in  = []
+        node_color_out = []
+        node_color_sum = []
+        for node in G.nodes():
+            node_color_in.append(G.in_degree(node))
+            node_color_out.append(G.out_degree(node))
+            node_color_sum.append(G.out_degree(node) - G.in_degree(node))
+        p1_5_helper(G, pos, degree='in' , node_color=node_color_in)
+        p1_5_helper(G, pos, degree='out', node_color=node_color_out)
+        p1_5_helper(G, pos, degree='sum', node_color=node_color_sum)
     elif point == '2.5':
         p2_5_helper(G, pos)
     elif point == '3.2':

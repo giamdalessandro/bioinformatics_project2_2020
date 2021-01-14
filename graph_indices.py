@@ -229,16 +229,15 @@ def p2_3(freq, run, threshold_pdc, threshold_dtf):
 
 def p2_5(G):
     print("[2.5] >>")
-    p1_5(G, point=2.5)
+    p1_5(G, point='2.5')
 
 
-'''
 conn_method = 'dtf'
 random_graph = 'erdos' # 'watts' and erdos are options
 N = 64
 nodes_idx = [i for i in range(N)]  # [0,1,2..., N]
 max_edges = N*(N-1)
-
+'''
 # get adjacency matrix
 conn_mat = load_matrix(conn_method=conn_method)
 print("mat shape:", conn_mat.shape)
