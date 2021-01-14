@@ -210,7 +210,25 @@ def graph_indices_part_2_7(conn_mat, threshold):
     print("Resutling highest 10 degrees (node, degree) format:", top_10_degrees_weighted) 
             
         
-        
+def p2_3(freq, run, threshold):
+    """
+    Computes for both pdc and dtf method:
+        - cl (Average Clustering Coefficient)
+        - pl (Average Path Length)
+    and compares them in a plot
+    """
+    pdc_mat = compute_adjacency(load_matrix(conn_method='pdc', freq=freq, run=run), threshold=threshold)    
+    dtf_mat = compute_adjacency(load_matrix(conn_method='dtf', freq=freq, run=run), threshold=threshold)
+    cl_pdc, pl_pdc = graph_indices_part_2_1(pdc_mat)
+    cl_dtf, pl_dtf = graph_indices_part_2_1(dtf_mat)
+
+    print("[2.3] >> Average Clustering Coefficient PDC:", cl_pdc)
+    print("[2.3] >> Average Clustering Coefficient DTF:", cl_dtf)
+    print("[2.3] >> Average PAth Length PDC:", pl_pdc)
+    print("[2.3] >> Average PAth Length DTF:", pl_dtf)
+
+
+
 conn_method = 'dtf'
 random_graph = 'erdos' # 'watts' and erdos are options
 N = 64

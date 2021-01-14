@@ -348,37 +348,6 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
     def p3_2_helper(G, pos):
         p1_5_helper(G, pos, 'in',  point='3.2')
         p1_5_helper(G, pos, 'out', point='3.2')
-        # node_color = []
-        # degree = 'in'
-        # for node in G.nodes():
-        #     if degree == 'in':
-        #         node_color.append(G.in_degree(node))
-        #     else:
-        #         node_color.append(G.out_degree(node))
-# 
-        # cmap = 'plasma'
-        # vmin = min(node_color)
-        # vmax = max(node_color)
-# 
-        # edge_color = [G[u][v]['color'] for u, v in G.edges()]
-        # # count = 0
-        # # for i in edge_color:
-        # #     if i != 'k':
-        # #         count += 1
-        # # print("FOUND {} on {} EDGES INVOLVED IN MOTIF 1".format(count, len(edge_color)))
-        # # edge_width = [G[u][v]['width'] for u, v in G.edges()]
-        # 
-        # nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700, node_color=node_color, cmap=cmap)
-        # _ = nx.draw_networkx_edges(G, pos, alpha=0.3, edge_color=edge_color, arrows=True, node_size=700)
-        # _  = nx.draw_networkx_labels(G, pos)
-        # if point == '1.5':
-        #     plt.title("Topological representation of the network - {} degree".format(degree))
-        # elif point == '3.2':
-        #     plt.title("Topological representation of the network's edges involved in motif 1 - {} degree".format(degree))
-        # sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
-        # sm._A = []
-        # plt.colorbar(sm)
-        # plt.show()
 
 
     def p4_2_helper(G, pos, communities):
