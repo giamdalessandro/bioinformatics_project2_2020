@@ -142,8 +142,8 @@ def print_adj(conn_method='pdc', freq=10, run='R01', threshold=0.1226, auto='aut
     TODO - - to check this values, prolly wrong
     DTF 10hz R01: threshold of 0.1378 network density -> 0.2006 (20.01%)
     PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
-    DTF 10hz R01: ???
-    PDC 10hz R01: ???    
+    DTF 10hz R02: ???
+    PDC 10hz R02: ???    
     """
 
     mat = load_matrix(conn_method=conn_method, freq=freq, run=run, auto=auto)
@@ -195,13 +195,6 @@ def p1_1(file_name="data/S003R01_fixed", point='1'):
     mv = cp.Mvar
     best_p, crit = mv.order_akaike(sigbufs, p_max=30, method='yw')    
     if PLOTS:
-        #### MVAR
-        # best_p = 5      # best for both R01 and R02 using 64 channels
-        # if point == '4':
-        #     if file_name == "data/S003R01_fixed_dropped.edf":
-        #         best_p = 13
-        #     elif file_name == "data/S003R02_fixed_dropped.edf":
-        #         best_p = 14
 
         plt.plot(1+np.arange(len(crit)), crit, 'g')
         plt.title("Model order estimation")
@@ -304,17 +297,10 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
     
     pos = load_channel_coordinates()
 
-    def p1_5_helper(G, pos, degree, point='1.5'):
+    def p1_5_helper(G, pos, degree, node_color, point='1.5'):
         """
         Helper function to now write two times the same plt stuff
         """
-        node_color = []
-        for node in G.nodes():
-            if degree == 'in':
-                node_color.append(G.in_degree(node))
-            else:
-                node_color.append(G.out_degree(node))
-
         cmap = 'viridis' if point == '1.5' else 'plasma'
         vmin = min(node_color)
         vmax = max(node_color)
@@ -345,40 +331,30 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         plt.show()
 
 
+    def p2_5_helper(G, pos):
+        node_color_in  = []
+        node_color_out = []
+        node_color_sum = []
+        for node in G.nodes():
+            node_color_in.append(G.in_degree(node))
+            node_color_out.append(G.out_degree(node))
+            node_color_sum.append(G.out_degree(node)-G.in_degree(node))
+        p1_5_helper(G, pos, degree='in',  node_color=node_color_in,  point='1.5')
+        p1_5_helper(G, pos, degree='out', node_color=node_color_out, point='1.5')
+        p1_5_helper(G, pos, degree='sum', node_color=node_color_sum, point='1.5')
+
+
     def p3_2_helper(G, pos):
-        p1_5_helper(G, pos, 'in',  point='3.2')
-        p1_5_helper(G, pos, 'out', point='3.2')
-        # node_color = []
-        # degree = 'in'
-        # for node in G.nodes():
-        #     if degree == 'in':
-        #         node_color.append(G.in_degree(node))
-        #     else:
-        #         node_color.append(G.out_degree(node))
-# 
-        # cmap = 'plasma'
-        # vmin = min(node_color)
-        # vmax = max(node_color)
-# 
-        # edge_color = [G[u][v]['color'] for u, v in G.edges()]
-        # # count = 0
-        # # for i in edge_color:
-        # #     if i != 'k':
-        # #         count += 1
-        # # print("FOUND {} on {} EDGES INVOLVED IN MOTIF 1".format(count, len(edge_color)))
-        # # edge_width = [G[u][v]['width'] for u, v in G.edges()]
-        # 
-        # nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700, node_color=node_color, cmap=cmap)
-        # _ = nx.draw_networkx_edges(G, pos, alpha=0.3, edge_color=edge_color, arrows=True, node_size=700)
-        # _  = nx.draw_networkx_labels(G, pos)
-        # if point == '1.5':
-        #     plt.title("Topological representation of the network - {} degree".format(degree))
-        # elif point == '3.2':
-        #     plt.title("Topological representation of the network's edges involved in motif 1 - {} degree".format(degree))
-        # sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
-        # sm._A = []
-        # plt.colorbar(sm)
-        # plt.show()
+        node_color_in  = []
+        node_color_out = []
+        node_color_sum = []
+        for node in G.nodes():
+            node_color_in.append( G.in_degree(node))
+            node_color_out.append(G.out_degree(node))
+            node_color_sum.append(G.out_degree(node) - G.in_degree(node))
+        p1_5_helper(G, pos, degree='in' , node_color=node_color_in,  point='3.2')
+        p1_5_helper(G, pos, degree='out', node_color=node_color_out, point='3.2')
+        p1_5_helper(G, pos, degree='sum', node_color=node_color_sum, point='3.2')
 
 
     def p4_2_helper(G, pos, communities):
@@ -391,7 +367,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         cmap = 'Spectral'
         vmin = min(communities.values())
         vmax = max(communities.values())
-        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
+        _  = nx.draw_networkx_edges(G, pos, alpha=0.3, edge_color='black', arrows=True, node_size=700)
         nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700,
                                     nodelist=communities.keys(), node_color=list(communities.values()), cmap=cmap)
         _  = nx.draw_networkx_labels(G, pos)
@@ -411,7 +387,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         cmap = 'Spectral'
         vmin = min(communities)
         vmax = max(communities)
-        _  = nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='black', arrows=True)
+        _  = nx.draw_networkx_edges(G, pos, alpha=0.3, edge_color='black', arrows=True, node_size=700)
         nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700, node_color=communities, cmap=cmap)
         _  = nx.draw_networkx_labels(G, pos)
         cbar = plt.colorbar(nc, ticks=np.arange(len(communities)), spacing='proportional')
@@ -421,8 +397,18 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 
     
     if point == '1.5':
-        p1_5_helper(G, pos, 'in')
-        p1_5_helper(G, pos, 'out')
+        node_color_in  = []
+        node_color_out = []
+        node_color_sum = []
+        for node in G.nodes():
+            node_color_in.append(G.in_degree(node))
+            node_color_out.append(G.out_degree(node))
+            node_color_sum.append(G.out_degree(node) + G.in_degree(node))
+        p1_5_helper(G, pos, degree='in' , node_color=node_color_in)
+        p1_5_helper(G, pos, degree='out', node_color=node_color_out)
+        p1_5_helper(G, pos, degree='sum', node_color=node_color_sum)
+    elif point == '2.5':
+        p2_5_helper(G, pos)
     elif point == '3.2':
         p3_2_helper(G, pos)
     elif point == '4.2':
