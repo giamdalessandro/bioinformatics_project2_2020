@@ -465,7 +465,7 @@ def p1_6(file_name="data/S003R01_fixed", freq=25, run='R01'):
 
 
 if __name__ == "__main__":
-
+    '''
     mat = load_matrix(conn_method='pdc', freq=10, run='R01')#, threshold=THRES_PDC_10HZ_R01_20percent)
     #print(mat)
     pos = {}
@@ -486,9 +486,9 @@ if __name__ == "__main__":
             right_indices.append(pos[k])
         elif 'z' in k:
             center_indices.append(pos[k]) 
-    #print(left_indices,   '\n')
-    #print(right_indices,  '\n')
-    #print(center_indices, '\n')
+    print(left_indices,   '\n')
+    print(right_indices,  '\n')
+    print(center_indices, '\n')
     print(len(left_indices)+len(right_indices)+len(center_indices)) # if 64 ok
 
     shuffled = np.zeros(shape=mat.shape)
@@ -496,4 +496,11 @@ if __name__ == "__main__":
     for idx in left_indices:
         for i in range(len(left_indices)):
             for j in range(len(left_indices)):
-                shuffled[i][j] = mat[idx][idx]
+                shuffled[i][j] = mat[idx][idx]  #wrong
+    plt.matshow(mat)
+    plt.colorbar()
+    plt.show()
+    plt.matshow(shuffled)
+    plt.colorbar()
+    plt.show()
+    '''
