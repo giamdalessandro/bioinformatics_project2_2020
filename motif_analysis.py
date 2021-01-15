@@ -6,14 +6,6 @@ from connectivity_graph import compute_adjacency, load_matrix, load_conn_graph, 
 
 PLOTS = False
 
-""" TO INSTALL bctpy 
-$ git clone https://github.com/aestrivex/bctpy
-$ cd bctpy
-$ python3 setup.py build
-$ python3 setup.py install
-$ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.6.egg/bct
-"""
-
 
 def significanceProfile(M, nrand=100):
     """
@@ -57,6 +49,19 @@ def significanceProfile(M, nrand=100):
     return sp
 
 def plot_sp(sp, real_frq, random_frq):
+    print("[3.1] >> Motif and anti-motif")
+    D = 0.1
+    thresholds = [r*D for r in random_frq]
+    thr_anti = [r*D*-1 for r in random_frq]
+
+    patterns = [str(i) for i in np.arange(1,14)]
+    plt.plot(np.arange(len(thresholds)), thresholds, 'o-')
+    plt.plot(np.arange(len(thresholds)), thr_anti, 'o-')
+    plt.xticks(np.arange(len(patterns)), labels=patterns)
+    plt.title("Thresholds")
+    plt.grid(True)
+    plt.show()
+
     print("[3.1] >> Motif frequencies")
     width = 0.4
     plt.bar(np.arange(len(real_frq)) - (width/2), real_frq, width=width, color="yellowgreen", label="real network")
@@ -182,8 +187,8 @@ if __name__ == '__main__':
 
     start = time.time()
     G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    #p3_1()
-    p3_4()
+    p3_1()
+    #p3_4()
 
     end = time.time()
     print("Elapsed time:", (end - start)/60, "min")
