@@ -465,5 +465,6 @@ def p1_6(file_name="data/S003R01_fixed", freq=25, run='R01'):
 
 
 if __name__ == "__main__":
-    p1_3('pdc', 10, 'R01')
-    p1_3('pdc', 10, 'R02')
+    # p1_3('pdc', 10, 'R01')
+    # p1_3('pdc', 10, 'R02')
+    pass

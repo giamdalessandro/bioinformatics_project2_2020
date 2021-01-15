@@ -126,12 +126,8 @@ def graph_indices_part_2_4(conn_mat, thresholds):
     cl_coeffs = []
     avg_pl    = []
     for threshold in thresholds:
-        adj_mat = compute_adjacency(conn_mat, threshold=threshold)  # 0.04597 for PDC
-        print("Threshold: ", threshold," Resulting network density:", np.sum(adj_mat)/max_edges)
-        
-        cl, pl = graph_indices_part_2_1(adj_mat,plots=False)
-        print('\n')        
-
+        adj_mat = compute_adjacency(conn_mat, threshold=threshold)  # 0.04597 for PDC        
+        cl, pl = graph_indices_part_2_1(adj_mat, plots=False, verbose=False)
         cl_coeffs.append(cl)
         avg_pl.append(pl)
     
@@ -172,7 +168,7 @@ def graph_indices_part_2_7(conn_mat, threshold):
     weights = conn_mat
     
     adj_mat = compute_adjacency(conn_mat, threshold=threshold)  # 0.04597 for PDC
-    print("Resulting network density:", np.sum(adj_mat)/max_edges)
+    print("Resulting network density:", np.sum(adj_mat)/4032)
     
     
     weighted_adj_mat = np.multiply(weights, adj_mat) # mask weiths using adjacency matrix
@@ -269,11 +265,25 @@ def p2_3(freq, run):
 
 
 
-def 2_4():
+def p2_4(run):
     # just change threshold values in crearting adjacency matrix to tune density as
     # mentioned in P 1.3
-    #  densities = [1%, 5%, 10%, 20%, 30%, 50%]
-    thresholds = [0.41, 0.24, 0.187, 0.137, 0.1, 0.055]
+    print('\n[2.4] >> Behaviours of global graph indices in function of network density')
+    conn_mat = load_matrix('pdc', 10, run, verbose=False)
+    if run == 'R01':
+        thresholds = [THRES_PDC_10HZ_R01_01percent,
+                      THRES_PDC_10HZ_R01_05percent,
+                      THRES_PDC_10HZ_R01_10percent,
+                      THRES_PDC_10HZ_R01_20percent,
+                      THRES_PDC_10HZ_R01_30percent,
+                      THRES_PDC_10HZ_R01_50percent]
+    else:
+        thresholds = [THRES_PDC_10HZ_R02_01percent,
+                      THRES_PDC_10HZ_R02_05percent,
+                      THRES_PDC_10HZ_R02_10percent,
+                      THRES_PDC_10HZ_R02_20percent,
+                      THRES_PDC_10HZ_R02_30percent,
+                      THRES_PDC_10HZ_R02_50percent]
     graph_indices_part_2_4(conn_mat, thresholds)
 
 
@@ -315,8 +325,6 @@ if __name__ == '__main__':
     conn_method = 'dtf'
     random_graph = 'erdos' # 'watts' and erdos are options
     N = 64
-    
-    max_edges = 4032
     '''
     # get adjacency matrix
     conn_mat = load_matrix(conn_method=conn_method)
@@ -324,7 +332,7 @@ if __name__ == '__main__':
 
     threshold_20_percent_density = 0.137 # 0.04597 for PDC
     adj_mat = compute_adjacency(conn_mat, threshold=threshold_20_percent_density)  
-    print("Resulting network density:", np.sum(adj_mat)/max_edges)
+    print("Resulting network density:", np.sum(adj_mat)/4032)
 
     print('\n================== P 2.1 ==============================')
     Cf_real, PL_real = graph_indices_part_2_1(adj_mat)

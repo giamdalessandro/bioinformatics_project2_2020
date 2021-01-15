@@ -44,7 +44,7 @@ for r in RUNS:
     cf_real, pl_real = p2_1(conn=conn, freq=freq, run=r)
     small_worldness  = p2_2(cf_real, pl_real, random_graph='erdos')  # or 'watts'
     p2_3(freq=freq, run=r)
-    p2_4()
+    p2_4(run=r)
 
 '''
 
