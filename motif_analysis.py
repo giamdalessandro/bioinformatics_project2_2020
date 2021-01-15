@@ -146,9 +146,9 @@ def p3_4():
     described by 'adj_mat' adjacency matrix.
     """
     M = compute_adjacency(load_matrix())
-    m_4, M_4 = motif4funct_bin(M)
+    m_4, M_4 = motif4struct_bin(M)
     print("[3.4] >> Displaying frequencies of 4-node motifs.")
-    plt.bar(np.arange(0,199), m_4)
+    plt.bar(np.arange(0,200), m_4)
     plt.subplots_adjust(left=0.05, right=0.95, top=0.92, bottom=0.08)
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
@@ -182,7 +182,8 @@ if __name__ == '__main__':
 
     start = time.time()
     G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    p3_1()
+    #p3_1()
+    p3_4()
 
     end = time.time()
     print("Elapsed time:", (end - start)/60, "min")
