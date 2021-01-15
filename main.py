@@ -45,23 +45,10 @@ for r in RUNS:
     small_worldness  = p2_2(cf_real, pl_real, random_graph='erdos')  # or 'watts'
     p2_3(freq=freq, run=r)
     p2_4(run=r)
+    p2_5(load_conn_graph(conn=conn, freq=freq, run=r))
+    p2_6(run=r)
+    p2_7(run=r)
 
-'''
-
-
-print('\n================== P 2.5 ==============================')
-G = load_conn_graph(conn="pdc", freq=10, run="R01")
-p2_5(G)
-
-print('\n================== P 2.6 ==============================')
-p2_6('R01')
-p2_6('R02')
-
-print('\n================== P 2.7 ==============================')
-threshold = threshold_20_percent_density
-graph_indices_part_2_7(conn_mat, threshold)
-
-'''
 
 
 

@@ -80,6 +80,7 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     axs[0].set_yticklabels(nodeid_best_degree)
     axs[0].set_ylabel("channel ID")
     axs[0].set_xlabel("node degree")
+    axs[0].grid()
     
     in_degree_sorted      = sorted(in_degs, key=getKey, reverse=False)
     top_10_in_degrees     = in_degree_sorted[-10:]
@@ -90,6 +91,7 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     axs[1].set_yticks(np.arange(0,10)),
     axs[1].set_yticklabels(nodeid_best_in_degree)
     axs[1].set_xlabel("in degree")
+    axs[1].grid()
     
     out_degree_sorted       = sorted(out_degs, key=getKey, reverse=False)
     top_10_out_degrees      = in_degree_sorted[-10:]
@@ -100,6 +102,7 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     axs[2].set_yticks(np.arange(0,10)),
     axs[2].set_yticklabels(nodeid_best_out_degree)
     axs[2].set_xlabel("out degree")
+    axs[2].grid()
     
     fig.suptitle("Top 10 channels for local     ")
     plt.show()
@@ -164,12 +167,8 @@ def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%'
 
 def graph_indices_part_2_7(conn_mat, threshold):
     weights = np.random.uniform(0, 2, (64,64))  # random generated weght with shape (n,n)
-    
-    weights = conn_mat
-    
-    adj_mat = compute_adjacency(conn_mat, threshold=threshold)  # 0.04597 for PDC
-    print("Resulting network density:", np.sum(adj_mat)/4032)
-    
+    weights = conn_mat # ???
+    adj_mat = compute_adjacency(conn_mat, threshold=threshold)  # 0.04597 for PDC    
     
     weighted_adj_mat = np.multiply(weights, adj_mat) # mask weiths using adjacency matrix
     
@@ -186,7 +185,7 @@ def graph_indices_part_2_7(conn_mat, threshold):
 
     Cfs_wght = list(nx.clustering(G_weighted, weight="weight").values())
     Cf_avg_wght = np.sum(Cfs_wght) / 64
-    print("Resulting global Graph Clustering Coefficient using local clustering Coefficient:", Cf_avg_wght)
+    # print("Resulting global Graph Clustering Coefficient using local clustering Coefficient:", Cf_avg_wght)
     
     
     PLs_wght = nx.shortest_path_length(G_weighted, weight="weight")
@@ -196,7 +195,7 @@ def graph_indices_part_2_7(conn_mat, threshold):
         sum_path_lenghs += np.sum(list(ps[1].values()))
         
     PL_avg_wght = sum_path_lenghs/(4032)
-    print("Resulting global Graph Path Lenght using local shortest path lenghts:", PL_avg_wght)
+    # print("Resulting global Graph Path Lenght using local shortest path lenghts:", PL_avg_wght)
     
     
     # degrees
@@ -218,7 +217,7 @@ def graph_indices_part_2_7(conn_mat, threshold):
     ]
     plot2_1(degrees_weighted,in_degrees_weighted,out_degrees_weighted,colors=my_colors)
 
-    return  
+    return Cf_avg_wght, PL_avg_wght
 
 
 def p2_1(conn, freq, run):
@@ -287,9 +286,8 @@ def p2_4(run):
     graph_indices_part_2_4(conn_mat, thresholds)
 
 
-
 def p2_5(G):
-    print("[2.5] >>")
+    print("[2.5] >> Displaying topological graph...")
     p1_5(G, point='2.5')
 
 
@@ -311,14 +309,21 @@ def p2_6(run):
     pdc_mat_25Hz = compute_adjacency(load_matrix(conn_method='pdc', freq=25, run=run), threshold=threshold_25Hz)    
     cl_pdc_25Hz, pl_pdc_25Hz = graph_indices_part_2_1(pdc_mat_25Hz,  plots=False, verbose=False)
 
-    print("[2.3] >> Average Clustering Coefficient PDC - 10Hz: {:.4f}%".format(100*cl_pdc_10Hz))
-    print("[2.3] >> Average Clustering Coefficient PDC - 25Hz: {:.4f}%".format(100*cl_pdc_25Hz))
-    print("[2.3] >> Average Path Length PDC - 10Hz: {:.4f}".format(pl_pdc_10Hz))
-    print("[2.3] >> Average Path Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
+    print("[2.6] >> Average Clustering Coefficient PDC - 10Hz: {:.4f}%".format(100*cl_pdc_10Hz))
+    print("[2.6] >> Average Clustering Coefficient PDC - 25Hz: {:.4f}%".format(100*cl_pdc_25Hz))
+    print("[2.6] >> Average Path Length PDC - 10Hz: {:.4f}".format(pl_pdc_10Hz))
+    print("[2.6] >> Average Path Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
 
 
-
-
+def p2_7(run):
+    if run == 'R01':
+        threshold = THRES_PDC_10HZ_R01_20percent
+    elif run == 'R02':
+        threshold = THRES_PDC_10HZ_R02_20percent
+    conn_mat = load_matrix('pdc', 10, run, verbose=False)
+    cl, pl = graph_indices_part_2_7(conn_mat, threshold)
+    print("[2.7] >> Average Weighted Clustering Coefficient PDC: {:.2f}%".format(100*cl))
+    print("[2.7] >> Average Weighted Path Length PDC: {:.2f}".format(pl))
 
 
 if __name__ == '__main__':
