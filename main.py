@@ -1,3 +1,4 @@
+from commons import *
 from graph_indices import *
 from motif_analysis import *
 from connectivity_graph import *
@@ -15,7 +16,7 @@ check_mean_var_EEG_rithm(plot=False)
 
 # since the values of the variance matrix above thresold are few, we will use a specific frequence - 10Hz
 freq = 10
-conn_method = 'pdc'
+conn = 'pdc'
 
 ####### TASK 1 ########
 
@@ -25,37 +26,21 @@ conn_method = 'pdc'
 # e.g. data/pdc_R01_10Hz_auto.txt
 # e.g. data/dtf_R02_12Hz_auto.txt
 
-p1_1(file_name="data/S003R01_fixed", freq=freq, run='R01')  # NOTE: p1_1 performs also point 1.2
-p1_3(conn_method=conn_method, freq=10, run='R01')
-p1_4()
-p1_5(load_conn_graph(conn=conn_method, freq=freq, run="R01"))
-p1_6(file_name="data/S003R01_fixed", freq=25, run='R01')
+for r in RUNS:
+    p1_1(file_name="data/S003{}_fixed".format(r), freq=freq, run=r)  # NOTE: p1_1 performs also point 1.2
+    p1_3(conn_method=conn, freq=10, run=r)
+    p1_4()
+    p1_5(load_conn_graph(conn=conn, freq=freq, run=r))
+    p1_6(file_name="data/S003{}_fixed".format(r), freq=25, run=r)
 
-p1_1(file_name="data/S003R02_fixed", freq=freq, run='R02')  # NOTE: p1_1 performs also point 1.2
-p1_3(conn_method=conn_method, freq=10, run='R02')
-p1_4()
-p1_5(load_conn_graph(conn=conn_method, freq=freq, run="R02"))
-p1_6(file_name="data/S003R02_fixed", freq=25, run='R02')
 
 
 ####### TASK 2 ########
 
-#N = 64
-#nodes_idx = [i for i in range(N)]  # [0,1,2..., N]
-#max_edges = N*(N-1)
+for r in RUNS:
+    p2_1(conn=conn, freq=freq, run=r)
 
-# get adjacency matrix
-conn_mat = load_matrix(conn_method=conn_method)
-print("mat shape:", conn_mat.shape)
-
-threshold_20_percent_density = 0.137 # 0.04597 for PDC
-adj_mat = compute_adjacency(conn_mat, threshold=threshold_20_percent_density)  
-print("Resulting network density:", np.sum(adj_mat)/4032)
-
-print('\n================== P 2.1 ==============================')
-Cf_real, PL_real = graph_indices_part_2_1(adj_mat)
-
-
+'''
 print('\n================== P 2.2 ==============================')
 print('small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
 # small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
@@ -84,7 +69,7 @@ print('\n================== P 2.7 ==============================')
 threshold = threshold_20_percent_density
 graph_indices_part_2_7(conn_mat, threshold)
 
-
+'''
 
 
 

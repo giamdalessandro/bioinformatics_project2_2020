@@ -269,7 +269,12 @@ def p2_6(run):
     print("[2.3] >> Average PAth Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
 
 
-def p2_1(conn, freq, run, threshold):
+def p2_1(conn, freq, run):
+    if run == 'R01':
+        threshold = THRES_10HZ_R01_20percent
+    elif run == 'R02':
+        threshold = THRES_10HZ_R02_20percent
+
     adj_mat = compute_adjacency(load_matrix(conn_method=conn, freq=freq, run=run), threshold=threshold)
     Cf_real, PL_real = graph_indices_part_2_1(adj_mat)
 
