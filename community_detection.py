@@ -4,10 +4,11 @@ import networkx as nx
 import community as cl
 import infomap
 
+from commons import *
 from connectivity_graph import load_conn_graph, load_channel_coordinates, load_matrix, compute_adjacency, p1_5, map_index_to_channels
 
 
-def relabel_partition(partition):
+def relabel_partition_louvain(partition):
     """
     Relabels node in the partition obtained using igraph\n
     It's not optimized nor elegant, but the graph is small, so...
@@ -22,7 +23,7 @@ def relabel_partition(partition):
             part.append(mapping[p])
         d.update({i: part})
     partition = {}
-    print("[4.1] >> Communities found: {}\n".format(len(d)))
+    print("[4.1] >> Communities found using Louvain algorithm: {}\n".format(len(d)))
     for k in d.keys():
         print("[Community {}]".format(k))
         for p in d[k]:
@@ -72,21 +73,33 @@ def best_partition_infomap(G):
 ####
 
 
-def p4_1(conn_method="pdc", freq=10, run="R01", auto='auto', threshold=0.1226):
-    
-    partition = best_partition_louvain(conn_method=conn_method, freq=freq,
-                                       run=run, auto=auto, threshold=threshold)
-    return relabel_partition(partition)
+def p4_1(conn_method="pdc", freq=10, run="R01", auto='auto'):
+    if run == 'R01':
+        threshold = THRES_PDC_10HZ_R01_20percent
+    elif run == 'R02':
+        threshold = THRES_PDC_10HZ_R02_20percent
+
+    partition = best_partition_louvain(conn_method=conn_method, freq=freq, run=run, auto=auto, threshold=threshold)
+    return relabel_partition_louvain(partition)
 
 
-def p4_2(G, partition):
+def p4_2(run, partition):
     """
     Display a topographical representation of the community structure
     """
+    if run == 'R01':
+        threshold = THRES_PDC_10HZ_R01_20percent
+    elif run == 'R02':
+        threshold = THRES_PDC_10HZ_R02_20percent
+    G = load_conn_graph(conn="pdc", freq=10, run=run, auto="auto", threshold=threshold)
     p1_5(G, point='4.2', communities=partition)
 
 
-def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226):
+def p4_3(conn_method="pdc", freq=10, run='R01', auto='auto'):
+    if run == 'R01':
+        threshold = THRES_PDC_10HZ_R01_20percent
+    elif run == 'R02':
+        threshold = THRES_PDC_10HZ_R02_20percent
     conn_mat = load_matrix(conn_method=conn_method, freq=freq, run=run, auto=auto)
     adj_mat = compute_adjacency(conn_mat, threshold=threshold)
     G = nx.from_numpy_array(adj_mat, create_using=nx.DiGraph)
@@ -101,7 +114,7 @@ def p4_3(G, conn_method="pdc", freq=10, run='R01', auto='auto', threshold=0.1226
         l.append(list())
     for node, comm in communities.items():
         l[comm-1].append(mapping[node])
-    print("[4.3] >> Communities found: {}\n".format(len(l)))
+    print("[4.3] >> Communities found using Infomap algorithm: {}\n".format(len(l)))
     for i in range(len(l)):
         print("[Community {}]".format(i))
         for node in l[i]:

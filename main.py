@@ -27,7 +27,7 @@ conn = 'pdc'
 # e.g. data/dtf_R02_12Hz_auto.txt
 '''
 for r in RUNS:
-    print("\n============================== {} ==============================".format(r))
+    print("\n============================== TASTK 1 - {} ==============================".format(r))
     print("'{}'".format(r))
     p1_1(file_name="data/S003{}_fixed".format(r), freq=freq, run=r)  # NOTE: p1_1 performs also point 1.2
     p1_3(conn_method=conn, freq=10, run=r)
@@ -38,9 +38,9 @@ for r in RUNS:
 
 
 ####### TASK 2 ########
-
+'''
 for r in RUNS:
-    print("\n============================== {} ==============================".format(r))
+    print("\n============================== TASTK 2 {} ==============================".format(r))
     cf_real, pl_real = p2_1(conn=conn, freq=freq, run=r)
     small_worldness  = p2_2(cf_real, pl_real, random_graph='erdos')  # or 'watts'
     p2_3(freq=freq, run=r)
@@ -48,32 +48,33 @@ for r in RUNS:
     p2_5(load_conn_graph(conn=conn, freq=freq, run=r))
     p2_6(run=r)
     p2_7(run=r)
-
-
-
-
-
 '''
-# PART 3
-M_3 = p3_1()
-p3_2(G)
-p3_3(freq_mat=M_3)
-p3_4()
 
 
-
-# PART 4
-partition, partition_louvain = p4_1()
-p4_2(G, partition)
-partition_infomap = p4_3(G)
-
-#NOTE: implementare una metrica (Jaccard ?) per vedere quanto le due partition sono simili
-
-for S1 in partition_louvain.values():
-    for S2 in partition_infomap:
-        j = jaccard(S1, S2)             # S1 and S2 are list of nodes
-        if j > 0:
-            print("Louvain community:", S1)
-            print("Infomap community:", S2)
-            print("Jaccard is {}%\n".format(j))
+####### TASK 3 ########
 '''
+for r in RUNS:
+    print("\n============================== TASK 3 - {} ==============================".format(r))
+    M_3 = p3_1()
+    p3_2(G)
+    p3_3(freq_mat=M_3)
+    p3_4()
+'''
+
+
+####### TASK 4 ########
+for r in RUNS:
+    print("\n============================== TASK 4 - {} ==============================".format(r))
+    partition, partition_louvain = p4_1(run=r)
+    p4_2(run=r, partition=partition)
+    partition_infomap = p4_3(run=r)
+
+    #NOTE: implementare una metrica (Jaccard ?) per vedere quanto le due partition sono simili
+    for S1 in partition_louvain.values():
+        for S2 in partition_infomap:
+            j = jaccard(S1, S2)             # S1 and S2 are list of nodes
+            if j > 0:
+                print("Louvain community:", S1)
+                print("Infomap community:", S2)
+                print("Jaccard is {}%\n".format(j))
+
