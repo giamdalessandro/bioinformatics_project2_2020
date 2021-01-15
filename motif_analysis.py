@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from bct import motif3struct_bin, motif3funct_bin, motif4struct_bin, motif4funct_bin
+from bct import motif3struct_bin, motif4struct_bin
 from connectivity_graph import compute_adjacency, load_matrix, load_conn_graph, p1_5
 
 PLOTS = False
@@ -15,10 +15,10 @@ $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.
 """
 
 
-def significanceProfile(M):
+def significanceProfile(M, nrand=100):
     """
-    Compute the significance profile of the motifs in directed graph G.
-        - G : directed graph representing the network; 
+    Compute the significance profile of the motifs in a directed graph G, represented by the adjacency matrix M.
+        - M : adjacency matrix representing the network; 
     """
     m_3, M_3 = motif3struct_bin(M)
 
@@ -26,7 +26,7 @@ def significanceProfile(M):
     out_degree_sequence = [d for n, d in G.out_degree()]  # out-degree sequence
 
     random_nets_census = []
-    for i in range(100):
+    for i in range(nrand):
         rand_G = nx.directed_configuration_model(in_degree_sequence, out_degree_sequence, create_using=nx.DiGraph, seed=i)
         adj_M  = nx.to_numpy_array(rand_G)
 
@@ -88,7 +88,7 @@ def p3_1():
     plt.title("Node class-3 motif frequency fingerprint")
     plt.show()
 
-    sp = significanceProfile(M)
+    sp = significanceProfile(M, nrand=1000)
     return M_3
 
 
