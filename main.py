@@ -6,7 +6,6 @@ from community_detection import *
 
 """
 TODO
-- 1.1   shuffle rows/cols?
 - 1.4   try to find the libraries
 - 3.1   check that we are performing the statistical test
 """
@@ -70,7 +69,6 @@ for r in RUNS:
     p4_2(run=r, partition=partition)
     partition_infomap = p4_3(run=r)
 
-    #NOTE: implementare una metrica (Jaccard ?) per vedere quanto le due partition sono simili
     for S1 in partition_louvain.values():
         for S2 in partition_infomap:
             j = jaccard(S1, S2)             # S1 and S2 are list of nodes
