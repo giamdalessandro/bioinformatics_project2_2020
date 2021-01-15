@@ -15,12 +15,11 @@ $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.
 """
 
 
-def significanceProfile(G):
+def significanceProfile(M):
     """
     Compute the significance profile of the motifs in directed graph G.
         - G : directed graph representing the network; 
     """
-    M = compute_adjacency(load_matrix())
     m_3, M_3 = motif3struct_bin(M)
 
     in_degree_sequence  = [d for n, d in G.in_degree()]   # in-degree sequence
@@ -56,9 +55,10 @@ def significanceProfile(G):
     return sp
 
 def plot_sp(sp):
+    print("[3.1] >> Significance Profile:",sp)
     patterns = [str(i) for i in np.arange(1,14)]
     plt.plot(np.arange(len(sp)), sp, 'o-')
-    plt.yticks(np.arange(-0.2, 0.7, 0.1))
+    plt.yticks(np.arange(-0.2, 0.8, 0.1))
     plt.xticks(np.arange(len(patterns)), labels=patterns)
     plt.ylabel("normalized Z-score")
     plt.xlabel("motif ID")
@@ -87,6 +87,8 @@ def p3_1():
     plt.ylabel("Motif ID")
     plt.title("Node class-3 motif frequency fingerprint")
     plt.show()
+
+    sp = significanceProfile(M)
     return M_3
 
 
@@ -163,7 +165,4 @@ def p3_4():
 
 if __name__ == '__main__':
     G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    #p3_2(G)
-
-    sp = significanceProfile(G)
-    print(sp)
+    p3_1()
