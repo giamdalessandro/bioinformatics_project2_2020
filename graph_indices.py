@@ -80,6 +80,7 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     axs[0].set_yticklabels(nodeid_best_degree)
     axs[0].set_ylabel("channel ID")
     axs[0].set_xlabel("node degree")
+    axs[0].grid()
     
     in_degree_sorted      = sorted(in_degs, key=getKey, reverse=False)
     top_10_in_degrees     = in_degree_sorted[-10:]
@@ -90,6 +91,7 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     axs[1].set_yticks(np.arange(0,10)),
     axs[1].set_yticklabels(nodeid_best_in_degree)
     axs[1].set_xlabel("in degree")
+    axs[1].grid()
     
     out_degree_sorted       = sorted(out_degs, key=getKey, reverse=False)
     top_10_out_degrees      = in_degree_sorted[-10:]
@@ -100,6 +102,7 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     axs[2].set_yticks(np.arange(0,10)),
     axs[2].set_yticklabels(nodeid_best_out_degree)
     axs[2].set_xlabel("out degree")
+    axs[2].grid()
     
     fig.suptitle("Top 10 channels for local     ")
     plt.show()
@@ -317,7 +320,13 @@ def p2_6(run):
     print("[2.3] >> Average Path Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
 
 
-
+def p2_7(run):
+    if run == 'R01':
+        threshold = THRES_PDC_10HZ_R01_20percent
+    elif run == 'R02':
+        threshold = THRES_PDC_10HZ_R02_20percent
+    conn_mat = load_matrix('pdc', 10, run, verbose=False)
+    graph_indices_part_2_7(conn_mat, threshold)
 
 
 
