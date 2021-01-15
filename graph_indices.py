@@ -10,7 +10,7 @@ def graph_indices_part_2_1(adj_mat, plots=True, verbose=True):
     # create graph using adjacency matrix
     G_Real = nx.from_numpy_matrix(adj_mat, create_using=nx.DiGraph)
     if verbose:
-        print("Resulting network density:", np.sum(adj_mat)/max_edges)
+        print("Resulting network density:", np.sum(adj_mat)/4032)
     
     """
         using density lower than 2% raise exception with using
@@ -25,8 +25,9 @@ def graph_indices_part_2_1(adj_mat, plots=True, verbose=True):
     # print("Resulting global Graph Path Lenght:", PL_real)
     
     # using local data to compute values
+    nodes_idx = [i for i in range(64)]  # [0,1,2..., N]
     Cfs_real = list(nx.clustering(G_Real, nodes=nodes_idx).values())
-    Cf_avg_real = np.sum(Cfs_real) / N
+    Cf_avg_real = np.sum(Cfs_real) / 64
     if verbose:
         print("Resulting global Graph Clustering Coefficient using local clustering Coefficient:", Cf_avg_real)
     
@@ -36,7 +37,7 @@ def graph_indices_part_2_1(adj_mat, plots=True, verbose=True):
     for ps in PLs_real:
         sum_path_lenghs = sum_path_lenghs + np.sum(list(ps[1].values()))
         
-    PL_avg_real = sum_path_lenghs/(N*(N-1))
+    PL_avg_real = sum_path_lenghs/(4032)
     if verbose:
         print("Resulting global Graph Path Lenght using local shortest path lenghts:", PL_avg_real)
     
@@ -107,9 +108,9 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
 
 def graph_indices_part_2_2(Cf_real, PL_real, random_graph='erdos'):
     if random_graph == 'erdos':
-        G_Rand = nx.erdos_renyi_graph(n=N, p=0.4, directed=True)
+        G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, directed=True)
     else:
-        G_Rand = nx.watts_strogatz_graph(n=N, p=0.4, k=5)
+        G_Rand = nx.watts_strogatz_graph(n=64, p=0.4, k=5)
         
     Cf_rand = nx.average_clustering(G_Rand)
     PL_rand = nx.average_shortest_path_length(G_Rand)
@@ -166,7 +167,7 @@ def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%'
 
 
 def graph_indices_part_2_7(conn_mat, threshold):
-    weights = np.random.uniform(0, 2, (N,N))  # random generated weght with shape (n,n)
+    weights = np.random.uniform(0, 2, (64,64))  # random generated weght with shape (n,n)
     
     weights = conn_mat
     
@@ -188,7 +189,7 @@ def graph_indices_part_2_7(conn_mat, threshold):
             
 
     Cfs_wght = list(nx.clustering(G_weighted, weight="weight").values())
-    Cf_avg_wght = np.sum(Cfs_wght) / N
+    Cf_avg_wght = np.sum(Cfs_wght) / 64
     print("Resulting global Graph Clustering Coefficient using local clustering Coefficient:", Cf_avg_wght)
     
     
@@ -198,7 +199,7 @@ def graph_indices_part_2_7(conn_mat, threshold):
         # print(list(ps[1].values()))
         sum_path_lenghs += np.sum(list(ps[1].values()))
         
-    PL_avg_wght = sum_path_lenghs/(N*(N-1))
+    PL_avg_wght = sum_path_lenghs/(4032)
     print("Resulting global Graph Path Lenght using local shortest path lenghts:", PL_avg_wght)
     
     
@@ -284,8 +285,8 @@ if __name__ == '__main__':
     conn_method = 'dtf'
     random_graph = 'erdos' # 'watts' and erdos are options
     N = 64
-    nodes_idx = [i for i in range(N)]  # [0,1,2..., N]
-    max_edges = N*(N-1)
+    
+    max_edges = 4032
     '''
     # get adjacency matrix
     conn_mat = load_matrix(conn_method=conn_method)

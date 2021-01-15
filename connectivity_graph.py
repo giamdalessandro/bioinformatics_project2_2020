@@ -462,3 +462,7 @@ def p1_6(file_name="data/S003R01_fixed", freq=25, run='R01'):
     threshold = find_threshold(mat, target=20, start=0.4, point='6')
     print("[1.6] >> best threshold = {}\n".format(threshold))
     print_adj(conn_method='pdc', freq=freq, run=run, threshold=threshold)
+
+
+if __name__ == "__main__":
+    p1_1(file_name='data/S003R01_fixed', freq=10, run='R01')  

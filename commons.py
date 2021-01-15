@@ -18,7 +18,7 @@ THRES_10HZ_R01_20percent = 0.12270000000001624
 THRES_10HZ_R02_20percent = 0.1167500000000169
 
 
-RUNS = ['RO1', 'R02']
+RUNS = ['R01', 'R02']
 
 
 def fxn():

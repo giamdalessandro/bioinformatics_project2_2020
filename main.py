@@ -25,14 +25,15 @@ conn = 'pdc'
 # to re-run the code that computes them, delete the matrix files
 # e.g. data/pdc_R01_10Hz_auto.txt
 # e.g. data/dtf_R02_12Hz_auto.txt
-
+'''
 for r in RUNS:
+    print("'{}'".format(r))
     p1_1(file_name="data/S003{}_fixed".format(r), freq=freq, run=r)  # NOTE: p1_1 performs also point 1.2
     p1_3(conn_method=conn, freq=10, run=r)
     p1_4()
     p1_5(load_conn_graph(conn=conn, freq=freq, run=r))
     p1_6(file_name="data/S003{}_fixed".format(r), freq=25, run=r)
-
+'''
 
 
 ####### TASK 2 ########
