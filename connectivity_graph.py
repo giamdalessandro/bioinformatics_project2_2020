@@ -247,7 +247,7 @@ def p1_1(file_name=None, freq=10, run='R01', point='1'):
         print("\n[1.1] >> DTF sign:", dtf_significance)
         #if PLOTS:
         #    data.plot_conn("DTF measure")
-        save_matrices(mat = dtf_values[freq], n_channels=64, freq=freq, run=run)
+        save_matrices(mat = dtf_values[freq], n_channels=64, conn_meth='dtf', freq=freq, run=run)
 
     pdc_path = "data/pdc_{}_{}hz_auto.txt".format(run, freq)
     if not os.path.isfile(pdc_path):
@@ -258,7 +258,7 @@ def p1_1(file_name=None, freq=10, run='R01', point='1'):
         print("\n[1.1] >> PDC sign:", pdc_significance)
         #if PLOTS :
         #    data.plot_conn("PDC measure")
-        save_matrices(mat=pdc_values[freq], n_channels=64, freq=freq, run=run)
+        save_matrices(mat=pdc_values[freq], n_channels=64, conn_meth='pdc', freq=freq, run=run)
 
     if PLOTS and point != '6':
         # NOTE: the threshold values here will yield ~20% density in the network.
