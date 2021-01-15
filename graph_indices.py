@@ -139,13 +139,14 @@ def graph_indices_part_2_4(conn_mat, thresholds):
 
 
 def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%']):
-    fig, ax = plt.subplots(1, 2, figsize=(9, 3))
+    fig, ax = plt.subplots(1, 2, figsize=(8, 4))
     width = 0.4
+    max_y = max(avg_pl) if max(avg_pl) >= max(cl_coeffs) else max(cl_coeffs)
 
     ax[0].bar(np.arange(len(cl_coeffs)), cl_coeffs, width=width, color="yellowgreen",label="avg clustering coefficient")
     ax[0].set_xticks(np.arange(len(densities)))
     ax[0].set_xticklabels(densities)
-    ax[0].set_yticks(np.arange(0.0,1.3,0.1))
+    ax[0].set_yticks(np.arange(0.0,max_y,0.2))
     ax[0].set_xlabel("network density")
     ax[0].set_ylabel("avg clustering coefficient")
     ax[0].grid(axis="y")
@@ -154,7 +155,7 @@ def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%'
     ax[1].bar(np.arange(len(avg_pl)), avg_pl, width=0.4, color="coral", label="avg path length")
     ax[1].set_xticks(np.arange(len(densities)))
     ax[1].set_xticklabels(densities)
-    ax[1].set_yticks(np.arange(0.0,1.3,0.1))
+    ax[1].set_yticks(np.arange(0.0,max_y,0.2))
     ax[1].set_xlabel("network density")
     ax[1].set_ylabel("avg path length")
     ax[1].grid(axis="y")
@@ -365,13 +366,16 @@ if __name__ == '__main__':
     '''
 
 
-    print('\n================== P 2.3 ==============================')
-    p2_3(freq=10, run='R01', threshold_pdc=0.1226, threshold_dtf=0.1378)
+    #print('\n================== P 2.3 ==============================')
+    #p2_3(freq=10, run='R01', threshold_pdc=0.1226, threshold_dtf=0.1378)
+
+    print('\n================== P 2.4 ==============================')
+    p2_4(run="R02")
 
     #print('\n================== P 2.5 ==============================')
     #G = load_conn_graph(conn="pdc", freq=10, run="R01")
     #p2_5(G)
 
-    print('\n================== P 2.6 ==============================')
-    p2_6('R01')
-    p2_6('R02')
+    #print('\n================== P 2.6 ==============================')
+    #p2_6('R01')
+    #p2_6('R02')
