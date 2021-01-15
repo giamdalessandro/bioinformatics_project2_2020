@@ -39,13 +39,12 @@ for r in RUNS:
 ####### TASK 2 ########
 
 for r in RUNS:
-    p2_1(conn=conn, freq=freq, run=r)
+    cf_real, pl_real = p2_1(conn=conn, freq=freq, run=r)
+    small_worldness  = p2_2(cf_real, pl_real, random_graph='erdos')  # or 'watts'
 
 '''
 print('\n================== P 2.2 ==============================')
-print('small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
-# small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
-Small_worldness = graph_indices_part_2_2(Cf_real, PL_real, random_graph='erdos')    # or 'watts'
+
 
 print('\n================== P 2.3 ==============================')
 p2_3(freq=10, run='R01', threshold_pdc=0.1226, threshold_dtf=0.1378)

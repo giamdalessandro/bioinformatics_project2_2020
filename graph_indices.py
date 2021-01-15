@@ -224,6 +224,24 @@ def graph_indices_part_2_7(conn_mat, threshold):
     return  
 
 
+def p2_1(conn, freq, run):
+    if run == 'R01':
+        threshold = THRES_10HZ_R01_20percent
+    elif run == 'R02':
+        threshold = THRES_10HZ_R02_20percent
+    print("\n[2.1] >> analyzing run", run)
+    adj_mat = compute_adjacency(load_matrix(conn_method=conn, freq=freq, run=run), threshold=threshold)
+    cf_real, pl_real = graph_indices_part_2_1(adj_mat)
+    return cf_real, pl_real
+
+
+def p2_2(cf_real, pl_real, random_graph='erdos'):
+    print('\n[2.2] >> small worlds formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
+    # small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
+    small_worldness = graph_indices_part_2_2(cf_real, pl_real, random_graph=random_graph)    
+    return small_worldness
+
+
 def p2_3(freq, run, threshold_pdc, threshold_dtf):
     """
     Computes for both pdc and dtf method:
@@ -270,14 +288,7 @@ def p2_6(run):
     print("[2.3] >> Average PAth Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
 
 
-def p2_1(conn, freq, run):
-    if run == 'R01':
-        threshold = THRES_10HZ_R01_20percent
-    elif run == 'R02':
-        threshold = THRES_10HZ_R02_20percent
 
-    adj_mat = compute_adjacency(load_matrix(conn_method=conn, freq=freq, run=run), threshold=threshold)
-    Cf_real, PL_real = graph_indices_part_2_1(adj_mat)
 
 
 
