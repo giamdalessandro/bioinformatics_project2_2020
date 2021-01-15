@@ -73,7 +73,8 @@ def compute_mean_adjacency(conn_method='pdc', run='R01'):
         aux_mat.append(conn_mat)
     
     mean_mat = np.mean(aux_mat, axis=0)
-    plt.matshow(mean_mat)
+    fig = plt.figure(figsize=[7, 6])
+    plt.matshow(mean_mat, fignum=fig.number)
     plt.title("Mean {} adjacency matrix of run {} in the alpha-band".format(conn_method, run))
     plt.colorbar()
     plt.show()
@@ -83,7 +84,8 @@ def compute_mean_adjacency(conn_method='pdc', run='R01'):
         conn_mat = load_matrix(conn_method=conn_method, freq=i, run=run,  verbose=False)
         aux_mat.append((conn_mat - mean_mat)**2)
     var_mat = np.mean(aux_mat, axis=0)
-    plt.matshow(var_mat)
+    fig = plt.figure(figsize=[7, 6])
+    plt.matshow(var_mat, fignum=fig.number)
     plt.title("Variance of the {} adjacency matrix of run {} in the alpha-band".format(conn_method, run))
     plt.colorbar()
     plt.show()
@@ -148,7 +150,8 @@ def print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='auto'
     """
 
     mat = load_matrix(conn_method=conn_method, freq=freq, run=run, auto=auto)
-    plt.matshow(mat)
+    fig = plt.figure(figsize=[7, 6])
+    plt.matshow(mat, fignum=fig.number)
     plt.title("{} adjacency matrix of run {} @{}Hz".format(conn_method, run, freq))
     plt.colorbar()
     plt.show()
@@ -157,8 +160,10 @@ def print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='auto'
         mat = compute_adjacency(mat, threshold=threshold)
         density = 100*np.sum(mat)/4032
         print("Density = {:.02f}%".format(density))
-        plt.matshow(mat)
+        fig = plt.figure(figsize=[7, 6])
+        plt.matshow(mat, fignum=fig.number)
         plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format(conn_method, run, freq, density))
+        plt.colorbar()
         plt.show()
 
  
@@ -304,10 +309,10 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         """
         Helper function to now write two times the same plt stuff
         """
+        fig = plt.figure(figsize=[8, 7])
         cmap = 'viridis' if point == '1.5' else 'plasma'
         vmin = min(node_color)
         vmax = max(node_color)
-
         nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700, node_color=node_color, cmap=cmap)
 
         if point == '1.5':
@@ -399,6 +404,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         plt.show()
 
     
+
     if point == '1.5':
         node_color_in  = []
         node_color_out = []
@@ -451,8 +457,10 @@ def p1_3(conn_method, freq, run, point='3'):
         new_mat = compute_adjacency(mat, threshold=best_t)
         density = 100*np.sum(new_mat)/4032
         print("Density ~ {:.02f}% with threshold = {}\n".format(density, best_t))
-        plt.matshow(new_mat)
+        fig = plt.figure(figsize=[7, 6])
+        plt.matshow(new_mat, fignum=fig.number)
         plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format(conn_method, run, freq, density))
+        plt.colorbar()
         plt.show()
 
 
