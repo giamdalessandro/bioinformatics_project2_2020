@@ -484,4 +484,5 @@ def p1_6(file_name="data/S003R01_fixed", freq=25, run='R01'):
     p1_1(file_name=file_name, freq=freq, run=run, point='6')
     mat = load_matrix(conn_method='pdc', freq=freq, run=run, verbose=True)
     threshold = find_threshold(mat, target=20, start=0.4)
+    print("[1.6] >> best threshold = {}\n".format(threshold))
     print_adj(conn_method='pdc', freq=freq, run=run, threshold=threshold)
