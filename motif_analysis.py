@@ -22,16 +22,17 @@ def significanceProfile(M, nrand=100):
     for i in range(nrand):
         rand_G = nx.directed_configuration_model(in_degree_sequence, out_degree_sequence, create_using=nx.DiGraph, seed=i)
         adj_M  = nx.to_numpy_array(rand_G)
-
+        # motif analysis on random graph
         rand_m_3, rand_M_3 = motif3struct_bin(adj_M)
         random_nets_census.append(rand_m_3)
+
+        # some processing check motif over-representation
         ov = []
         for i in range(len(rand_m_3)):
             if rand_m_3[i] > m_3[i]: 
                 ov.append(1)
             else:
                 ov.append(0)
-
         over_rep.append(ov)
 
     real_census   = m_3
@@ -39,6 +40,8 @@ def significanceProfile(M, nrand=100):
     print(len(real_census))
     print(random_census.shape)
     avg_random_census = []
+
+    # computing z-score
     z_score = []
     for p in range(len(real_census)):
         N_real_p = real_census[p]
@@ -74,8 +77,13 @@ def plot_sp(sp, real_frq, random_frq, over_rep):
         norm_motif.append(round(norm_m_score,4))
         norm_anti.append(round(norm_a_score,4))
 
-    print("ov shape:",np.array(over_rep).shape)
-
+    over_rep = np.array(over_rep)
+    print("ov shape:",over_rep.shape)
+    prob_frq = []
+    for i in range(len(thresholds)):
+        p_i = np.sum(over_rep[:,i])/100
+        prob_frq.append(p_i)
+    print(prob_frq)
 
     print("[3.1] >> Motif frequencies")
     width = 0.4
