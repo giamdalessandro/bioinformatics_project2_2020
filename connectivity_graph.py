@@ -465,8 +465,5 @@ def p1_6(file_name="data/S003R01_fixed", freq=25, run='R01'):
 
 
 if __name__ == "__main__":
-    mat = load_matrix(conn_method='dtf', freq=10, run='R02', verbose=False)
-    best_t = find_threshold(mat, 20, 0.5)
-    new_mat = compute_adjacency(mat, threshold=best_t)
-    density = 100*np.sum(new_mat)/4032
-    print("Density ~ {:.02f}% with threshold = {}\n".format(density, best_t))
+    p1_3('pdc', 10, 'R01')
+    p1_3('pdc', 10, 'R02')

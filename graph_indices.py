@@ -268,6 +268,16 @@ def p2_3(freq, run):
     print("[2.3] >> Average Path Length DTF: {:.2f}".format(pl_dtf))
 
 
+
+def 2_4():
+    # just change threshold values in crearting adjacency matrix to tune density as
+    # mentioned in P 1.3
+    #  densities = [1%, 5%, 10%, 20%, 30%, 50%]
+    thresholds = [0.41, 0.24, 0.187, 0.137, 0.1, 0.055]
+    graph_indices_part_2_4(conn_mat, thresholds)
+
+
+
 def p2_5(G):
     print("[2.5] >>")
     p1_5(G, point='2.5')

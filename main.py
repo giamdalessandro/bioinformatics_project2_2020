@@ -44,18 +44,10 @@ for r in RUNS:
     cf_real, pl_real = p2_1(conn=conn, freq=freq, run=r)
     small_worldness  = p2_2(cf_real, pl_real, random_graph='erdos')  # or 'watts'
     p2_3(freq=freq, run=r)
+    p2_4()
 
 '''
 
-print('\n================== P 2.3 ==============================')
-
-
-print('\n================== P 2.4 ==============================')
-# just change threshold values in crearting adjacency matrix to tune density as 
-# mentioned in P 1.3
-#  densities = [1%, 5%, 10%, 20%, 30%, 50%]
-thresholds = [0.41, 0.24, 0.187, 0.137, 0.1, 0.055]
-graph_indices_part_2_4(conn_mat, thresholds)
 
 print('\n================== P 2.5 ==============================')
 G = load_conn_graph(conn="pdc", freq=10, run="R01")
