@@ -18,22 +18,32 @@ def significanceProfile(M, nrand=100):
     out_degree_sequence = [d for n, d in G.out_degree()]  # out-degree sequence
 
     random_nets_census = []
+    over_rep = []
     for i in range(nrand):
         rand_G = nx.directed_configuration_model(in_degree_sequence, out_degree_sequence, create_using=nx.DiGraph, seed=i)
         adj_M  = nx.to_numpy_array(rand_G)
 
         rand_m_3, rand_M_3 = motif3struct_bin(adj_M)
         random_nets_census.append(rand_m_3)
+        ov = []
+        for i in range(len(rand_m_3)):
+            if rand_m_3[i] > m_3[i]: 
+                ov.append(1)
+            else:
+                ov.append(0)
+
+        over_rep.append(ov)
 
     real_census   = m_3
-    random_census = random_nets_census
+    random_census = np.array(random_nets_census)
+    print(len(real_census))
+    print(random_census.shape)
     avg_random_census = []
     z_score = []
     for p in range(len(real_census)):
-        #print(p)
         N_real_p = real_census[p]
-        N_rand_p = np.mean(random_census[p])
-        std = np.std(random_census[p])
+        N_rand_p = np.mean(random_census[:,p])
+        std = np.std(random_census[:,p])
 
         z_p =  ((N_real_p - N_rand_p)/std if std != 0 else 0)
         z_score.append(z_p)
@@ -45,12 +55,13 @@ def significanceProfile(M, nrand=100):
         norm_z_score = (z_score[i]/z_norm if z_norm != 0 else z_score[i])
         sp.append(round(norm_z_score,4))
 
-    plot_sp(sp, real_census, avg_random_census)
+    plot_sp(sp, real_census, avg_random_census, over_rep)
     return sp
 
-def plot_sp(sp, real_frq, random_frq):
+def plot_sp(sp, real_frq, random_frq, over_rep):
     print("[3.1] >> Motif and anti-motif")
     D = 0.1
+    p = 0.01
     thresholds = [r*D for r in random_frq]
     thr_anti   = [r*D*-1 for r in random_frq]
     norm_motif = []
@@ -62,6 +73,9 @@ def plot_sp(sp, real_frq, random_frq):
         norm_a_score = (thr_anti[i]/norm_a if norm_a != 0 else thr_anti[i])
         norm_motif.append(round(norm_m_score,4))
         norm_anti.append(round(norm_a_score,4))
+
+    print("ov shape:",np.array(over_rep).shape)
+
 
     print("[3.1] >> Motif frequencies")
     width = 0.4
@@ -77,16 +91,17 @@ def plot_sp(sp, real_frq, random_frq):
 
     print("[3.1] >> Significance Profile:",sp)
     patterns = [str(i) for i in np.arange(1,14)]
-    plt.plot(np.arange(len(sp)), sp, 'o-')
-    plt.plot(np.arange(len(norm_motif)), norm_motif, 'o-', color="red")
-    plt.plot(np.arange(len(norm_anti)), norm_anti,   'o-', color="red")
-    plt.yticks(np.arange(-0.2, 0.8, 0.1))
+    plt.plot(np.arange(len(sp)), sp, 'o-', label="real net z-scores")
+    plt.plot(np.arange(len(norm_motif)), norm_motif, 'd--', color="coral", label="motif")
+    plt.plot(np.arange(len(norm_anti)), norm_anti,   'd--', color="red", label="anti-motif")
+    plt.yticks(np.arange(-0.7, 0.8, 0.1))
     plt.xticks(np.arange(len(patterns)), labels=patterns)
     plt.ylabel("normalized Z-score")
     plt.xlabel("motif ID")
 
-    plt.title("Significance Profile")
+    plt.title("Network significance profile")
     plt.grid(True)
+    plt.legend()
     plt.show()
     return
 
