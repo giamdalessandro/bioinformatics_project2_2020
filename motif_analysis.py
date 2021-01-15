@@ -15,17 +15,13 @@ $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.
 """
 
 
-def significanceProfile(G, triad_cfg="fuffa"):
+def significanceProfile(G):
     """
-    Compute the significance profile of the patterns mapped in triad_cfg, 
-    inside directed graph G.
-        - G          : directed graph representing the network; 
-        - triads_cfg : dict mapping interesting triadic patterns codes, 
-            as in nx.triadic_census(), with explicit names. 
-            (e.g. triad_cfg = {'003' : 'Null', '012' : 'Single-edge'})
+    Compute the significance profile of the motifs in directed graph G.
+        - G : directed graph representing the network; 
     """
     M = compute_adjacency(load_matrix())
-    m_3, M_3 = motif3funct_bin(M)
+    m_3, M_3 = motif3struct_bin(M)
 
     in_degree_sequence  = [d for n, d in G.in_degree()]   # in-degree sequence
     out_degree_sequence = [d for n, d in G.out_degree()]  # out-degree sequence
@@ -35,7 +31,7 @@ def significanceProfile(G, triad_cfg="fuffa"):
         rand_G = nx.directed_configuration_model(in_degree_sequence, out_degree_sequence, create_using=nx.DiGraph, seed=i)
         adj_M  = nx.to_numpy_array(rand_G)
 
-        rand_m_3, rand_M_3 = motif3funct_bin(adj_M)
+        rand_m_3, rand_M_3 = motif3struct_bin(adj_M)
         random_nets_census.append(rand_m_3)
 
     real_census   = m_3
@@ -75,7 +71,7 @@ def plot_sp(sp):
 
 def p3_1():
     M = compute_adjacency(load_matrix())
-    m_3, M_3 = motif3funct_bin(M)
+    m_3, M_3 = motif3struct_bin(M)
 
     print("[3.1] >> Motif frequency:", m_3)
     plt.bar(np.arange(1, 14), m_3)
