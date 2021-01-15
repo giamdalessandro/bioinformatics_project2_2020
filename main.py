@@ -5,7 +5,6 @@ from community_detection import *
 """
 TODO
 - 1.1   shuffle rows/cols?
-- 1.3
 - 1.4   try to find the libraries
 - 1.6   same as 1.1
 - 2.6
@@ -28,15 +27,17 @@ freq = 10
 # e.g. data/pdc_R01_10Hz_auto.txt
 # e.g. data/dtf_R02_12Hz_auto.txt
 
-p1_1(file_name="data/S003R01_fixed", freq=freq, run='R01')  # NOTE: p1_1 performs also point 1.2
-p1_3(conn_method='pdc', freq=10, run='R01')
+# p1_1(file_name="data/S003R01_fixed", freq=freq, run='R01')  # NOTE: p1_1 performs also point 1.2
+# p1_3(conn_method='pdc', freq=10, run='R01')
+#   p1_4()
+# p1_5()
+p1_6(file_name="data/S003R01_fixed", freq=25, run='R01')
 
-
-
-
-p1_1(file_name="data/S003R02_fixed", freq=freq, run='R02')  # NOTE: p1_1 performs also point 1.2
-p1_3(conn_method='pdc', freq=10, run='R02')
-
+# p1_1(file_name="data/S003R02_fixed", freq=freq, run='R02')  # NOTE: p1_1 performs also point 1.2
+# p1_3(conn_method='pdc', freq=10, run='R02')
+# p1_4()
+# p1_5()
+p1_6(file_name="data/S003R02_fixed", freq=25, run='R02')
 
 
 

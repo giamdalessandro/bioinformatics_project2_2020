@@ -21,7 +21,7 @@ def fxn():
 
 ## point 1.1 func ##
 
-def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
+def save_matrices(mat, n_channels=64, conn_meth='pdc', freq=8, run="R01"):
     """
     Save adjacency matrices obtained from DTF and PDC connectivity analysis to file
         - dtf_mat    : connectivity matrix obtained with DTF measure;
@@ -31,24 +31,17 @@ def save_matrices(dtf_mat, pdc_mat, n_channels=64, freq=8, run="R01"):
         - freq       : frequecy value related to the matrix data;
         - run        : the related run of the experiment, one of {'R01','R02'}.
     """
-    dtf_path = "data/dtf_{}_{}hz_auto.txt".format(run,freq)
-    pdc_path = "data/pdc_{}_{}hz_auto.txt".format(run,freq)
+    path = "data/{}_{}_{}hz_auto.txt".format(conn_meth, run,freq)
 
-    print("\nSaving DTF and PDC matrices respectively to {} and {}".format(dtf_path,pdc_path))
-    f_dtf = open(dtf_path, "w")
-    f_pdc = open(pdc_path, "w")
-
+    print("\nSaving to {}".format(path))
+    f = open(path, "w")
     for i in range(n_channels):
         for j in range(n_channels):
             if j == 63:
-                f_dtf.write(str(dtf_mat[i][j]) + "\n")
-                f_pdc.write(str(pdc_mat[i][j]) + "\n")
+                f.write(str(mat[i][j]) + "\n")
             else:
-                f_dtf.write(str(dtf_mat[i][j]) + " ")
-                f_pdc.write(str(pdc_mat[i][j]) + " ")
-
-    f_dtf.close()
-    f_pdc.close()
+                f.write(str(mat[i][j]) + " ")
+    f.close()
     return
 
 
@@ -193,7 +186,7 @@ def print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='auto'
         plt.show()
 
  
-def p1_1(file_name="data/S003R01_fixed", freq=10, run='R01', point='1'):
+def p1_1(file_name=None, freq=10, run='R01', point='1'):
     
     #### Load EEG data from edf file
     if point == '4':        ### <<<<<<<<<<<<<<<<<<
@@ -243,27 +236,31 @@ def p1_1(file_name="data/S003R01_fixed", freq=10, run='R01', point='1'):
         return data
 
     #### Compute connectivity matrices with DTF and PDC measures
-    if not already_computed() or COMPUTE_MATS:
+    #if not already_computed() or COMPUTE_MATS:
+    
+    dtf_path = "data/dtf_{}_{}hz_auto.txt".format(run, freq)
+    if not os.path.isfile(dtf_path):
         # investigate connectivity using DTF
         dtf_values = data.conn('dtf',resolution=80)
         dtf_significance = data.significance(Nrep=100, alpha=0.05)
         print("[1.1] >> dtf_shape:",dtf_values.shape)
         print("\n[1.1] >> DTF sign:", dtf_significance)
-        if PLOTS:
-            data.plot_conn("DTF measure")
+        #if PLOTS:
+        #    data.plot_conn("DTF measure")
+        save_matrices(mat = dtf_values[freq], n_channels=64, freq=freq, run=run)
 
+    pdc_path = "data/pdc_{}_{}hz_auto.txt".format(run, freq)
+    if not os.path.isfile(pdc_path):
         # investigate connectivity using PDC
         pdc_values = data.conn('pdc',resolution=80)
         pdc_significance = data.significance(Nrep=100, alpha=0.05)
         print("[1.1] >> pdc_shape:", pdc_values.shape)
         print("\n[1.1] >> PDC sign:", pdc_significance)
-        if PLOTS:
-            data.plot_conn("PDC measure")
+        #if PLOTS :
+        #    data.plot_conn("PDC measure")
+        save_matrices(mat=pdc_values[freq], n_channels=64, freq=freq, run=run)
 
-        for i in range(8,14):
-            save_matrices(dtf_mat=dtf_values[i],pdc_mat=pdc_values[i],n_channels=64,freq=i,run=file_name[9:12])
-
-    if PLOTS:
+    if PLOTS and point != '6':
         # NOTE: the threshold values here will yield ~20% density in the network.
         if run == 'R01':
             print_adj(conn_method='pdc', freq=freq, run=run, threshold=0.1226)
@@ -447,12 +444,8 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         p4_3_helper(G, pos, communities)
 
 
-def p1_6():
-    print("[1.6] >> Still to be implemented...")
 
 
-#print_adj(conn_method='pdc', freq=10, run='R02', threshold=0.1167)
-#print_adj(conn_method='dtf', freq=10, run='R02', threshold=0.1322)
 
 def find_threshold(mat, target, start):
     print('[1.3] >> Optimizing thresold to reach {}% density..'.format(target))
@@ -488,3 +481,15 @@ def p1_3(conn_method, freq, run):
         plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format(conn_method, run, freq, density))
         plt.show()
 
+
+def p1_6(file_name="data/S003R01_fixed", freq=25, run='R01'):
+    p1_1(file_name=file_name, freq=freq, run=run, point='6')
+    mat = load_matrix(conn_method='pdc', freq=freq, run=run, verbose=True)
+    threshold = find_threshold(mat, target=20, start=0.4)
+    new_mat = compute_adjacency(mat, threshold=threshold)
+    density = 100*np.sum(new_mat)/4032
+    print("Density ~ {:.02f}% with threshold = {}\n".format(
+        density, threshold))
+    plt.matshow(new_mat)
+    plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format('pdc', run, freq, density))
+    plt.show()
