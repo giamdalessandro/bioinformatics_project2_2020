@@ -1,22 +1,4 @@
-import warnings
-import os
-import pyedflib
-import numpy as np
-import networkx as nx
-import connectivipy as cp
-import matplotlib.pyplot as plt
-import matplotlib.colors as colors
-from itertools import count
-
-PLOTS        = True
-COMPUTE_MATS = False
-ADJACENCY    = False
-OPTIMIZE_P   = False
-
-
-def fxn():
-    warnings.warn("future",  FutureWarning)
-    warnings.warn("warning", Warning)
+from commons import *
 
 
 ## point 1.1 func ##

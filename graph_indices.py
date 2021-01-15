@@ -1,7 +1,4 @@
-import numpy as np
-import networkx as nx
-import matplotlib.pyplot as plt
-
+from commons import *
 from connectivity_graph import load_matrix, compute_adjacency, load_channel_coordinates, load_conn_graph, p1_5
 
 
@@ -254,10 +251,10 @@ def p2_6(run):
     Thresold values are stored here and not calculated again
     """
     if run == 'R01':
-        threshold_10Hz = 0.12270000000001624
+        threshold_10Hz = THRES_10HZ_R01_20percent
         threshold_25Hz = 0.1268000000000301
     elif run == 'R02':
-        threshold_10Hz = 0.1167500000000169
+        threshold_10Hz = THRES_10HZ_R02_20percent
         threshold_25Hz = 0.12200000000003064
     
     pdc_mat_10Hz = compute_adjacency(load_matrix(conn_method='pdc', freq=10, run=run), threshold=threshold_10Hz)    
@@ -270,6 +267,11 @@ def p2_6(run):
     print("[2.3] >> Average Clustering Coefficient PDC - 25Hz: {:.4f}%".format(100*cl_pdc_25Hz))
     print("[2.3] >> Average PAth Length PDC - 10Hz: {:.4f}".format(pl_pdc_10Hz))
     print("[2.3] >> Average PAth Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
+
+
+def p2_1(conn, freq, run, threshold):
+    adj_mat = compute_adjacency(load_matrix(conn_method=conn, freq=freq, run=run), threshold=threshold)
+    Cf_real, PL_real = graph_indices_part_2_1(adj_mat)
 
 
 
