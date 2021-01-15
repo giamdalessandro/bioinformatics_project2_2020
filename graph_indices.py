@@ -9,10 +9,11 @@ def getKey(item):
     return item[1]
 
 
-def graph_indices_part_2_1(adj_mat, plots=True):
+def graph_indices_part_2_1(adj_mat, plots=True, verbose=True):
     # create graph using adjacency matrix
     G_Real = nx.from_numpy_matrix(adj_mat, create_using=nx.DiGraph)
-    print("Resulting network density:", np.sum(adj_mat)/max_edges)
+    if verbose:
+        print("Resulting network density:", np.sum(adj_mat)/max_edges)
     
     """
         using density lower than 2% raise exception with using
@@ -29,7 +30,8 @@ def graph_indices_part_2_1(adj_mat, plots=True):
     # using local data to compute values
     Cfs_real = list(nx.clustering(G_Real, nodes=nodes_idx).values())
     Cf_avg_real = np.sum(Cfs_real) / N
-    print("Resulting global Graph Clustering Coefficient using local clustering Coefficient:", Cf_avg_real)
+    if verbose:
+        print("Resulting global Graph Clustering Coefficient using local clustering Coefficient:", Cf_avg_real)
     
     
     PLs_real = nx.shortest_path_length(G_Real)
@@ -38,7 +40,8 @@ def graph_indices_part_2_1(adj_mat, plots=True):
         sum_path_lenghs = sum_path_lenghs + np.sum(list(ps[1].values()))
         
     PL_avg_real = sum_path_lenghs/(N*(N-1))
-    print("Resulting global Graph Path Lenght using local shortest path lenghts:", PL_avg_real)
+    if verbose:
+        print("Resulting global Graph Path Lenght using local shortest path lenghts:", PL_avg_real)
     
     
     degrees     = list(G_Real.degree(nodes_idx))     # degree of all nodes as tuple of (node,degree) form
@@ -48,7 +51,8 @@ def graph_indices_part_2_1(adj_mat, plots=True):
     
     degree_sorted = sorted(degrees, key=getKey, reverse=False)
     top_10_degrees = degree_sorted[-10:]
-    print("Resulting highest 10 degrees (node, degree) format:", top_10_degrees) 
+    if verbose:
+        print("Resulting highest 10 degrees (node, degree) format:", top_10_degrees)
 
     if plots:
         my_colors = [
@@ -230,8 +234,8 @@ def p2_3(freq, run, threshold_pdc, threshold_dtf):
     """
     pdc_mat = compute_adjacency(load_matrix(conn_method='pdc', freq=freq, run=run), threshold=threshold_pdc)    
     dtf_mat = compute_adjacency(load_matrix(conn_method='dtf', freq=freq, run=run), threshold=threshold_dtf)
-    cl_pdc, pl_pdc = graph_indices_part_2_1(pdc_mat)
-    cl_dtf, pl_dtf = graph_indices_part_2_1(dtf_mat)
+    cl_pdc, pl_pdc = graph_indices_part_2_1(pdc_mat, plots=False, verbose=False)
+    cl_dtf, pl_dtf = graph_indices_part_2_1(dtf_mat, plots=False, verbose=False)
 
     print("[2.3] >> Average Clustering Coefficient PDC: {:.2f}%".format(100*cl_pdc))
     print("[2.3] >> Average Clustering Coefficient DTF: {:.2f}%".format(100*cl_dtf))
@@ -257,15 +261,15 @@ def p2_6(run):
         threshold_25Hz = 0.12200000000003064
     
     pdc_mat_10Hz = compute_adjacency(load_matrix(conn_method='pdc', freq=10, run=run), threshold=threshold_10Hz)    
-    cl_pdc_10Hz, pl_pdc_10Hz = graph_indices_part_2_1(pdc_mat_10Hz)
+    cl_pdc_10Hz, pl_pdc_10Hz = graph_indices_part_2_1(pdc_mat_10Hz, plots=False, verbose=False)
 
     pdc_mat_25Hz = compute_adjacency(load_matrix(conn_method='pdc', freq=25, run=run), threshold=threshold_25Hz)    
-    cl_pdc_25Hz, pl_pdc_25Hz = graph_indices_part_2_1(pdc_mat_25Hz)
+    cl_pdc_25Hz, pl_pdc_25Hz = graph_indices_part_2_1(pdc_mat_25Hz,  plots=False, verbose=False)
 
-    print("[2.3] >> Average Clustering Coefficient PDC - 10Hz: {:.2f}%".format(100*cl_pdc_10Hz))
-    print("[2.3] >> Average Clustering Coefficient PDC - 25Hz: {:.2f}%".format(100*cl_pdc_25Hz))
-    print("[2.3] >> Average PAth Length PDC - 10Hz: {:.2f}".format(pl_pdc_10Hz))
-    print("[2.3] >> Average PAth Length PDC - 25Hz: {:.2f}".format(pl_pdc_25Hz))
+    print("[2.3] >> Average Clustering Coefficient PDC - 10Hz: {:.4f}%".format(100*cl_pdc_10Hz))
+    print("[2.3] >> Average Clustering Coefficient PDC - 25Hz: {:.4f}%".format(100*cl_pdc_25Hz))
+    print("[2.3] >> Average PAth Length PDC - 10Hz: {:.4f}".format(pl_pdc_10Hz))
+    print("[2.3] >> Average PAth Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
 
 
 
@@ -313,9 +317,10 @@ if __name__ == '__main__':
     print('\n================== P 2.3 ==============================')
     p2_3(freq=10, run='R01', threshold_pdc=0.1226, threshold_dtf=0.1378)
 
-    print('\n================== P 2.5 ==============================')
-    G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    p2_5(G)
+    #print('\n================== P 2.5 ==============================')
+    #G = load_conn_graph(conn="pdc", freq=10, run="R01")
+    #p2_5(G)
 
+    print('\n================== P 2.6 ==============================')
     p2_6('R01')
     p2_6('R02')
