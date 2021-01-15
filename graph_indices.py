@@ -204,6 +204,7 @@ def graph_indices_part_2_7(conn_mat, threshold):
     
     
     # degrees
+    nodes_idx = [i for i in range(64)]  # [0,1,2..., N]
     degrees_weighted = list(G_weighted.degree(nodes_idx))  # degree of all nodes as tuple of (node,degree) form
     in_degrees_weighted = list(G_weighted.in_degree(nodes_idx))  # degree of all nodes as tuple of (node,degree) form
     out_degrees_weighted = list(G_weighted.out_degree(nodes_idx))  # degree of all nodes as tuple of (node,degree) form
@@ -226,9 +227,9 @@ def graph_indices_part_2_7(conn_mat, threshold):
 
 def p2_1(conn, freq, run):
     if run == 'R01':
-        threshold = THRES_10HZ_R01_20percent
+        threshold = THRES_PDC_10HZ_R01_20percent
     elif run == 'R02':
-        threshold = THRES_10HZ_R02_20percent
+        threshold = THRES_PDC_10HZ_R02_20percent
     print("\n[2.1] >> analyzing run", run)
     adj_mat = compute_adjacency(load_matrix(conn_method=conn, freq=freq, run=run), threshold=threshold)
     cf_real, pl_real = graph_indices_part_2_1(adj_mat)
@@ -242,21 +243,29 @@ def p2_2(cf_real, pl_real, random_graph='erdos'):
     return small_worldness
 
 
-def p2_3(freq, run, threshold_pdc, threshold_dtf):
+def p2_3(freq, run):
     """
     Computes for both pdc and dtf method:
         - cl (Average Clustering Coefficient)
         - pl (Average Path Length)
     """
+    if run == 'R01':
+        threshold_pdc = THRES_PDC_10HZ_R01_20percent
+        threshold_dtf = THRES_DTF_10HZ_R01_20percent
+    elif run == 'R02':
+        threshold_pdc = THRES_PDC_10HZ_R02_20percent
+        threshold_dtf = THRES_DTF_10HZ_R02_20percent
+
+    
     pdc_mat = compute_adjacency(load_matrix(conn_method='pdc', freq=freq, run=run), threshold=threshold_pdc)    
     dtf_mat = compute_adjacency(load_matrix(conn_method='dtf', freq=freq, run=run), threshold=threshold_dtf)
     cl_pdc, pl_pdc = graph_indices_part_2_1(pdc_mat, plots=False, verbose=False)
     cl_dtf, pl_dtf = graph_indices_part_2_1(dtf_mat, plots=False, verbose=False)
-
+    print("\n")
     print("[2.3] >> Average Clustering Coefficient PDC: {:.2f}%".format(100*cl_pdc))
     print("[2.3] >> Average Clustering Coefficient DTF: {:.2f}%".format(100*cl_dtf))
-    print("[2.3] >> Average PAth Length PDC: {:.2f}".format(pl_pdc))
-    print("[2.3] >> Average PAth Length DTF: {:.2f}".format(pl_dtf))
+    print("[2.3] >> Average Path Length PDC: {:.2f}".format(pl_pdc))
+    print("[2.3] >> Average Path Length DTF: {:.2f}".format(pl_dtf))
 
 
 def p2_5(G):
@@ -270,11 +279,11 @@ def p2_6(run):
     Thresold values are stored here and not calculated again
     """
     if run == 'R01':
-        threshold_10Hz = THRES_10HZ_R01_20percent
-        threshold_25Hz = 0.1268000000000301
+        threshold_10Hz = THRES_PDC_10HZ_R01_20percent
+        threshold_25Hz = THRES_PDC_25HZ_R01_20percent
     elif run == 'R02':
-        threshold_10Hz = THRES_10HZ_R02_20percent
-        threshold_25Hz = 0.12200000000003064
+        threshold_10Hz = THRES_PDC_10HZ_R02_20percent
+        threshold_25Hz = THRES_PDC_25HZ_R02_20percent
     
     pdc_mat_10Hz = compute_adjacency(load_matrix(conn_method='pdc', freq=10, run=run), threshold=threshold_10Hz)    
     cl_pdc_10Hz, pl_pdc_10Hz = graph_indices_part_2_1(pdc_mat_10Hz, plots=False, verbose=False)
@@ -284,8 +293,8 @@ def p2_6(run):
 
     print("[2.3] >> Average Clustering Coefficient PDC - 10Hz: {:.4f}%".format(100*cl_pdc_10Hz))
     print("[2.3] >> Average Clustering Coefficient PDC - 25Hz: {:.4f}%".format(100*cl_pdc_25Hz))
-    print("[2.3] >> Average PAth Length PDC - 10Hz: {:.4f}".format(pl_pdc_10Hz))
-    print("[2.3] >> Average PAth Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
+    print("[2.3] >> Average Path Length PDC - 10Hz: {:.4f}".format(pl_pdc_10Hz))
+    print("[2.3] >> Average Path Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
 
 
 

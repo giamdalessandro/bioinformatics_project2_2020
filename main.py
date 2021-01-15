@@ -27,6 +27,7 @@ conn = 'pdc'
 # e.g. data/dtf_R02_12Hz_auto.txt
 '''
 for r in RUNS:
+    print("\n============================== {} ==============================".format(r))
     print("'{}'".format(r))
     p1_1(file_name="data/S003{}_fixed".format(r), freq=freq, run=r)  # NOTE: p1_1 performs also point 1.2
     p1_3(conn_method=conn, freq=10, run=r)
@@ -39,15 +40,14 @@ for r in RUNS:
 ####### TASK 2 ########
 
 for r in RUNS:
+    print("\n============================== {} ==============================".format(r))
     cf_real, pl_real = p2_1(conn=conn, freq=freq, run=r)
     small_worldness  = p2_2(cf_real, pl_real, random_graph='erdos')  # or 'watts'
+    p2_3(freq=freq, run=r)
 
 '''
-print('\n================== P 2.2 ==============================')
-
 
 print('\n================== P 2.3 ==============================')
-p2_3(freq=10, run='R01', threshold_pdc=0.1226, threshold_dtf=0.1378)
 
 
 print('\n================== P 2.4 ==============================')
