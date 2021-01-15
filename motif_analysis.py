@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from bct import motif3struct_bin, motif3funct_bin, motif4struct_bin, motif4funct_bin
+from bct import motif3struct_bin, motif4struct_bin
 from connectivity_graph import compute_adjacency, load_matrix, load_conn_graph, p1_5
 
 PLOTS = False
@@ -15,27 +15,22 @@ $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.
 """
 
 
-def significanceProfile(G, triad_cfg="fuffa"):
+def significanceProfile(M, nrand=100):
     """
-    Compute the significance profile of the patterns mapped in triad_cfg, 
-    inside directed graph G.
-        - G          : directed graph representing the network; 
-        - triads_cfg : dict mapping interesting triadic patterns codes, 
-            as in nx.triadic_census(), with explicit names. 
-            (e.g. triad_cfg = {'003' : 'Null', '012' : 'Single-edge'})
+    Compute the significance profile of the motifs in a directed graph G, represented by the adjacency matrix M.
+        - M : adjacency matrix representing the network; 
     """
-    M = compute_adjacency(load_matrix())
-    m_3, M_3 = motif3funct_bin(M)
+    m_3, M_3 = motif3struct_bin(M)
 
     in_degree_sequence  = [d for n, d in G.in_degree()]   # in-degree sequence
     out_degree_sequence = [d for n, d in G.out_degree()]  # out-degree sequence
 
     random_nets_census = []
-    for i in range(100):
+    for i in range(nrand):
         rand_G = nx.directed_configuration_model(in_degree_sequence, out_degree_sequence, create_using=nx.DiGraph, seed=i)
         adj_M  = nx.to_numpy_array(rand_G)
 
-        rand_m_3, rand_M_3 = motif3funct_bin(adj_M)
+        rand_m_3, rand_M_3 = motif3struct_bin(adj_M)
         random_nets_census.append(rand_m_3)
 
     real_census   = m_3
@@ -60,9 +55,10 @@ def significanceProfile(G, triad_cfg="fuffa"):
     return sp
 
 def plot_sp(sp):
+    print("[3.1] >> Significance Profile:",sp)
     patterns = [str(i) for i in np.arange(1,14)]
     plt.plot(np.arange(len(sp)), sp, 'o-')
-    plt.yticks(np.arange(-0.2, 0.7, 0.1))
+    plt.yticks(np.arange(-0.2, 0.8, 0.1))
     plt.xticks(np.arange(len(patterns)), labels=patterns)
     plt.ylabel("normalized Z-score")
     plt.xlabel("motif ID")
@@ -75,7 +71,7 @@ def plot_sp(sp):
 
 def p3_1():
     M = compute_adjacency(load_matrix())
-    m_3, M_3 = motif3funct_bin(M)
+    m_3, M_3 = motif3struct_bin(M)
 
     print("[3.1] >> Motif frequency:", m_3)
     plt.bar(np.arange(1, 14), m_3)
@@ -91,6 +87,8 @@ def p3_1():
     plt.ylabel("Motif ID")
     plt.title("Node class-3 motif frequency fingerprint")
     plt.show()
+
+    sp = significanceProfile(M, nrand=1000)
     return M_3
 
 
@@ -167,7 +165,4 @@ def p3_4():
 
 if __name__ == '__main__':
     G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    #p3_2(G)
-
-    sp = significanceProfile(G)
-    print(sp)
+    p3_1()
