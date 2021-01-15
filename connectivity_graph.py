@@ -162,13 +162,7 @@ def already_computed():
 
 def print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='auto'):
     """
-    Prints adjacency matrix
-    ------------------------
-    TODO 
-    DTF 10hz R01: threshold of 0.1378 network density -> 0.2006 (20.01%)
-    PDC 10hz R01: threshold of 0.1226 network density -> 0.2001 (20.01%)
-    DTF 10hz R02: ???
-    PDC 10hz R02: ???    
+    Prints adjacency matrix    
     """
 
     mat = load_matrix(conn_method=conn_method, freq=freq, run=run, auto=auto)
@@ -444,16 +438,16 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         p4_3_helper(G, pos, communities)
 
 
-def find_threshold(mat, target, start):
-    print('[1.3] >> Optimizing thresold to reach {}% density..'.format(target))
+def find_threshold(mat, target, start, point='3'):
+    print('[1.{}] >> Optimizing thresold to reach {}% density..'.format(point, target))
     old = 100
     best_t = -1
-    eps = 0.1
+    eps = 0.05
     # it's faster if we decrease our threshold
-    vv = np.arange(start, 0.06, -0.0001)
+    vv = np.arange(start, 0.06, -0.00005)
     for t in vv:
         new_mat = compute_adjacency(mat, threshold=t)
-        curr_d = 100*np.sum(new_mat)/(4032-64*2)
+        curr_d = 100*np.sum(new_mat)/4032
         if abs(curr_d - target) <= eps:
             if abs(curr_d - target) <= old:
                 best_t = t
@@ -463,9 +457,9 @@ def find_threshold(mat, target, start):
     return best_t
 
 
-def p1_3(conn_method, freq, run):
+def p1_3(conn_method, freq, run, point='3'):
     print("------------------------------------------------------")
-    print("[1.3] >> Optimizing ", conn_method, "matrix, run", run)
+    print("[1.{}] >> Optimizing ".format(point), conn_method, "matrix, run", run)
     mat = load_matrix(conn_method=conn_method, freq=freq, run=run, verbose=False)
     
     # threshold for minimum freq with pdc
@@ -483,6 +477,6 @@ def p1_3(conn_method, freq, run):
 def p1_6(file_name="data/S003R01_fixed", freq=25, run='R01'):
     p1_1(file_name=file_name, freq=freq, run=run, point='6')
     mat = load_matrix(conn_method='pdc', freq=freq, run=run, verbose=True)
-    threshold = find_threshold(mat, target=20, start=0.4)
+    threshold = find_threshold(mat, target=20, start=0.4, point='6')
     print("[1.6] >> best threshold = {}\n".format(threshold))
     print_adj(conn_method='pdc', freq=freq, run=run, threshold=threshold)

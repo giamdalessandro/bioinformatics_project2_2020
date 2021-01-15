@@ -244,19 +244,28 @@ def p2_5(G):
     p1_5(G, point='2.5')
 
 
-def p2_6(freq, run, threshold):
+def p2_6(run):
     """
-    Compares the graph indices found in p2_1 with those of another band's frequeny
+    Compares the graph indices found in p2_1 with those of another band's frequeny\n
+    Thresold values are stored here and not calculated again
     """
-    pdc_mat = compute_adjacency(load_matrix(conn_method='pdc', freq=freq, run=run), threshold=threshold_pdc)    
-    dtf_mat = compute_adjacency(load_matrix(conn_method='dtf', freq=freq, run=run), threshold=threshold_dtf)
-    cl_pdc, pl_pdc = graph_indices_part_2_1(pdc_mat)
-    cl_dtf, pl_dtf = graph_indices_part_2_1(dtf_mat)
+    if run == 'R01':
+        threshold_10Hz = 0.12270000000001624
+        threshold_25Hz = 0.1268000000000301
+    elif run == 'R02':
+        threshold_10Hz = 0.1167500000000169
+        threshold_25Hz = 0.12200000000003064
+    
+    pdc_mat_10Hz = compute_adjacency(load_matrix(conn_method='pdc', freq=10, run=run), threshold=threshold_10Hz)    
+    cl_pdc_10Hz, pl_pdc_10Hz = graph_indices_part_2_1(pdc_mat_10Hz)
 
-    print("[2.3] >> Average Clustering Coefficient PDC: {:.2f}%".format(100*cl_pdc))
-    print("[2.3] >> Average Clustering Coefficient DTF: {:.2f}%".format(100*cl_dtf))
-    print("[2.3] >> Average PAth Length PDC: {:.2f}".format(pl_pdc))
-    print("[2.3] >> Average PAth Length DTF: {:.2f}".format(pl_dtf))
+    pdc_mat_25Hz = compute_adjacency(load_matrix(conn_method='pdc', freq=25, run=run), threshold=threshold_25Hz)    
+    cl_pdc_25Hz, pl_pdc_25Hz = graph_indices_part_2_1(pdc_mat_25Hz)
+
+    print("[2.3] >> Average Clustering Coefficient PDC - 10Hz: {:.2f}%".format(100*cl_pdc_10Hz))
+    print("[2.3] >> Average Clustering Coefficient PDC - 25Hz: {:.2f}%".format(100*cl_pdc_25Hz))
+    print("[2.3] >> Average PAth Length PDC - 10Hz: {:.2f}".format(pl_pdc_10Hz))
+    print("[2.3] >> Average PAth Length PDC - 25Hz: {:.2f}".format(pl_pdc_25Hz))
 
 
 
@@ -307,3 +316,6 @@ if __name__ == '__main__':
     print('\n================== P 2.5 ==============================')
     G = load_conn_graph(conn="pdc", freq=10, run="R01")
     p2_5(G)
+
+    p2_6('R01')
+    p2_6('R02')
