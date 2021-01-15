@@ -444,9 +444,6 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
         p4_3_helper(G, pos, communities)
 
 
-
-
-
 def find_threshold(mat, target, start):
     print('[1.3] >> Optimizing thresold to reach {}% density..'.format(target))
     old = 100
@@ -464,6 +461,7 @@ def find_threshold(mat, target, start):
                 break
         old = abs(curr_d - target)
     return best_t
+
 
 def p1_3(conn_method, freq, run):
     print("------------------------------------------------------")
@@ -486,10 +484,4 @@ def p1_6(file_name="data/S003R01_fixed", freq=25, run='R01'):
     p1_1(file_name=file_name, freq=freq, run=run, point='6')
     mat = load_matrix(conn_method='pdc', freq=freq, run=run, verbose=True)
     threshold = find_threshold(mat, target=20, start=0.4)
-    new_mat = compute_adjacency(mat, threshold=threshold)
-    density = 100*np.sum(new_mat)/4032
-    print("Density ~ {:.02f}% with threshold = {}\n".format(
-        density, threshold))
-    plt.matshow(new_mat)
-    plt.title("{} binary adjacency matrix of run {} @{}Hz with density = {:.02f}%".format('pdc', run, freq, density))
-    plt.show()
+    print_adj(conn_method='pdc', freq=freq, run=run, threshold=threshold)
