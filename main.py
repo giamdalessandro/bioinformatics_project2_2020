@@ -63,6 +63,7 @@ for r in RUNS:
 
 
 ####### TASK 4 ########
+'''
 for r in RUNS:
     print("\n============================== TASK 4 - {} ==============================".format(r))
     partition, partition_louvain = p4_1(run=r)
@@ -77,4 +78,4 @@ for r in RUNS:
                 print("Louvain community:", S1)
                 print("Infomap community:", S2)
                 print("Jaccard is {}%\n".format(j))
-
+'''

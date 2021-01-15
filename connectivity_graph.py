@@ -465,6 +465,35 @@ def p1_6(file_name="data/S003R01_fixed", freq=25, run='R01'):
 
 
 if __name__ == "__main__":
-    # p1_3('pdc', 10, 'R01')
-    # p1_3('pdc', 10, 'R02')
-    pass
+
+    mat = load_matrix(conn_method='pdc', freq=10, run='R01')#, threshold=THRES_PDC_10HZ_R01_20percent)
+    #print(mat)
+    pos = {}
+    with open("data/channel_locations.txt") as f:
+        for line in f:
+            # yes, there are 8 spaces in the file.
+            l = line.split(sep='        ')
+            if l[0] != '\ufeff#':
+                pos.update({str(l[1]): int(l[0])-1})
+    #print(pos)
+    left_indices   = []
+    right_indices  = []
+    center_indices = []
+    for k in pos.keys():
+        if '1' in k or '3' in k or '5' in k or '7' in k or '9' in k:
+            left_indices.append(pos[k])
+        elif '0' in k or '2' in k or '4' in k or '6'in k  or '8' in k:
+            right_indices.append(pos[k])
+        elif 'z' in k:
+            center_indices.append(pos[k]) 
+    #print(left_indices,   '\n')
+    #print(right_indices,  '\n')
+    #print(center_indices, '\n')
+    print(len(left_indices)+len(right_indices)+len(center_indices)) # if 64 ok
+
+    shuffled = np.zeros(shape=mat.shape)
+
+    for idx in left_indices:
+        for i in range(len(left_indices)):
+            for j in range(len(left_indices)):
+                shuffled[i][j] = mat[idx][idx]
