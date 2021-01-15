@@ -52,15 +52,16 @@ def plot_sp(sp, real_frq, random_frq):
     print("[3.1] >> Motif and anti-motif")
     D = 0.1
     thresholds = [r*D for r in random_frq]
-    thr_anti = [r*D*-1 for r in random_frq]
-
-    patterns = [str(i) for i in np.arange(1,14)]
-    plt.plot(np.arange(len(thresholds)), thresholds, 'o-')
-    plt.plot(np.arange(len(thresholds)), thr_anti, 'o-')
-    plt.xticks(np.arange(len(patterns)), labels=patterns)
-    plt.title("Thresholds")
-    plt.grid(True)
-    plt.show()
+    thr_anti   = [r*D*-1 for r in random_frq]
+    norm_motif = []
+    norm_anti  = []
+    for i in range(len(thresholds)):
+        norm_m = np.linalg.norm(thresholds)
+        norm_a = np.linalg.norm(thr_anti)
+        norm_m_score = (thresholds[i]/norm_m if norm_m != 0 else thresholds[i])
+        norm_a_score = (thr_anti[i]/norm_a if norm_a != 0 else thr_anti[i])
+        norm_motif.append(round(norm_m_score,4))
+        norm_anti.append(round(norm_a_score,4))
 
     print("[3.1] >> Motif frequencies")
     width = 0.4
@@ -77,6 +78,8 @@ def plot_sp(sp, real_frq, random_frq):
     print("[3.1] >> Significance Profile:",sp)
     patterns = [str(i) for i in np.arange(1,14)]
     plt.plot(np.arange(len(sp)), sp, 'o-')
+    plt.plot(np.arange(len(norm_motif)), norm_motif, 'o-', color="red")
+    plt.plot(np.arange(len(norm_anti)), norm_anti,   'o-', color="red")
     plt.yticks(np.arange(-0.2, 0.8, 0.1))
     plt.xticks(np.arange(len(patterns)), labels=patterns)
     plt.ylabel("normalized Z-score")
