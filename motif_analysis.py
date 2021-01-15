@@ -35,6 +35,7 @@ def significanceProfile(M, nrand=100):
 
     real_census   = m_3
     random_census = random_nets_census
+    avg_random_census = []
     z_score = []
     for p in range(len(real_census)):
         #print(p)
@@ -44,6 +45,7 @@ def significanceProfile(M, nrand=100):
 
         z_p =  ((N_real_p - N_rand_p)/std if std != 0 else 0)
         z_score.append(z_p)
+        avg_random_census.append(N_rand_p)
 
     sp = []
     for i in range(len(z_score)):
@@ -51,10 +53,22 @@ def significanceProfile(M, nrand=100):
         norm_z_score = (z_score[i]/z_norm if z_norm != 0 else z_score[i])
         sp.append(round(norm_z_score,4))
 
-    plot_sp(sp)
+    plot_sp(sp, real_census, avg_random_census)
     return sp
 
-def plot_sp(sp):
+def plot_sp(sp, real_frq, random_frq):
+    print("[3.1] >> Motif frequencies")
+    width = 0.4
+    plt.bar(np.arange(len(real_frq)) - (width/2), real_frq, width=width, color="yellowgreen", label="real network")
+    plt.bar(np.arange(len(random_frq)) + (width/2), random_frq, width=width, color="coral", label="avg random networks")
+    plt.xticks(np.arange(len(real_frq)), labels=[str(i) for i in np.arange(1,len(real_frq)+1)])
+    plt.xlabel("motif ID")
+    plt.ylabel("frequency")
+    plt.grid(axis="y")
+    plt.legend()
+    plt.title("Class-3 motif frequency")
+    plt.show()
+
     print("[3.1] >> Significance Profile:",sp)
     patterns = [str(i) for i in np.arange(1,14)]
     plt.plot(np.arange(len(sp)), sp, 'o-')
@@ -88,7 +102,7 @@ def p3_1():
     plt.title("Node class-3 motif frequency fingerprint")
     plt.show()
 
-    sp = significanceProfile(M, nrand=1000)
+    sp = significanceProfile(M, nrand=100)
     return M_3
 
 
