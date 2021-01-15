@@ -164,5 +164,11 @@ def p3_4():
 
 
 if __name__ == '__main__':
+    import time
+
+    start = time.time()
     G = load_conn_graph(conn="pdc", freq=10, run="R01")
     p3_1()
+
+    end = time.time()
+    print("Elapsed time:", (end - start)/60, "min")
