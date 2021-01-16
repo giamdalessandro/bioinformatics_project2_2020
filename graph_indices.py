@@ -110,39 +110,81 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     return
 
 
-def graph_indices_part_2_2(cf_real, pl_real):
+def graph_indices_part_2_2(cf_real, pl_real, iters=500, cf_rand=None, pl_rand=None):
+    if cf_rand is not None and pl_rand is not None:
+        return (cf_real/cf_rand)/(pl_real/pl_rand)
     cf_rand = 0
     pl_rand = 0
-    iters = 500
     for i in range(iters):
-        G_Rand = nx.erdos_renyi_graph(n=64, p=randint(4,6)/10, seed=i, directed=True)        
-        cf_rand += nx.average_clustering(G_Rand)
-        pl_rand += nx.average_shortest_path_length(G_Rand)
+        #G_Rand = nx.erdos_renyi_graph(n=64, p=randint(4,6)/10, seed=i, directed=True)        
+        G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, seed=i, directed=True)        
+        cf = nx.average_clustering(G_Rand)
+        pl = nx.average_shortest_path_length(G_Rand)
+        print("cf = ", cf)
+        print("pl = ", pl)
+        cf_rand += cf 
+        pl_rand += pl
     
     cf_rand = cf_rand / iters
     pl_rand = pl_rand / iters
-
+    print("cf real / cf rand = ", cf_real, '/', cf_rand)
+    print("pl real / l rand = ", pl_real, '/', pl_rand)
     Small_worldness = (cf_real/cf_rand)/(pl_real/pl_rand)    
     return Small_worldness
 
 
-def graph_indices_part_2_4(conn_mat, thresholds):
+def cf_pl(iters=500):
+    cf_rand = 0
+    pl_rand = 0
+    for i in range(iters):
+        #G_Rand = nx.erdos_renyi_graph(n=64, p=randint(4,6)/10, seed=i, directed=True)
+        G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, seed=i, directed=True)
+        cf = nx.average_clustering(G_Rand)
+        pl = nx.average_shortest_path_length(G_Rand)
+        cf_rand += cf
+        pl_rand += pl
+
+    cf_rand = cf_rand / iters
+    pl_rand = pl_rand / iters
+    print("cf_rand = ", cf_rand)
+    print("pl_rand = ", pl_rand)
+    return cf_rand, pl_rand
+
+
+def graph_indices_part_2_4(conn_mat, thresholds, cf_rand=None, pl_rand=None):
     cl_coeffs = []
     avg_pl    = []
+    smalls    = []
     for threshold in thresholds:
-        adj_mat = compute_adjacency(conn_mat, threshold=threshold)  # 0.04597 for PDC        
+        # if threshold == THRES_PDC_10HZ_R01_01percent or threshold == THRES_PDC_10HZ_R02_01percent:
+        #     d = 0.1
+        # elif threshold == THRES_PDC_10HZ_R01_05percent or threshold == THRES_PDC_10HZ_R01_05percent:
+        #     d = 0.1
+        # elif threshold == THRES_PDC_10HZ_R01_10percent or threshold == THRES_PDC_10HZ_R01_10percent:
+        #     d = 0.1
+        # elif threshold == THRES_PDC_10HZ_R01_20percent or threshold == THRES_PDC_10HZ_R01_20percent:
+        #     d = 0.2
+        # elif threshold == THRES_PDC_10HZ_R01_30percent or threshold == THRES_PDC_10HZ_R01_30percent:
+        #     d = 0.3
+        # elif threshold == THRES_PDC_10HZ_R01_50percent or threshold == THRES_PDC_10HZ_R01_50percent:
+        #     d = 0.5
+        adj_mat = compute_adjacency(conn_mat, threshold=threshold)        
         cl, pl = graph_indices_part_2_1(adj_mat, plots=False, verbose=False)
+        small_worldness = graph_indices_part_2_2(cl, pl, cf_rand=cf_rand, pl_rand=pl_rand) #, density=d)
         cl_coeffs.append(cl)
         avg_pl.append(pl)
+        smalls.append(small_worldness)
     
-    plot2_4(cl_coeffs,avg_pl)
+    plot2_4(cl_coeffs,avg_pl,smalls)
     return
 
 
-def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%']):
-    fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+def plot2_4(cl_coeffs, avg_pl, smalls, densities=['1%', '5%', '10%', '20%', '30%', '50%']):
+    fig, ax = plt.subplots(1, 3, figsize=(8, 4))
     width = 0.4
-    max_y = max(avg_pl) if max(avg_pl) >= max(cl_coeffs) else max(cl_coeffs)
+    #max_y = max(avg_pl) if max(avg_pl) >= max(cl_coeffs) else max(cl_coeffs)
+
+    max_y = max(max(cl_coeffs), max(avg_pl), max(smalls))
 
     ax[0].bar(np.arange(len(cl_coeffs)), cl_coeffs, width=width, color="yellowgreen",label="avg clustering coefficient")
     ax[0].set_xticks(np.arange(len(densities)))
@@ -161,6 +203,15 @@ def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%'
     ax[1].set_ylabel("avg path length")
     ax[1].grid(axis="y")
     ax[1].legend()
+
+    ax[2].bar(np.arange(len(smalls)), smalls, width=0.4, color="darkturquoise", label="small-worldness")
+    ax[2].set_xticks(np.arange(len(densities)))
+    ax[2].set_xticklabels(densities)
+    ax[2].set_yticks(np.arange(0.0,max_y,0.2))
+    ax[2].set_xlabel("network density")
+    ax[2].set_ylabel("small-worldness")
+    ax[2].grid(axis="y")
+    ax[2].legend()
 
     fig.suptitle("Global graph indices per network density")
     plt.show()
@@ -269,7 +320,7 @@ def p2_3(freq, run):
 
 
 
-def p2_4(run):
+def p2_4(run, cf_rand=None, pl_rand=None):
     # just change threshold values in crearting adjacency matrix to tune density as
     # mentioned in P 1.3
     print('\n[2.4] >> Behaviours of global graph indices in function of network density')
@@ -288,7 +339,7 @@ def p2_4(run):
                       THRES_PDC_10HZ_R02_20percent,
                       THRES_PDC_10HZ_R02_30percent,
                       THRES_PDC_10HZ_R02_50percent]
-    graph_indices_part_2_4(conn_mat, thresholds)
+    graph_indices_part_2_4(conn_mat, thresholds, cf_rand=cf_rand, pl_rand=pl_rand)
 
 
 def p2_5(G):

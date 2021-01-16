@@ -36,13 +36,13 @@ for r in RUNS:
 
 
 ####### TASK 2 ########
-
+cf, pl = cf_pl()
 for r in RUNS:
     print("\n============================== TASTK 2 {} ==============================".format(r))
-    cf_real, pl_real = p2_1(conn=conn, freq=freq, run=r)
-    small_worldness  = p2_2(cf_real, pl_real)
-    p2_3(freq=freq, run=r)
-    #p2_4(run=r)
+    #cf_real, pl_real = p2_1(conn=conn, freq=freq, run=r)
+    #small_worldness  = p2_2(cf_real, pl_real)
+    #p2_3(freq=freq, run=r)
+    p2_4(run=r, cf_rand=cf, pl_rand=pl)
     #p2_5(load_conn_graph(conn=conn, freq=freq, run=r))
     #p2_6(run=r)
     #p2_7(run=r)
