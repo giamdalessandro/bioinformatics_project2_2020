@@ -28,4 +28,6 @@ $ sudo mv motif34lib.mat /usr/local/lib/python3.6/dist-packages/bctpy-0.5.2-py3.
 $ cd \usr\local\lib\python3.6\dist-packages\bctpy-0.5.2-py3.6.egg\bct\algorithms
 ```
 
-Then open file `motifs.py` and change array sizes to `200` at lines 701-702 (refer to the second screenshot).
+Then open file `motifs.py` and change array sizes to `200` at lines 701-702 (refer to the second screenshot). 
+
+a.

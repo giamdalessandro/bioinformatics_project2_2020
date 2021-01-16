@@ -11,7 +11,7 @@ def significanceProfile(M, nrand=100, run="R01"):
     """
     Compute the significance profile of the motifs in a directed graph G, represented by the adjacency matrix M.
         - M : adjacency matrix representing the network; 
-    """
+    """#a
     m_3, M_3 = motif3struct_bin(M)
 
     in_degree_sequence  = [d for n, d in G.in_degree()]   # in-degree sequence

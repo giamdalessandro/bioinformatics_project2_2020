@@ -109,7 +109,7 @@ def p4_3(conn_method="pdc", freq=10, run='R01', auto='auto'):
     G = nx.relabel_nodes(G, mapping)
 
     ### this is just to print the result, not needed for the logic
-    l = []
+    l = [] # a
     for i in range(len(set(communities.values()))):
         l.append(list())
     for node, comm in communities.items():

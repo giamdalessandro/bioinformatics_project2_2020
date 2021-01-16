@@ -1,5 +1,6 @@
 from commons import *
 
+# a
 
 ## point 1.1 func ##
 
@@ -254,21 +255,21 @@ def p1_1(file_name=None, freq=10, run='R01', point='1'):
 def p1_4(R='R01'):
     pdc_path = "data/pdc_{}_10hz_19_channels.txt".format(R)
     data = p1_1(file_name="data/S003{}_fixed".format(R), point='4')
-
-    if os.path.isfile(pdc_path):
-        pdc_values = data.conn('pdc', resolution=80)
-        sign = data.significance(Nrep=100, alpha=0.05)         # returns pdc_significance but what to do with it? However, it does side effect
-        print("\n[1.1] >> PDC sign:", sign)
-
-        pdc_mat = pdc_values[10]
-        f_pdc = open(pdc_path, "w")
-        for i in range(19):
-            for j in range(19):
-                if j == 18:
-                    f_pdc.write(str(pdc_mat[i][j]) + "\n")
-                else:
+    pdc_values = data.conn('pdc', resolution=80)
+    sign = data.significance(Nrep=100, alpha=0.05)         # returns pdc_significance but what to do with it? However, it does side effect
+    print("\n[1.1] >> PDC sign:", sign)
+    mapping = map_index_to_channels()
+    channels = ['Fp1.', 'Fp2.', 'F7..', 'F3..', 'Fz..', 'F4..', 'F8..', 'T7..', 'C3..', 'Cz..', 'T8..', 'P7..', 'P3..', 'Pz..', 'P4..', 'P8..', 'O1..', 'O2..']
+    pdc_mat = pdc_values[10]
+    print(pdc_values.shape)
+    print(pdc_mat.shape)
+    f_pdc = open(pdc_path, "w")
+    for i in range(64):
+        for j in range(64):
+            if mapping[i] in channels and mapping[j] in channels:
                     f_pdc.write(str(pdc_mat[i][j]) + " ")
-        f_pdc.close()
+    f_pdc.write("\n")
+    f_pdc.close()
     
     if PLOTS:
         print("[1.4] >> Plotting connectivity...")
@@ -276,7 +277,10 @@ def p1_4(R='R01'):
         #data.plot_conn("PDC measure")
         thr = find_threshold(pdc_values[10],20)
         G = nx.from_numpy_array(compute_adjacency(pdc_values[10],threshold=thr), create_using=nx.DiGraph)
-        p1_5(G,run=R)
+        mapping = map_index_to_channels()
+        G = nx.relabel_nodes(G, mapping)
+        p1_5(load_conn_graph(conn='pdc', freq=10, run=R),
+             run=R, nodelist=G.nodes(), edgelist=G.edges())
 
 def load_channel_coordinates(label=True, map_ch=False):
     """
@@ -302,15 +306,15 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
     Prints a topological representation of the networks
     Node colors depend on their degree
     """
-    if nodelist is None:
-        nodelist = G.nodes()
+    #if nodelist is None:
+    nodelist = G.nodes()
     if edgelist is None:
         edgelist = G.edges()
     
     pos = load_channel_coordinates()
     #pos = map_index_to_channels()
 
-    def p1_5_helper(G, pos, degree, node_color, point='1.5', run=run):
+    def p1_5_helper(G, pos, degree, node_color, nodelist, edgelist, point='1.5', run=run):
         """
         Helper function to now write two times the same plt stuff
         """
@@ -318,10 +322,12 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
         cmap = 'viridis' if point == '1.5' else 'plasma'
         vmin = min(node_color)
         vmax = max(node_color)
-        nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black', node_size=700, node_color=node_color, cmap=cmap)
+        nc = nx.draw_networkx_nodes(G, pos=pos, vmin=vmin, vmax=vmax, edgecolors='black',
+                                    node_size=700, node_color=node_color, nodelist=nodelist,  cmap=cmap)
+
 
         if point == '1.5':
-            _  = nx.draw_networkx_edges(G, pos, alpha=0.3, edge_color='black', arrows=True, node_size=700)
+            _  = nx.draw_networkx_edges(G, pos, alpha=0.3, edge_color='black', arrows=True, node_size=700, edgelist=edgelist)
 
         elif point == '3.2':
             edge_color = [G[u][v]['color'] for u, v in G.edges()]
@@ -352,9 +358,9 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
             node_color_in.append(G.in_degree(node))
             node_color_out.append(G.out_degree(node))
             node_color_sum.append(G.out_degree(node)-G.in_degree(node))
-        p1_5_helper(G, pos, degree='in',  node_color=node_color_in,  point='1.5')
-        p1_5_helper(G, pos, degree='out', node_color=node_color_out, point='1.5')
-        p1_5_helper(G, pos, degree='sum', node_color=node_color_sum, point='1.5')
+        p1_5_helper(G, pos, nodelist=None, edgelist=None, degree='in',  node_color=node_color_in,  point='1.5')
+        p1_5_helper(G, pos, nodelist=None, edgelist=None, degree='out', node_color=node_color_out, point='1.5')
+        p1_5_helper(G, pos, nodelist=None, edgelist=None, degree='sum', node_color=node_color_sum, point='1.5')
 
 
     def p3_2_helper(G, pos):
@@ -365,9 +371,9 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
             node_color_in.append( G.in_degree(node))
             node_color_out.append(G.out_degree(node))
             node_color_sum.append(G.out_degree(node) - G.in_degree(node))
-        p1_5_helper(G, pos, degree='in' , node_color=node_color_in,  point='3.2')
-        p1_5_helper(G, pos, degree='out', node_color=node_color_out, point='3.2')
-        p1_5_helper(G, pos, degree='sum', node_color=node_color_sum, point='3.2')
+        p1_5_helper(G, pos, nodelist=None, edgelist=None, degree='in' , node_color=node_color_in,  point='3.2')
+        p1_5_helper(G, pos, nodelist=None, edgelist=None, degree='out', node_color=node_color_out, point='3.2')
+        p1_5_helper(G, pos, nodelist=None, edgelist=None, degree='sum', node_color=node_color_sum, point='3.2')
 
 
     def p4_2_helper(G, pos, communities):
@@ -414,13 +420,13 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
         node_color_in  = []
         node_color_out = []
         node_color_sum = []
-        for node in G.nodes():
+        for node in nodelist:
             node_color_in.append(G.in_degree(node))
             node_color_out.append(G.out_degree(node))
             node_color_sum.append(G.out_degree(node) + G.in_degree(node))
-        p1_5_helper(G, pos, degree='in' , node_color=node_color_in)
-        p1_5_helper(G, pos, degree='out', node_color=node_color_out)
-        p1_5_helper(G, pos, degree='sum', node_color=node_color_sum)
+        p1_5_helper(G, pos, nodelist=nodelist, edgelist=edgelist, degree='in' , node_color=node_color_in)
+        p1_5_helper(G, pos, nodelist=nodelist, edgelist=edgelist, degree='out', node_color=node_color_out)
+        p1_5_helper(G, pos, nodelist=nodelist, edgelist=edgelist, degree='sum', node_color=node_color_sum)
     elif point == '2.5':
         p2_5_helper(G, pos)
     elif point == '3.2':

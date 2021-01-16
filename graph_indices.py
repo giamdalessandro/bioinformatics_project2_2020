@@ -35,7 +35,7 @@ def graph_indices_part_2_1(adj_mat, plots=True, verbose=True):
     
     PLs_real = nx.shortest_path_length(G_Real)
     sum_path_lenghs = 0
-    for ps in PLs_real:
+    for ps in PLs_real: # a
         sum_path_lenghs = sum_path_lenghs + np.sum(list(ps[1].values()))
         
     PL_avg_real = sum_path_lenghs/(4032)
