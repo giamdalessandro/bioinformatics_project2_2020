@@ -120,8 +120,6 @@ def graph_indices_part_2_2(cf_real, pl_real, iters=500, cf_rand=None, pl_rand=No
         G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, seed=i, directed=True)        
         cf = nx.average_clustering(G_Rand)
         pl = nx.average_shortest_path_length(G_Rand)
-        print("cf = ", cf)
-        print("pl = ", pl)
         cf_rand += cf 
         pl_rand += pl
     
@@ -184,7 +182,7 @@ def plot2_4(cl_coeffs, avg_pl, smalls, densities=['1%', '5%', '10%', '20%', '30%
     width = 0.4
     #max_y = max(avg_pl) if max(avg_pl) >= max(cl_coeffs) else max(cl_coeffs)
 
-    max_y = max(max(cl_coeffs), max(avg_pl), max(smalls))
+    max_y = max(max(cl_coeffs), max(avg_pl))
 
     ax[0].bar(np.arange(len(cl_coeffs)), cl_coeffs, width=width, color="yellowgreen",label="avg clustering coefficient")
     ax[0].set_xticks(np.arange(len(densities)))
@@ -207,7 +205,7 @@ def plot2_4(cl_coeffs, avg_pl, smalls, densities=['1%', '5%', '10%', '20%', '30%
     ax[2].bar(np.arange(len(smalls)), smalls, width=0.4, color="darkturquoise", label="small-worldness")
     ax[2].set_xticks(np.arange(len(densities)))
     ax[2].set_xticklabels(densities)
-    ax[2].set_yticks(np.arange(0.0,max_y,0.2))
+    ax[2].set_yticks(np.arange(0.0, max(smalls) , 0.5))
     ax[2].set_xlabel("network density")
     ax[2].set_ylabel("small-worldness")
     ax[2].grid(axis="y")
@@ -365,10 +363,10 @@ def p2_6(run):
     pdc_mat_25Hz = compute_adjacency(load_matrix(conn_method='pdc', freq=25, run=run), threshold=threshold_25Hz)    
     cl_pdc_25Hz, pl_pdc_25Hz = graph_indices_part_2_1(pdc_mat_25Hz,  plots=False, verbose=False)
 
-    print("[2.6] >> Average Clustering Coefficient PDC - 10Hz: {:.4f}%".format(100*cl_pdc_10Hz))
-    print("[2.6] >> Average Clustering Coefficient PDC - 25Hz: {:.4f}%".format(100*cl_pdc_25Hz))
-    print("[2.6] >> Average Path Length PDC - 10Hz: {:.4f}".format(pl_pdc_10Hz))
-    print("[2.6] >> Average Path Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
+    print("[2.6] >> Average Clustering Coefficient PDC - 10Hz: {:.6f}%".format(cl_pdc_10Hz))
+    print("[2.6] >> Average Clustering Coefficient PDC - 25Hz: {:.6f}%".format(cl_pdc_25Hz))
+    print("[2.6] >> Average Path Length PDC - 10Hz: {:.6f}".format(pl_pdc_10Hz))
+    print("[2.6] >> Average Path Length PDC - 25Hz: {:.6f}".format(pl_pdc_25Hz))
 
 
 def p2_7(run):
@@ -378,8 +376,8 @@ def p2_7(run):
         threshold = THRES_PDC_10HZ_R02_20percent
     conn_mat = load_matrix('pdc', 10, run, verbose=False)
     cl, pl = graph_indices_part_2_7(conn_mat, threshold)
-    print("[2.7] >> Average Weighted Clustering Coefficient PDC: {:.2f}%".format(100*cl))
-    print("[2.7] >> Average Weighted Path Length PDC: {:.2f}".format(pl))
+    print("[2.7] >> Average Weighted Clustering Coefficient PDC: {:.6f}".format(cl))
+    print("[2.7] >> Average Weighted Path Length PDC: {:.6f}".format(pl))
 
 
 if __name__ == '__main__':
