@@ -373,7 +373,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
         S = set(communities.values())
         for i in S:
             colorbar_labels.append('Community {}'.format(i+1))
-
+        fig = plt.figure(figsize=[8, 7])
         cmap = 'Spectral'
         vmin = min(communities.values())
         vmax = max(communities.values())
@@ -393,7 +393,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
         S = set(communities)
         for i in S:
             colorbar_labels.append('Community {}'.format(i+1))
-
+        fig = plt.figure(figsize=[8, 7])
         cmap = 'Spectral'
         vmin = min(communities)
         vmax = max(communities)
