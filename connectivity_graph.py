@@ -293,7 +293,7 @@ def load_channel_coordinates(label=True, map_ch=False):
     return pos
 
 
-def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
+def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R01"):
     """
     Prints a topological representation of the networks
     Node colors depend on their degree
@@ -305,7 +305,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
     
     pos = load_channel_coordinates()
 
-    def p1_5_helper(G, pos, degree, node_color, point='1.5'):
+    def p1_5_helper(G, pos, degree, node_color, point='1.5', run=run):
         """
         Helper function to now write two times the same plt stuff
         """
@@ -330,9 +330,9 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
 
         _  = nx.draw_networkx_labels(G, pos)
         if point == '1.5':
-            plt.title("Topological representation of the network - {} degree".format(degree))
+            plt.title("Topological representation of the network - {} degree - S003{}".format(degree,run))
         elif point == '3.2':
-            plt.title("Topological representation of the network's edges involved in motif 1 - {} degree".format(degree))
+            plt.title("Topological representation of the network's edges involved in motif 1 - {} degree - S003{}".format(degree,run))
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
         sm._A = []
         plt.colorbar(sm)
