@@ -307,7 +307,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
     if edgelist is None:
         edgelist = G.edges()
     
-    pos = load_channel_coordinates(label=False)
+    pos = load_channel_coordinates()
     #pos = map_index_to_channels()
 
     def p1_5_helper(G, pos, degree, node_color, point='1.5', run=run):

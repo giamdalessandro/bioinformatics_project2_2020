@@ -64,7 +64,6 @@ def graph_indices_part_2_1(adj_mat, plots=True, verbose=True):
 
     return Cf_avg_real, PL_avg_real
 
-
 def plot2_1(node_degs, in_degs, out_degs, colors):
     """
     Plots top 10 nodes for local indices: degree, in-degree, out-degree 
