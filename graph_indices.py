@@ -1,6 +1,7 @@
 from commons import *
 from connectivity_graph import load_matrix, compute_adjacency, load_channel_coordinates, load_conn_graph, p1_5
 
+from random import randint
 
 def getKey(item):
     return item[1]
@@ -109,44 +110,79 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     return
 
 
-def graph_indices_part_2_2(cf_real, pl_real, random_graph='erdos'):
+def graph_indices_part_2_2(cf_real, pl_real, iters=500, cf_rand=None, pl_rand=None):
+    if cf_rand is not None and pl_rand is not None:
+        return (cf_real/cf_rand)/(pl_real/pl_rand)
     cf_rand = 0
     pl_rand = 0
-    for i in range(1000):
-        if random_graph == 'erdos':
-            G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, directed=True)
-        else:
-            G_Rand = nx.watts_strogatz_graph(n=64, p=0.4, k=5)
-
-        cf_rand += nx.average_clustering(G_Rand)
-        pl_rand += nx.average_shortest_path_length(G_Rand)
+    for i in range(iters):
+        #G_Rand = nx.erdos_renyi_graph(n=64, p=randint(4,6)/10, seed=i, directed=True)        
+        G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, seed=i, directed=True)        
+        cf = nx.average_clustering(G_Rand)
+        pl = nx.average_shortest_path_length(G_Rand)
+        cf_rand += cf 
+        pl_rand += pl
     
-    cf_rand = cf_rand / 1000
-    pl_rand = pl_rand / 1000
-
-    Small_worldness = (cf_real/cf_rand)/(pl_real/pl_rand)
-    print("Resulting Small worldness:", Small_worldness)
-    
+    cf_rand = cf_rand / iters
+    pl_rand = pl_rand / iters
+    print("cf real / cf rand = ", cf_real, '/', cf_rand)
+    print("pl real / l rand = ", pl_real, '/', pl_rand)
+    Small_worldness = (cf_real/cf_rand)/(pl_real/pl_rand)    
     return Small_worldness
 
 
-def graph_indices_part_2_4(conn_mat, thresholds):
+def cf_pl(iters=500):
+    cf_rand = 0
+    pl_rand = 0
+    for i in range(iters):
+        #G_Rand = nx.erdos_renyi_graph(n=64, p=randint(4,6)/10, seed=i, directed=True)
+        G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, seed=i, directed=True)
+        cf = nx.average_clustering(G_Rand)
+        pl = nx.average_shortest_path_length(G_Rand)
+        cf_rand += cf
+        pl_rand += pl
+
+    cf_rand = cf_rand / iters
+    pl_rand = pl_rand / iters
+    print("cf_rand = ", cf_rand)
+    print("pl_rand = ", pl_rand)
+    return cf_rand, pl_rand
+
+
+def graph_indices_part_2_4(conn_mat, thresholds, cf_rand=None, pl_rand=None):
     cl_coeffs = []
     avg_pl    = []
+    smalls    = []
     for threshold in thresholds:
-        adj_mat = compute_adjacency(conn_mat, threshold=threshold)  # 0.04597 for PDC        
+        # if threshold == THRES_PDC_10HZ_R01_01percent or threshold == THRES_PDC_10HZ_R02_01percent:
+        #     d = 0.1
+        # elif threshold == THRES_PDC_10HZ_R01_05percent or threshold == THRES_PDC_10HZ_R01_05percent:
+        #     d = 0.1
+        # elif threshold == THRES_PDC_10HZ_R01_10percent or threshold == THRES_PDC_10HZ_R01_10percent:
+        #     d = 0.1
+        # elif threshold == THRES_PDC_10HZ_R01_20percent or threshold == THRES_PDC_10HZ_R01_20percent:
+        #     d = 0.2
+        # elif threshold == THRES_PDC_10HZ_R01_30percent or threshold == THRES_PDC_10HZ_R01_30percent:
+        #     d = 0.3
+        # elif threshold == THRES_PDC_10HZ_R01_50percent or threshold == THRES_PDC_10HZ_R01_50percent:
+        #     d = 0.5
+        adj_mat = compute_adjacency(conn_mat, threshold=threshold)        
         cl, pl = graph_indices_part_2_1(adj_mat, plots=False, verbose=False)
+        small_worldness = graph_indices_part_2_2(cl, pl, cf_rand=cf_rand, pl_rand=pl_rand) #, density=d)
         cl_coeffs.append(cl)
         avg_pl.append(pl)
+        smalls.append(small_worldness)
     
-    plot2_4(cl_coeffs,avg_pl)
+    plot2_4(cl_coeffs,avg_pl,smalls)
     return
 
 
-def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%']):
-    fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+def plot2_4(cl_coeffs, avg_pl, smalls, densities=['1%', '5%', '10%', '20%', '30%', '50%']):
+    fig, ax = plt.subplots(1, 3, figsize=(8, 4))
     width = 0.4
-    max_y = max(avg_pl) if max(avg_pl) >= max(cl_coeffs) else max(cl_coeffs)
+    #max_y = max(avg_pl) if max(avg_pl) >= max(cl_coeffs) else max(cl_coeffs)
+
+    max_y = max(max(cl_coeffs), max(avg_pl))
 
     ax[0].bar(np.arange(len(cl_coeffs)), cl_coeffs, width=width, color="yellowgreen",label="avg clustering coefficient")
     ax[0].set_xticks(np.arange(len(densities)))
@@ -165,6 +201,15 @@ def plot2_4(cl_coeffs, avg_pl, densities=['1%', '5%', '10%', '20%', '30%', '50%'
     ax[1].set_ylabel("avg path length")
     ax[1].grid(axis="y")
     ax[1].legend()
+
+    ax[2].bar(np.arange(len(smalls)), smalls, width=0.4, color="darkturquoise", label="small-worldness")
+    ax[2].set_xticks(np.arange(len(densities)))
+    ax[2].set_xticklabels(densities)
+    ax[2].set_yticks(np.arange(0.0, max(smalls) , 0.5))
+    ax[2].set_xlabel("network density")
+    ax[2].set_ylabel("small-worldness")
+    ax[2].grid(axis="y")
+    ax[2].legend()
 
     fig.suptitle("Global graph indices per network density")
     plt.show()
@@ -233,22 +278,26 @@ def p2_1(conn, freq, run):
         threshold = THRES_PDC_10HZ_R02_20percent
     print("\n[2.1] >> analyzing run", run)
     adj_mat = compute_adjacency(load_matrix(conn_method=conn, freq=freq, run=run), threshold=threshold)
-    cf_real, pl_real = graph_indices_part_2_1(adj_mat)
+    cf_real, pl_real = graph_indices_part_2_1(adj_mat, verbose=False)
+    print("[2.1] >> Average Clustering Coefficient PDC: {:.6f}".format(cf_real))
+    print("[2.1] >> Average Path Length PDC: {:.6f}".format(pl_real))
     return cf_real, pl_real
 
 
-def p2_2(cf_real, pl_real, random_graph='erdos'):
+def p2_2(cf_real, pl_real):
     print('\n[2.2] >> small worlds formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
     # small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
-    small_worldness = graph_indices_part_2_2(cf_real, pl_real, random_graph=random_graph)    
+    small_worldness = graph_indices_part_2_2(cf_real, pl_real)   
+    print("[2.2] >> Small worldness PDC: {:.6f}".format(small_worldness))
     return small_worldness
 
 
 def p2_3(freq, run):
     """
-    Computes for both pdc and dtf method:
+    Computes p2_1 for dtf method:
         - cl (Average Clustering Coefficient)
         - pl (Average Path Length)
+        - SMALL WORLDNESS
     """
     if run == 'R01':
         threshold_pdc = THRES_PDC_10HZ_R01_20percent
@@ -257,20 +306,19 @@ def p2_3(freq, run):
         threshold_pdc = THRES_PDC_10HZ_R02_20percent
         threshold_dtf = THRES_DTF_10HZ_R02_20percent
 
-    
-    pdc_mat = compute_adjacency(load_matrix(conn_method='pdc', freq=freq, run=run), threshold=threshold_pdc)    
     dtf_mat = compute_adjacency(load_matrix(conn_method='dtf', freq=freq, run=run), threshold=threshold_dtf)
-    cl_pdc, pl_pdc = graph_indices_part_2_1(pdc_mat, plots=False, verbose=False)
     cl_dtf, pl_dtf = graph_indices_part_2_1(dtf_mat, plots=False, verbose=False)
+    small_worldness = graph_indices_part_2_2(cl_dtf, cl_dtf)
     print("\n")
-    print("[2.3] >> Average Clustering Coefficient PDC: {:.6f}".format(cl_pdc))
     print("[2.3] >> Average Clustering Coefficient DTF: {:.6f}".format(cl_dtf))
-    print("[2.3] >> Average Path Length PDC: {:.6f}".format(pl_pdc))
     print("[2.3] >> Average Path Length DTF: {:.6f}".format(pl_dtf))
+    print("[2.3] >> Small worldness DTF:  {:.6f}".format(small_worldness))
 
 
 
-def p2_4(run):
+
+
+def p2_4(run, cf_rand=None, pl_rand=None):
     # just change threshold values in crearting adjacency matrix to tune density as
     # mentioned in P 1.3
     print('\n[2.4] >> Behaviours of global graph indices in function of network density')
@@ -289,7 +337,7 @@ def p2_4(run):
                       THRES_PDC_10HZ_R02_20percent,
                       THRES_PDC_10HZ_R02_30percent,
                       THRES_PDC_10HZ_R02_50percent]
-    graph_indices_part_2_4(conn_mat, thresholds)
+    graph_indices_part_2_4(conn_mat, thresholds, cf_rand=cf_rand, pl_rand=pl_rand)
 
 
 def p2_5(G):
@@ -315,10 +363,10 @@ def p2_6(run):
     pdc_mat_25Hz = compute_adjacency(load_matrix(conn_method='pdc', freq=25, run=run), threshold=threshold_25Hz)    
     cl_pdc_25Hz, pl_pdc_25Hz = graph_indices_part_2_1(pdc_mat_25Hz,  plots=False, verbose=False)
 
-    print("[2.6] >> Average Clustering Coefficient PDC - 10Hz: {:.4f}%".format(100*cl_pdc_10Hz))
-    print("[2.6] >> Average Clustering Coefficient PDC - 25Hz: {:.4f}%".format(100*cl_pdc_25Hz))
-    print("[2.6] >> Average Path Length PDC - 10Hz: {:.4f}".format(pl_pdc_10Hz))
-    print("[2.6] >> Average Path Length PDC - 25Hz: {:.4f}".format(pl_pdc_25Hz))
+    print("[2.6] >> Average Clustering Coefficient PDC - 10Hz: {:.6f}%".format(cl_pdc_10Hz))
+    print("[2.6] >> Average Clustering Coefficient PDC - 25Hz: {:.6f}%".format(cl_pdc_25Hz))
+    print("[2.6] >> Average Path Length PDC - 10Hz: {:.6f}".format(pl_pdc_10Hz))
+    print("[2.6] >> Average Path Length PDC - 25Hz: {:.6f}".format(pl_pdc_25Hz))
 
 
 def p2_7(run):
@@ -328,8 +376,8 @@ def p2_7(run):
         threshold = THRES_PDC_10HZ_R02_20percent
     conn_mat = load_matrix('pdc', 10, run, verbose=False)
     cl, pl = graph_indices_part_2_7(conn_mat, threshold)
-    print("[2.7] >> Average Weighted Clustering Coefficient PDC: {:.2f}%".format(100*cl))
-    print("[2.7] >> Average Weighted Path Length PDC: {:.2f}".format(pl))
+    print("[2.7] >> Average Weighted Clustering Coefficient PDC: {:.6f}".format(cl))
+    print("[2.7] >> Average Weighted Path Length PDC: {:.6f}".format(pl))
 
 
 if __name__ == '__main__':
