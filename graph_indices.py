@@ -109,17 +109,22 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     return
 
 
-def graph_indices_part_2_2(Cf_real, PL_real, random_graph='erdos'):
-    if random_graph == 'erdos':
-        G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, directed=True)
-    else:
-        G_Rand = nx.watts_strogatz_graph(n=64, p=0.4, k=5)
-        
-    Cf_rand = nx.average_clustering(G_Rand)
-    PL_rand = nx.average_shortest_path_length(G_Rand)
+def graph_indices_part_2_2(cf_real, pl_real, random_graph='erdos'):
+    cf_rand = 0
+    pl_rand = 0
+    for i in range(1000):
+        if random_graph == 'erdos':
+            G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, directed=True)
+        else:
+            G_Rand = nx.watts_strogatz_graph(n=64, p=0.4, k=5)
+
+        cf_rand += nx.average_clustering(G_Rand)
+        pl_rand += nx.average_shortest_path_length(G_Rand)
     
-    
-    Small_worldness = (Cf_real/Cf_rand)/(PL_real/PL_rand)
+    cf_rand = cf_rand / 1000
+    pl_rand = pl_rand / 1000
+
+    Small_worldness = (cf_real/cf_rand)/(pl_real/pl_rand)
     print("Resulting Small worldness:", Small_worldness)
     
     return Small_worldness
@@ -258,10 +263,10 @@ def p2_3(freq, run):
     cl_pdc, pl_pdc = graph_indices_part_2_1(pdc_mat, plots=False, verbose=False)
     cl_dtf, pl_dtf = graph_indices_part_2_1(dtf_mat, plots=False, verbose=False)
     print("\n")
-    print("[2.3] >> Average Clustering Coefficient PDC: {:.2f}%".format(100*cl_pdc))
-    print("[2.3] >> Average Clustering Coefficient DTF: {:.2f}%".format(100*cl_dtf))
-    print("[2.3] >> Average Path Length PDC: {:.2f}".format(pl_pdc))
-    print("[2.3] >> Average Path Length DTF: {:.2f}".format(pl_dtf))
+    print("[2.3] >> Average Clustering Coefficient PDC: {:.6f}".format(cl_pdc))
+    print("[2.3] >> Average Clustering Coefficient DTF: {:.6f}".format(cl_dtf))
+    print("[2.3] >> Average Path Length PDC: {:.6f}".format(pl_pdc))
+    print("[2.3] >> Average Path Length DTF: {:.6f}".format(pl_dtf))
 
 
 

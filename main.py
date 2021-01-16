@@ -13,7 +13,8 @@ TODO
 # we check if we can use just one frequencies of the alpha band or the entire band
 check_mean_var_EEG_rithm(plot=False)
 
-# since the values of the variance matrix above thresold are few, we will use a specific frequence - 10Hz
+# since the values of the variance matrix are two order of magnitude less than the mean matrix, 
+# we will use a specific frequence - 10Hz
 freq = 10
 conn = 'pdc'
 
@@ -24,30 +25,28 @@ conn = 'pdc'
 # to re-run the code that computes them, delete the matrix files
 # e.g. data/pdc_R01_10Hz_auto.txt
 # e.g. data/dtf_R02_12Hz_auto.txt
-'''
+
 for r in RUNS:
     print("\n============================== TASTK 1 - {} ==============================".format(r))
-    print("'{}'".format(r))
-    p1_1(file_name="data/S003{}_fixed".format(r), freq=freq, run=r)  # NOTE: p1_1 performs also point 1.2
-    p1_3(conn_method=conn, freq=10, run=r)
-    p1_4()
-    p1_5(load_conn_graph(conn=conn, freq=freq, run=r))
-    p1_6(file_name="data/S003{}_fixed".format(r), freq=25, run=r)
-'''
+    # p1_1(file_name="data/S003{}_fixed".format(r), freq=freq, run=r)  #NOTE: p1_1 performs also point 1.2
+    # p1_3(conn_method=conn, freq=10, run=r)
+    # p1_4()
+    # p1_5(load_conn_graph(conn=conn, freq=freq, run=r))
+    # p1_6(file_name="data/S003{}_fixed".format(r), freq=25, run=r)
 
 
 ####### TASK 2 ########
-'''
+
 for r in RUNS:
     print("\n============================== TASTK 2 {} ==============================".format(r))
     cf_real, pl_real = p2_1(conn=conn, freq=freq, run=r)
     small_worldness  = p2_2(cf_real, pl_real, random_graph='erdos')  # or 'watts'
     p2_3(freq=freq, run=r)
-    p2_4(run=r)
-    p2_5(load_conn_graph(conn=conn, freq=freq, run=r))
-    p2_6(run=r)
-    p2_7(run=r)
-'''
+    #p2_4(run=r)
+    #p2_5(load_conn_graph(conn=conn, freq=freq, run=r))
+    #p2_6(run=r)
+    #p2_7(run=r)
+
 
 
 ####### TASK 3 ########
