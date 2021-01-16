@@ -173,22 +173,21 @@ def p3_3(freq_mat, ch_name="Po4", run="R01"):
     plt.show()
 
 
-def p3_4():
+def p3_4(run="R01"):
     """
     Plots frequency of class-4 motif involving in the graph 
     described by 'adj_mat' adjacency matrix.
     """
     M = compute_adjacency(load_matrix())
     m_4, M_4 = motif4struct_bin(M)
+    print(m_4[-1])
     print("[3.4] >> Displaying frequencies of 4-node motifs.")
     plt.bar(np.arange(0,200), m_4)
     plt.subplots_adjust(left=0.05, right=0.95, top=0.92, bottom=0.08)
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
-    ticks = np.arange(0, 200, 5)
-    ticks[0] = 1
-    ticks[-1] = 199
-    plt.xticks(ticks, rotation='vertical')
+    ticks = [i for i in np.arange(0,200,5)] + [199]
+    plt.xticks(ticks,labels=[str(i) for i in np.arange(0, 200, 5)]+['199'],fontsize="small",rotation=90)
 
     """
     makes the plot larger to fit all 200 values, but it's unpractical
@@ -203,7 +202,7 @@ def p3_4():
         plt.gcf().set_size_inches(s, plt.gcf().get_size_inches()[1])
     """
     
-    plt.title("Network class-4 motif frequency in the graph")
+    plt.title("Network class-4 motif frequency in the graph - S003{}".format(run))
     plt.show()
 
     return m_4, M_4
@@ -219,6 +218,7 @@ if __name__ == '__main__':
     frq_mat = p3_1(run=run,nrep=100)
     p3_2(G,run=run)
     p3_3(frq_mat,run=run)
+    p3_4(run=run)
 
     end = time.time()
     print("Elapsed time:", (end - start)/60, "min")
