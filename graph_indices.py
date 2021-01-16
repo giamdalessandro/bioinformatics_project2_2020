@@ -54,11 +54,12 @@ def graph_indices_part_2_1(adj_mat, plots=True, verbose=True):
         print("Resulting highest 10 degrees (node, degree) format:", top_10_degrees)
 
     if plots:
-        my_colors = [
-            ["blue","red","navy","yellow","cyan","gray","brown","magenta","orange","lime"],
-            ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"],
-            ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"]
-        ]
+        my_colors = plt.get_cmap('tab20')
+        # my_colors = [
+        #     ["blue","red","navy","yellow","cyan","gray","brown","magenta","orange","lime"],
+        #     ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"],
+        #     ["red","green","blue","yellow","cyan","gray","brown","magenta","orange","lime"]
+        # ]
         plot2_1(degrees,in_degrees,out_degrees,my_colors)
 
     return Cf_avg_real, PL_avg_real
@@ -68,7 +69,9 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     """
     Plots top 10 nodes for local indices: degree, in-degree, out-degree 
     """
-    fig, axs = plt.subplots(1, 3, figsize=(9, 3))
+    rescale = lambda y: (y - np.min(y)) / (np.max(y) - np.min(y))
+
+    #fig, axs = plt.subplots(1, 2, figsize=(9, 3))
     ch_names = load_channel_coordinates(label=False,map_ch=True)
 
     degree_sorted      = sorted(node_degs, key=getKey, reverse=False)
@@ -76,36 +79,42 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     nodeid_best_degree = [ch_names[n[0]] for n in top_10_degrees]
     best_degree        = [n[1] for n in top_10_degrees]
 
-    axs[0].barh(np.arange(0,10), best_degree, color=colors[0])
-    axs[0].set_yticks(np.arange(0,10))
-    axs[0].set_yticklabels(nodeid_best_degree)
-    axs[0].set_ylabel("channel ID")
-    axs[0].set_xlabel("node degree")
-    axs[0].grid()
+    #axs[0].barh(np.arange(0, 10), best_degree, color=colors(rescale(best_degree)))
+    #axs[0].set_yticks(np.arange(0,10))
+    #axs[0].set_yticklabels(nodeid_best_degree)
+    #axs[0].set_ylabel("channel ID")
+    #axs[0].set_xlabel("node degree")
+    #axs[0].grid()
     
     in_degree_sorted      = sorted(in_degs, key=getKey, reverse=False)
     top_10_in_degrees     = in_degree_sorted[-10:]
     nodeid_best_in_degree = [ch_names[n[0]] for n in top_10_in_degrees]
     best_in_degree        = [n[1] for n in top_10_in_degrees]
   
-    axs[1].barh(np.arange(0,10), best_in_degree, color=colors[1])
-    axs[1].set_yticks(np.arange(0,10)),
-    axs[1].set_yticklabels(nodeid_best_in_degree)
-    axs[1].set_xlabel("in degree")
-    axs[1].grid()
-    
+    #axs[1].barh(np.arange(0, 10), best_in_degree, color=colors(rescale(best_in_degree)))
+    #axs[1].set_yticks(np.arange(0,10)),
+    #axs[1].set_yticklabels(nodeid_best_in_degree)
+    #axs[1].set_xlabel("in degree")
+    #axs[1].grid()
+    #
     out_degree_sorted       = sorted(out_degs, key=getKey, reverse=False)
-    top_10_out_degrees      = in_degree_sorted[-10:]
+    top_10_out_degrees      = out_degree_sorted[-10:]
     nodeid_best_out_degree = [ch_names[n[0]] for n in top_10_out_degrees]
     best_out_degree         = [n[1] for n in top_10_out_degrees]
 
-    axs[2].barh(np.arange(0,10), best_out_degree, color=colors[2])
-    axs[2].set_yticks(np.arange(0,10)),
-    axs[2].set_yticklabels(nodeid_best_out_degree)
-    axs[2].set_xlabel("out degree")
-    axs[2].grid()
-    
-    fig.suptitle("Top 10 channels for local     ")
+    #axs[2].barh(np.arange(0,10), best_out_degree, color=colors(rescale(best_out_degree)))
+    #axs[2].set_yticks(np.arange(0,10)),
+    #axs[2].set_yticklabels(nodeid_best_out_degree)
+    #axs[2].set_xlabel("out degree")
+    #axs[2].grid()
+    #
+
+    plt.scatter(nodeid_best_degree, best_degree,        s=100, label="10 best degree nodes", cmap=colors)
+    plt.scatter(nodeid_best_in_degree, best_in_degree,  s=100, label="10 best in degree nodes", cmap=colors)
+    plt.scatter(nodeid_best_out_degree, best_out_degree,s=100, label="10 best out degree nodes", cmap=colors)
+    plt.grid()
+    plt.legend()
+    #fig.suptitle("Top 10 channels for local     ")
     plt.show()
     return
 
@@ -367,6 +376,7 @@ def p2_6(run):
     print("[2.6] >> Average Clustering Coefficient PDC - 25Hz: {:.6f}%".format(cl_pdc_25Hz))
     print("[2.6] >> Average Path Length PDC - 10Hz: {:.6f}".format(pl_pdc_10Hz))
     print("[2.6] >> Average Path Length PDC - 25Hz: {:.6f}".format(pl_pdc_25Hz))
+    p2_1('pdc', 25, run)
 
 
 def p2_7(run):
@@ -378,7 +388,6 @@ def p2_7(run):
     cl, pl = graph_indices_part_2_7(conn_mat, threshold)
     print("[2.7] >> Average Weighted Clustering Coefficient PDC: {:.6f}".format(cl))
     print("[2.7] >> Average Weighted Path Length PDC: {:.6f}".format(pl))
-
 
 if __name__ == '__main__':
     conn_method = 'dtf'
