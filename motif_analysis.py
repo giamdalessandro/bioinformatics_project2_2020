@@ -132,6 +132,7 @@ def p3_1(run="R01",nrep=100):
     plt.xticks(np.arange(M_3.shape[1]), labels=[str(i) for i in np.arange(1,M_3.shape[1]+1)], rotation=90)
     plt.ylabel("Motif ID")
     plt.yticks(np.arange(len(m_3)), labels=[str(i) for i in np.arange(1,len(m_3)+1)])
+    plt.colorbar()
     plt.title("Node class-3 motif frequency fingerprint - {}".format(run))
     plt.show()
 
@@ -211,14 +212,14 @@ def p3_4(run="R01"):
 
 if __name__ == '__main__':
     import time
-    run = "R01"
+    run = "R02"
 
     start = time.time()
     G = load_conn_graph(conn="pdc", freq=10, run=run)
     frq_mat = p3_1(run=run,nrep=1000)
-    p3_2(G,run=run)
-    p3_3(frq_mat,run=run)
-    p3_4(run=run)
+    #p3_2(G,run=run)
+    #p3_3(frq_mat,run=run)
+    #p3_4(run=run)
 
     end = time.time()
     print("Elapsed time:", (end - start)/60, "min")

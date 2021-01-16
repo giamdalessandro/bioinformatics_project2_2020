@@ -252,12 +252,14 @@ def p1_1(file_name=None, freq=10, run='R01', point='1'):
 
 
 def p1_4(R='R01'):
-    data = p1_1(point='4')
     pdc_path = "data/pdc_{}_10hz_19_channels.txt".format(R)
+    data = p1_1(file_name="data/S003R01_fixed", point='4')
 
-    if not os.path.isfile(pdc_path):
+    if os.path.isfile(pdc_path):
         pdc_values = data.conn('pdc', resolution=80)
-        data.significance(Nrep=100, alpha=0.05)         # returns pdc_significance but what to do with it? However, it does side effect
+        sign = data.significance(Nrep=100, alpha=0.05)         # returns pdc_significance but what to do with it? However, it does side effect
+        print("\n[1.1] >> PDC sign:", sign)
+
         pdc_mat = pdc_values[10]
         f_pdc = open(pdc_path, "w")
         for i in range(19):
@@ -271,7 +273,7 @@ def p1_4(R='R01'):
     if PLOTS:
         print("[1.4] >> Plotting connectivity...")
         print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='19_channels')
-        # data.plot_conn("PDC measure")     # is it even useful?
+        data.plot_conn("PDC measure")     # is it even useful?
 
 
 def load_channel_coordinates(label=True, map_ch=False):
@@ -512,5 +514,6 @@ if __name__ == "__main__":
     plt.colorbar()
     plt.show()
     '''
+    p1_4(R="R01")
 
     pass
