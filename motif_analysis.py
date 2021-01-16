@@ -7,7 +7,7 @@ from connectivity_graph import compute_adjacency, load_matrix, load_conn_graph, 
 PLOTS = False
 
 
-def significanceProfile(M, nrand=100):
+def significanceProfile(M, nrand=100, run="R01"):
     """
     Compute the significance profile of the motifs in a directed graph G, represented by the adjacency matrix M.
         - M : adjacency matrix representing the network; 
@@ -58,10 +58,10 @@ def significanceProfile(M, nrand=100):
         norm_z_score = (z_score[i]/z_norm if z_norm != 0 else z_score[i])
         sp.append(round(norm_z_score,4))
 
-    plot_sp(sp, real_census, avg_random_census, over_rep)
+    plot_sp(sp, real_census, avg_random_census, over_rep, run=run)
     return sp
 
-def plot_sp(sp, real_frq, random_frq, over_rep):
+def plot_sp(sp, real_frq, random_frq, over_rep, run):
     print("[3.1] >> Motif and anti-motif")
     D = 0.1
     p = 0.01
@@ -94,7 +94,7 @@ def plot_sp(sp, real_frq, random_frq, over_rep):
     plt.ylabel("frequency")
     plt.grid(axis="y")
     plt.legend()
-    plt.title("Class-3 motif frequency")
+    plt.title("Class-3 motif frequency- S003{}".format(run))
     plt.show()
 
     print("[3.1] >> Significance Profile:",sp)
@@ -107,15 +107,15 @@ def plot_sp(sp, real_frq, random_frq, over_rep):
     plt.ylabel("normalized Z-score")
     plt.xlabel("motif ID")
 
-    plt.title("Network significance profile")
+    plt.title("Network significance profile - S003{}".format(run))
     plt.grid(True)
     plt.legend()
     plt.show()
     return
 
 
-def p3_1():
-    M = compute_adjacency(load_matrix())
+def p3_1(run="R01",nrep=100):
+    M = compute_adjacency(load_matrix(run=run))
     m_3, M_3 = motif3struct_bin(M)
 
     print("[3.1] >> Motif frequency:", m_3)
@@ -123,21 +123,23 @@ def p3_1():
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
     plt.xticks(np.arange(0, 14, 1))
-    plt.title("Network class-3 motif frequency in the graph")
+    plt.title("Network class-3 motif frequency in the graph - S003{}".format(run))
     plt.show()
 
     print("[3.1] >> Motif 1 node frequency:", M_3[0])
     plt.matshow(M_3)
     plt.xlabel("Node ID")
+    plt.xticks(np.arange(M_3.shape[1]), labels=[str(i) for i in np.arange(1,M_3.shape[1]+1)], rotation=90)
     plt.ylabel("Motif ID")
-    plt.title("Node class-3 motif frequency fingerprint")
+    plt.yticks(np.arange(len(m_3)), labels=[str(i) for i in np.arange(1,len(m_3)+1)])
+    plt.title("Node class-3 motif frequency fingerprint - S003{}".format(run))
     plt.show()
 
-    sp = significanceProfile(M, nrand=100)
+    sp = significanceProfile(M, nrand=nrep, run=run)
     return M_3
 
 
-def p3_2(G):
+def p3_2(G, run="R01"):
     """
     Plots a new graph with the same nodes as G, containing only G edges involved
     in motif of type 1.
@@ -154,10 +156,10 @@ def p3_2(G):
         if edge not in motif_G.edges():
             motif_G.add_edge(edge[0], edge[1], color='b')
     print("[3.2] >> found {} edges between {} nodes in the new graph.".format(len(motif_G.edges()),len(motif_G.nodes())))
-    p1_5(motif_G, point='3.2')
+    p1_5(motif_G, point='3.2',run=run)
 
 
-def p3_3(freq_mat, ch_name="Po4"):
+def p3_3(freq_mat, ch_name="Po4", run="R01"):
     """
     Plots frequency of motif involving 'ch_name' channel.
     """
@@ -167,7 +169,7 @@ def p3_3(freq_mat, ch_name="Po4"):
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
     plt.xticks(np.arange(0,14,1))
-    plt.title("Motif frequency - channel {}".format(ch_name))
+    plt.title("Motif frequency - channel {} - S003{}".format(ch_name,run))
     plt.show()
 
 
@@ -210,11 +212,13 @@ def p3_4():
 
 if __name__ == '__main__':
     import time
+    run = "R01"
 
     start = time.time()
-    G = load_conn_graph(conn="pdc", freq=10, run="R01")
-    p3_1()
-    #p3_4()
+    G = load_conn_graph(conn="pdc", freq=10, run=run)
+    frq_mat = p3_1(run=run,nrep=1000)
+    p3_2(G,run=run)
+    p3_3(frq_mat,run=run)
 
     end = time.time()
     print("Elapsed time:", (end - start)/60, "min")
