@@ -109,24 +109,18 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
     return
 
 
-def graph_indices_part_2_2(cf_real, pl_real, random_graph='erdos'):
+def graph_indices_part_2_2(cf_real, pl_real):
     cf_rand = 0
     pl_rand = 0
-    for i in range(1000):
-        if random_graph == 'erdos':
-            G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, directed=True)
-        else:
-            G_Rand = nx.watts_strogatz_graph(n=64, p=0.4, k=5)
-
+    for i in range(5000):
+        G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, seed=i, directed=True)        
         cf_rand += nx.average_clustering(G_Rand)
         pl_rand += nx.average_shortest_path_length(G_Rand)
     
     cf_rand = cf_rand / 1000
     pl_rand = pl_rand / 1000
 
-    Small_worldness = (cf_real/cf_rand)/(pl_real/pl_rand)
-    print("Resulting Small worldness:", Small_worldness)
-    
+    Small_worldness = (cf_real/cf_rand)/(pl_real/pl_rand)    
     return Small_worldness
 
 
@@ -237,10 +231,11 @@ def p2_1(conn, freq, run):
     return cf_real, pl_real
 
 
-def p2_2(cf_real, pl_real, random_graph='erdos'):
+def p2_2(cf_real, pl_real):
     print('\n[2.2] >> small worlds formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)')
     # small worls formula = (Cf_G/Cf_rand)/(PL_G/PL_rand)
-    small_worldness = graph_indices_part_2_2(cf_real, pl_real, random_graph=random_graph)    
+    small_worldness = graph_indices_part_2_2(cf_real, pl_real)   
+    print("[2.2] >> Small worldness:", small_worldness)
     return small_worldness
 
 
@@ -267,6 +262,10 @@ def p2_3(freq, run):
     print("[2.3] >> Average Clustering Coefficient DTF: {:.6f}".format(cl_dtf))
     print("[2.3] >> Average Path Length PDC: {:.6f}".format(pl_pdc))
     print("[2.3] >> Average Path Length DTF: {:.6f}".format(pl_dtf))
+    small_worldness = graph_indices_part_2_2(cl_dtf, cl_dtf)
+    print("[2.3] >> Small worldness:", small_worldness)
+
+
 
 
 
