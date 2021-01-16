@@ -330,9 +330,9 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
 
         _  = nx.draw_networkx_labels(G, pos)
         if point == '1.5':
-            plt.title("Topological representation of the network - {} degree - S003{}".format(degree,run))
+            plt.title("Topological representation of the network - {} degree - {}".format(degree,run))
         elif point == '3.2':
-            plt.title("Topological representation of the network's edges involved in motif 1 - {} degree - S003{}".format(degree,run))
+            plt.title("Topological representation of the network's edges involved in motif 1 - {} degree - {}".format(degree,run))
         sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
         sm._A = []
         plt.colorbar(sm)

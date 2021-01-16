@@ -94,7 +94,7 @@ def plot_sp(sp, real_frq, random_frq, over_rep, run):
     plt.ylabel("frequency")
     plt.grid(axis="y")
     plt.legend()
-    plt.title("Class-3 motif frequency- S003{}".format(run))
+    plt.title("Class-3 motif frequency - {}".format(run))
     plt.show()
 
     print("[3.1] >> Significance Profile:",sp)
@@ -107,7 +107,7 @@ def plot_sp(sp, real_frq, random_frq, over_rep, run):
     plt.ylabel("normalized Z-score")
     plt.xlabel("motif ID")
 
-    plt.title("Network significance profile - S003{}".format(run))
+    plt.title("Network significance profile - {}".format(run))
     plt.grid(True)
     plt.legend()
     plt.show()
@@ -123,7 +123,7 @@ def p3_1(run="R01",nrep=100):
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
     plt.xticks(np.arange(0, 14, 1))
-    plt.title("Network class-3 motif frequency in the graph - S003{}".format(run))
+    plt.title("Network class-3 motif frequency in the graph - {}".format(run))
     plt.show()
 
     print("[3.1] >> Motif 1 node frequency:", M_3[0])
@@ -132,7 +132,7 @@ def p3_1(run="R01",nrep=100):
     plt.xticks(np.arange(M_3.shape[1]), labels=[str(i) for i in np.arange(1,M_3.shape[1]+1)], rotation=90)
     plt.ylabel("Motif ID")
     plt.yticks(np.arange(len(m_3)), labels=[str(i) for i in np.arange(1,len(m_3)+1)])
-    plt.title("Node class-3 motif frequency fingerprint - S003{}".format(run))
+    plt.title("Node class-3 motif frequency fingerprint - {}".format(run))
     plt.show()
 
     sp = significanceProfile(M, nrand=nrep, run=run)
@@ -169,7 +169,7 @@ def p3_3(freq_mat, ch_name="Po4", run="R01"):
     plt.xlabel("Motif ID")
     plt.ylabel("frequency")
     plt.xticks(np.arange(0,14,1))
-    plt.title("Motif frequency - channel {} - S003{}".format(ch_name,run))
+    plt.title("Motif frequency - channel {} - {}".format(ch_name,run))
     plt.show()
 
 
@@ -202,7 +202,7 @@ def p3_4(run="R01"):
         plt.gcf().set_size_inches(s, plt.gcf().get_size_inches()[1])
     """
     
-    plt.title("Network class-4 motif frequency in the graph - S003{}".format(run))
+    plt.title("Network class-4 motif frequency in the graph - {}".format(run))
     plt.show()
 
     return m_4, M_4
@@ -215,7 +215,7 @@ if __name__ == '__main__':
 
     start = time.time()
     G = load_conn_graph(conn="pdc", freq=10, run=run)
-    frq_mat = p3_1(run=run,nrep=100)
+    frq_mat = p3_1(run=run,nrep=1000)
     p3_2(G,run=run)
     p3_3(frq_mat,run=run)
     p3_4(run=run)
