@@ -7,7 +7,6 @@ from community_detection import *
 """
 TODO
 - 1.4   try to find the libraries
-- 3.1   check that we are performing the statistical test
 """
 
 # we check if we can use just one frequencies of the alpha band or the entire band
@@ -45,7 +44,7 @@ for r in RUNS:
     #p2_4(run=r, cf_rand=cf, pl_rand=pl)
     #p2_5(load_conn_graph(conn=conn, freq=freq, run=r))
     #p2_6(run=r)
-    p2_7(run=r)
+    #p2_7(run=r)
 
 
 
@@ -75,4 +74,11 @@ for r in RUNS:
                 print("Louvain community:", S1)
                 print("Infomap community:", S2)
                 print("Jaccard is {}%\n".format(j))
+
 '''
+
+
+# to see the mapping between integers and channels in latex
+# mapping = map_index_to_channels()
+# for k,v in mapping.items():
+#     print("{} & {} \\\\ \hline".format(k,v))
