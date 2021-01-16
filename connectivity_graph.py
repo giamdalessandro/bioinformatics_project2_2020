@@ -253,7 +253,7 @@ def p1_1(file_name=None, freq=10, run='R01', point='1'):
 
 def p1_4(R='R01'):
     pdc_path = "data/pdc_{}_10hz_19_channels.txt".format(R)
-    data = p1_1(file_name="data/S003R01_fixed", point='4')
+    data = p1_1(file_name="data/S003{}_fixed".format(R), point='4')
 
     if os.path.isfile(pdc_path):
         pdc_values = data.conn('pdc', resolution=80)
@@ -272,9 +272,11 @@ def p1_4(R='R01'):
     
     if PLOTS:
         print("[1.4] >> Plotting connectivity...")
-        print_adj(conn_method='pdc', freq=10, run='R01', threshold=None, auto='19_channels')
-        data.plot_conn("PDC measure")     # is it even useful?
-
+        print_adj(conn_method='pdc', freq=10, run=R, threshold=None, auto='19_channels')
+        #data.plot_conn("PDC measure")
+        thr = find_threshold(pdc_values[10],20)
+        G = nx.from_numpy_array(compute_adjacency(pdc_values[10],threshold=thr), create_using=nx.DiGraph)
+        p1_5(G,run=R)
 
 def load_channel_coordinates(label=True, map_ch=False):
     """
@@ -428,7 +430,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R0
         p4_3_helper(G, pos, communities)
 
 
-def find_threshold(mat, target, start, point='3'):
+def find_threshold(mat, target, start=0.3, point='3'):
     print('[1.{}] >> Optimizing thresold to reach {}% density..'.format(point, target))
     old = 100
     best_t = -1
@@ -514,6 +516,6 @@ if __name__ == "__main__":
     plt.colorbar()
     plt.show()
     '''
-    p1_4(R="R01")
+    p1_4(R="R02")
 
     pass
