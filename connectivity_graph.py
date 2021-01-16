@@ -293,7 +293,7 @@ def load_channel_coordinates(label=True, map_ch=False):
     return pos
 
 
-def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
+def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None, run="R01"):
     """
     Prints a topological representation of the networks
     Node colors depend on their degree
@@ -305,7 +305,7 @@ def p1_5(G, point='1.5', communities=None, nodelist=None, edgelist=None):
     
     pos = load_channel_coordinates()
 
-    def p1_5_helper(G, pos, degree, node_color, point='1.5', run="R01"):
+    def p1_5_helper(G, pos, degree, node_color, point='1.5', run=run):
         """
         Helper function to now write two times the same plt stuff
         """

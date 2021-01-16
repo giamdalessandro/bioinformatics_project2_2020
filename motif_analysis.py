@@ -216,7 +216,7 @@ if __name__ == '__main__':
 
     start = time.time()
     G = load_conn_graph(conn="pdc", freq=10, run=run)
-    frq_mat = p3_1(run=run,nrep=1000)
+    frq_mat = p3_1(run=run,nrep=100)
     p3_2(G,run=run)
     p3_3(frq_mat,run=run)
 
