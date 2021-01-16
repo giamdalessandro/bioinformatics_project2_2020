@@ -43,7 +43,7 @@ for r in RUNS:
     #p2_3(freq=freq, run=r)
     #p2_4(run=r, cf_rand=cf, pl_rand=pl)
     #p2_5(load_conn_graph(conn=conn, freq=freq, run=r))
-    #p2_6(run=r)
+    p2_6(run=r)
     #p2_7(run=r)
 
 
