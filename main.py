@@ -36,17 +36,17 @@ for r in RUNS:
 
 
 ####### TASK 2 ########
-'''
+
 for r in RUNS:
     print("\n============================== TASTK 2 {} ==============================".format(r))
     cf_real, pl_real = p2_1(conn=conn, freq=freq, run=r)
     small_worldness  = p2_2(cf_real, pl_real, random_graph='erdos')  # or 'watts'
     p2_3(freq=freq, run=r)
-    p2_4(run=r)
-    p2_5(load_conn_graph(conn=conn, freq=freq, run=r))
-    p2_6(run=r)
-    p2_7(run=r)
-'''
+    #p2_4(run=r)
+    #p2_5(load_conn_graph(conn=conn, freq=freq, run=r))
+    #p2_6(run=r)
+    #p2_7(run=r)
+
 
 
 ####### TASK 3 ########
