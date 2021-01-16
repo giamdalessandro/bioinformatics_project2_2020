@@ -1,6 +1,7 @@
 from commons import *
 from connectivity_graph import load_matrix, compute_adjacency, load_channel_coordinates, load_conn_graph, p1_5
 
+from random import randint
 
 def getKey(item):
     return item[1]
@@ -112,8 +113,8 @@ def plot2_1(node_degs, in_degs, out_degs, colors):
 def graph_indices_part_2_2(cf_real, pl_real):
     cf_rand = 0
     pl_rand = 0
-    for i in range(5000):
-        G_Rand = nx.erdos_renyi_graph(n=64, p=0.4, seed=i, directed=True)        
+    for i in range(1000):
+        G_Rand = nx.erdos_renyi_graph(n=64, p=randint(4,10)/10, seed=i, directed=True)        
         cf_rand += nx.average_clustering(G_Rand)
         pl_rand += nx.average_shortest_path_length(G_Rand)
     
@@ -227,7 +228,9 @@ def p2_1(conn, freq, run):
         threshold = THRES_PDC_10HZ_R02_20percent
     print("\n[2.1] >> analyzing run", run)
     adj_mat = compute_adjacency(load_matrix(conn_method=conn, freq=freq, run=run), threshold=threshold)
-    cf_real, pl_real = graph_indices_part_2_1(adj_mat)
+    cf_real, pl_real = graph_indices_part_2_1(adj_mat, verbose=False)
+    print("[2.1] >> Average Clustering Coefficient PDC: {:.6f}".format(cf_real))
+    print("[2.1] >> Average Path Length PDC: {:.6f}".format(pl_real))
     return cf_real, pl_real
 
 
@@ -241,9 +244,10 @@ def p2_2(cf_real, pl_real):
 
 def p2_3(freq, run):
     """
-    Computes for both pdc and dtf method:
+    Computes p2_1 for dtf method:
         - cl (Average Clustering Coefficient)
         - pl (Average Path Length)
+        - SMALL WORLDNESS
     """
     if run == 'R01':
         threshold_pdc = THRES_PDC_10HZ_R01_20percent
@@ -252,17 +256,12 @@ def p2_3(freq, run):
         threshold_pdc = THRES_PDC_10HZ_R02_20percent
         threshold_dtf = THRES_DTF_10HZ_R02_20percent
 
-    
-    pdc_mat = compute_adjacency(load_matrix(conn_method='pdc', freq=freq, run=run), threshold=threshold_pdc)    
     dtf_mat = compute_adjacency(load_matrix(conn_method='dtf', freq=freq, run=run), threshold=threshold_dtf)
-    cl_pdc, pl_pdc = graph_indices_part_2_1(pdc_mat, plots=False, verbose=False)
     cl_dtf, pl_dtf = graph_indices_part_2_1(dtf_mat, plots=False, verbose=False)
-    print("\n")
-    print("[2.3] >> Average Clustering Coefficient PDC: {:.6f}".format(cl_pdc))
-    print("[2.3] >> Average Clustering Coefficient DTF: {:.6f}".format(cl_dtf))
-    print("[2.3] >> Average Path Length PDC: {:.6f}".format(pl_pdc))
-    print("[2.3] >> Average Path Length DTF: {:.6f}".format(pl_dtf))
     small_worldness = graph_indices_part_2_2(cl_dtf, cl_dtf)
+    print("\n")
+    print("[2.3] >> Average Clustering Coefficient DTF: {:.6f}".format(cl_dtf))
+    print("[2.3] >> Average Path Length DTF: {:.6f}".format(pl_dtf))
     print("[2.3] >> Small worldness:", small_worldness)
 
 
