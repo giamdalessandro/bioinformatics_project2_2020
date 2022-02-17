@@ -1,11 +1,18 @@
-# bioinformatics_project_2_2020
+# Brain network study during resting states
 
-Repo for the second project of the Bioinformatics & Network Medicine 2020 at Sapienza. To install all dependencies run
+Second project of the Bioinformatics & Network Medicine 20/21 course, Sapienza University of Rome. 
+
+We conducted the study of the a brain network during resting phase with eyes open and eyes closed. We used the EEG data of subject S003 from the dataset of PhysioNet (reachable [here](https://physionet.org/content/eegmmidb/1.0.0/)) to perform functional connectivity analysis. The study is divided into four steps; connectivity estimation and network creation, network analysis through local and global indices, motif analysis and community detection. We developed these tests in a python environment. Full report is avilable [here](./docs/report_proj_group2.pdf).
+
+
+## Notes
+
+### Run
+
+To install all dependencies run
 ```shell
 $ pip3 -r requirements.txt
 ```
-
-## Notes
 
 ### Fixing broken EDF headers
 
