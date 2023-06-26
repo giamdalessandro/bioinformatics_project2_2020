@@ -40,5 +40,5 @@ Then open file `motifs.py` and change array sizes to `200` at lines 701-702 (ref
 
 ## Authors
 - [Giammarco D'Alessandro](https://github.com/giamdalessandro)
-- [Luca Gioffrè](https://github.com/lukfre)
+- [Luca Gioffrè](https://github.com/lukfre)  (username changed from `balthier`)
 - [Narges Sharghi](https://github.com/nargessharghi)
